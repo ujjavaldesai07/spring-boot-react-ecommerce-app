@@ -24,3 +24,8 @@ client/yarn.lock
 client/npm-debug.log*
 client/yarn-debug.log*
 client/yarn-error.log*
+
+# server
+server/authentication-service/.idea/
+server/common-data-service/.idea/
+server/seller-account-service/.idea/

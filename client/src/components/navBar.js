@@ -88,7 +88,7 @@ const NavBar = (props) => {
             onClose={handleMenuClose}
         >
             <Link to={!tokenId? "/login": "/"}>
-                <MenuItem onClick={handleLoginStatus}>{!tokenId? 'Login/SignUp': 'Logout'}</MenuItem>
+                <MenuItem onClick={handleLoginStatus}>{!tokenId? 'Login': 'Logout'}</MenuItem>
             </Link>
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
         </Menu>

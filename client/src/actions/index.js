@@ -1,6 +1,6 @@
 import {
     TAB_CLICK, SIGN_IN,
-    SIGN_OUT, TOKEN_ID, SIGN_IN_ERROR
+    SIGN_OUT, TOKEN_ID, SIGN_IN_ERROR, SIGN_UP, SIGN_UP_ERROR
 } from './types';
 import authApi from "../api/authApi";
 import history from "../history";
@@ -30,7 +30,6 @@ export const signIn = formValues => async (dispatch) => {
     authApi.defaults.headers.common['Authorization'] = `Basic ${hash}`
     authApi.defaults.timeout = 5000;
     const response = await authApi.post('/authenticate').catch(err => {
-        console.log("ERROR: " + err.message)
         dispatch({type: SIGN_IN_ERROR, payload: err.message});
     });
 
@@ -46,10 +45,35 @@ export const signIn = formValues => async (dispatch) => {
 }
 
 export const signOut = () => {
-    console.log('Removing token....')
     Cookies.remove(TOKEN_ID)
     return {
         type: SIGN_OUT
+    }
+}
+
+export const signUp = formValues => async (dispatch) => {
+
+    authApi.defaults.timeout = 5000;
+    const response = await authApi.post('/signup', {
+        'username': formValues.Username,
+        'password': formValues.Password,
+        'firstname': formValues.FirstName,
+        'lastname': formValues.LastName,
+        'email': formValues.Email.toLowerCase(),
+    }).catch(err => {
+        dispatch({type: SIGN_UP_ERROR, payload: err.message});
+    });
+
+    if (response) {
+        console.log('account_creation_status = ' + response.data.account_creation_status.localeCompare('success'))
+        console.log('account_creation_status = ' + response.data.account_creation_status)
+        if (response.data.account_creation_status === 'success') {
+            dispatch({type: SIGN_UP, payload: response.data.account_creation_status});
+            history.push('/verification_email');
+        } else {
+            console.log('response.data.error_msg = ' + response.data.error_msg);
+            dispatch({type: SIGN_UP_ERROR, payload: response.data.error_msg});
+        }
     }
 }
 

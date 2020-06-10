@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Button, Dimmer, Segment} from 'semantic-ui-react';
+import {Button, Dimmer, Segment, Grid, Divider} from 'semantic-ui-react';
 
 export const StyledSegment = styled(Segment)({
     border: 'none !important',
@@ -15,4 +15,12 @@ export const StyledDimmer = styled(Dimmer)({
 
 export const StyledWebButton = styled(Button)({
     width: '10em !important'
+});
+
+export const StyledLoginScreenGrid = styled(Grid)({
+    paddingTop: '100px !important'
+});
+
+export const StyledDivider = styled(Divider)({
+    padding: '0 !important'
 });

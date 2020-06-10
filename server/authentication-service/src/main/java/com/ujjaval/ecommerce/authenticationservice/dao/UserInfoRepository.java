@@ -2,8 +2,10 @@ package com.ujjaval.ecommerce.authenticationservice.dao;
 
 import com.ujjaval.ecommerce.authenticationservice.entity.UserInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -13,11 +15,21 @@ public interface UserInfoRepository extends JpaRepository<UserInfo, Integer> {
             nativeQuery = true)
     Optional<UserInfo> findByUsername(@Param("USERNAME") String USERNAME);
 
+    @Query(value="SELECT user_id, user_name, first_name, last_name, email, password " +
+            "FROM user_info where email = :EMAIL ",
+            nativeQuery = true)
+    Optional<UserInfo> findByEmail(@Param("EMAIL") String EMAIL);
+
     @Query(value="DELETE FROM user_info where user_name = :USERNAME and password = :PASSWORD",
             nativeQuery = true)
     void deleteByUsernamePassword(@Param("USERNAME") String USERNAME, @Param("PASSWORD") String PASSWORD);
 
-    @Query(value="INSERT INTO `user_info` VALUES ('',:USERNAME, :FIRSTNAME, :LASTNAME, :EMAIL, :PASSWORD",
-            nativeQuery = true)
-    void saveUserProfile(String USERNAME, String FIRSTNAME, String LASTNAME, String EMAIL, String PASSWORD);
+    @Modifying
+    @Transactional
+    @Query(value="INSERT INTO user_info (user_name, first_name, last_name, email, password) " +
+            " VALUES (:USERNAME, :FIRSTNAME, :LASTNAME, :EMAIL, :PASSWORD)", nativeQuery = true)
+    void createUserProfile(@Param("USERNAME") String USERNAME, @Param("FIRSTNAME")  String FIRSTNAME,
+                           @Param("LASTNAME") String LASTNAME, @Param("EMAIL") String EMAIL,
+                           @Param("PASSWORD") String PASSWORD);
+
 }

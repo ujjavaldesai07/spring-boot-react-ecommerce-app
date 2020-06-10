@@ -1,7 +1,12 @@
 package com.ujjaval.ecommerce.authenticationservice.controller;
 
+import com.ujjaval.ecommerce.authenticationservice.entity.UserInfo;
+import com.ujjaval.ecommerce.authenticationservice.model.AccountCreationRequest;
+import com.ujjaval.ecommerce.authenticationservice.model.AccountCreationResponse;
 import com.ujjaval.ecommerce.authenticationservice.model.AuthenticationRequest;
 import com.ujjaval.ecommerce.authenticationservice.model.AuthenticationResponse;
+import com.ujjaval.ecommerce.authenticationservice.service.AuthDataService;
+import com.ujjaval.ecommerce.authenticationservice.service.AuthDataServiceImpl;
 import com.ujjaval.ecommerce.authenticationservice.service.CustomUserDetailsService;
 import com.ujjaval.ecommerce.authenticationservice.util.JwtUtil;
 import com.ujjaval.ecommerce.authenticationservice.util.Md5Util;
@@ -29,6 +34,9 @@ public class AuthController {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    @Autowired
+    private AuthDataService authDataService;
+
     @GetMapping("/hello" )
     public String firstPage() {
         return "Hello World";
@@ -36,6 +44,27 @@ public class AuthController {
 
     public void loop() {
         while (true){}
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> createAccount(
+            @RequestBody AccountCreationRequest accountCreationRequest)
+            throws Exception {
+
+        if(authDataService.findByEmail(accountCreationRequest.getEmail()) != null) {
+            return ResponseEntity.ok(
+                    new AccountCreationResponse("failure", "Email already exist"));
+        }
+
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(accountCreationRequest.getEmail());
+        userInfo.setFirstName(accountCreationRequest.getFirstname());
+        userInfo.setLastName(accountCreationRequest.getLastname());
+        userInfo.setPassword(accountCreationRequest.getPassword());
+        userInfo.setUserName(accountCreationRequest.getUsername());
+
+        authDataService.createUserProfile(userInfo);
+        return ResponseEntity.ok(new AccountCreationResponse("success", null));
     }
 
     @PostMapping("/authenticate")
