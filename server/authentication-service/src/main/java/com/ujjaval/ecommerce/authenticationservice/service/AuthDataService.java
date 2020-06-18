@@ -8,7 +8,9 @@ public interface AuthDataService {
 
     public UserInfo findByUsername(String username);
 
+    public UserInfo findByEmail(String email);
+
     public void deleteByUsernamePassword(String username, String password) throws NoSuchAlgorithmException;
 
-    public void saveUserProfile(UserInfo userInfo) throws NoSuchAlgorithmException;
+    public void createUserProfile(UserInfo userInfo) throws NoSuchAlgorithmException;
 }

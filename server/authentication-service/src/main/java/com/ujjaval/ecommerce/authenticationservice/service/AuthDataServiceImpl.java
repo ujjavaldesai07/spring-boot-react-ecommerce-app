@@ -29,13 +29,28 @@ public class AuthDataServiceImpl implements AuthDataService {
         return userInfo;
     }
 
-    public void deleteByUsernamePassword(String username, String password) throws NoSuchAlgorithmException {
-        UserInfoRepository.deleteByUsernamePassword(username, Md5Util.getInstance().getMd5Hash(password));
+    public UserInfo findByEmail(String email) {
+        Optional<UserInfo> result = UserInfoRepository.findByEmail(email);
+
+        UserInfo userInfo = null;
+
+        if(result.isPresent()) {
+            userInfo = result.get();
+        } else {
+            return null;
+        }
+
+        return userInfo;
     }
 
-    public void saveUserProfile(UserInfo userInfo) throws NoSuchAlgorithmException {
-        UserInfoRepository.saveUserProfile(userInfo.getUserName(),
+    public void createUserProfile(UserInfo userInfo) throws NoSuchAlgorithmException {
+        System.out.println("Userinfoooo = " + userInfo);
+        UserInfoRepository.createUserProfile(userInfo.getUserName(),
                 userInfo.getFirstName(), userInfo.getLastName(),
                 userInfo.getEmail(), Md5Util.getInstance().getMd5Hash(userInfo.getPassword()));
+    }
+
+    public void deleteByUsernamePassword(String username, String password) throws NoSuchAlgorithmException {
+        UserInfoRepository.deleteByUsernamePassword(username, Md5Util.getInstance().getMd5Hash(password));
     }
 }

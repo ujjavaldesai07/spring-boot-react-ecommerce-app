@@ -19,8 +19,15 @@ client/.env.development.local
 client/.env.test.local
 client/.env.production.local
 .idea/
+node_modules/
+package-lock.json
 
 client/yarn.lock
 client/npm-debug.log*
 client/yarn-debug.log*
 client/yarn-error.log*
+
+# server
+server/authentication-service/.idea/
+server/common-data-service/.idea/
+server/seller-account-service/.idea/
