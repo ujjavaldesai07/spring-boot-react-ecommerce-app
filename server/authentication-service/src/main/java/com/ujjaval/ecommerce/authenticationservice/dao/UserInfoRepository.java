@@ -10,25 +10,25 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 public interface UserInfoRepository extends JpaRepository<UserInfo, Integer> {
-    @Query(value="SELECT user_id, user_name, first_name, last_name, email, password " +
+    @Query(value = "SELECT user_id, user_name, first_name, last_name, email, password " +
             "FROM user_info where user_name = :USERNAME ",
             nativeQuery = true)
     Optional<UserInfo> findByUsername(@Param("USERNAME") String USERNAME);
 
-    @Query(value="SELECT user_id, user_name, first_name, last_name, email, password " +
+    @Query(value = "SELECT user_id, user_name, first_name, last_name, email, password " +
             "FROM user_info where email = :EMAIL ",
             nativeQuery = true)
     Optional<UserInfo> findByEmail(@Param("EMAIL") String EMAIL);
 
-    @Query(value="DELETE FROM user_info where user_name = :USERNAME and password = :PASSWORD",
+    @Query(value = "DELETE FROM user_info where user_name = :USERNAME and password = :PASSWORD",
             nativeQuery = true)
     void deleteByUsernamePassword(@Param("USERNAME") String USERNAME, @Param("PASSWORD") String PASSWORD);
 
     @Modifying
     @Transactional
-    @Query(value="INSERT INTO user_info (user_name, first_name, last_name, email, password) " +
+    @Query(value = "INSERT INTO user_info (user_name, first_name, last_name, email, password) " +
             " VALUES (:USERNAME, :FIRSTNAME, :LASTNAME, :EMAIL, :PASSWORD)", nativeQuery = true)
-    void createUserProfile(@Param("USERNAME") String USERNAME, @Param("FIRSTNAME")  String FIRSTNAME,
+    void createUserProfile(@Param("USERNAME") String USERNAME, @Param("FIRSTNAME") String FIRSTNAME,
                            @Param("LASTNAME") String LASTNAME, @Param("EMAIL") String EMAIL,
                            @Param("PASSWORD") String PASSWORD);
 

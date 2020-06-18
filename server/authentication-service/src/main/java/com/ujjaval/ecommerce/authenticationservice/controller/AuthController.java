@@ -6,11 +6,16 @@ import com.ujjaval.ecommerce.authenticationservice.model.AccountCreationResponse
 import com.ujjaval.ecommerce.authenticationservice.model.AuthenticationRequest;
 import com.ujjaval.ecommerce.authenticationservice.model.AuthenticationResponse;
 import com.ujjaval.ecommerce.authenticationservice.service.AuthDataService;
-import com.ujjaval.ecommerce.authenticationservice.service.AuthDataServiceImpl;
 import com.ujjaval.ecommerce.authenticationservice.service.CustomUserDetailsService;
 import com.ujjaval.ecommerce.authenticationservice.util.JwtUtil;
 import com.ujjaval.ecommerce.authenticationservice.util.Md5Util;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,6 +23,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
@@ -37,13 +45,35 @@ public class AuthController {
     @Autowired
     private AuthDataService authDataService;
 
-    @GetMapping("/hello" )
+    @GetMapping(value = "/resources1")
+    public ResponseEntity<InputStreamResource> getImage1() throws IOException {
+
+        var imgFile = new ClassPathResource("static/images/b1.png");
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(new InputStreamResource(imgFile.getInputStream()));
+    }
+
+    @GetMapping(value = "/resources2")
+    public ResponseEntity<InputStreamResource> getImage2() throws IOException {
+        String mediaType = "image/webp";
+        String path = "static/images/s1.webp";
+        var imgFile = new ClassPathResource(path);
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.parseMediaType(mediaType))
+                .body(new InputStreamResource(imgFile.getInputStream()));
+    }
+
+    @GetMapping("/hello")
     public String firstPage() {
         return "Hello World";
     }
 
     public void loop() {
-        while (true){}
+        while (true) {
+        }
     }
 
     @PostMapping("/signup")
@@ -51,7 +81,7 @@ public class AuthController {
             @RequestBody AccountCreationRequest accountCreationRequest)
             throws Exception {
 
-        if(authDataService.findByEmail(accountCreationRequest.getEmail()) != null) {
+        if (authDataService.findByEmail(accountCreationRequest.getEmail()) != null) {
             return ResponseEntity.ok(
                     new AccountCreationResponse("failure", "Email already exist"));
         }
@@ -86,8 +116,7 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
                             Md5Util.getInstance().getMd5Hash(authenticationRequest.getPassword()))
             );
-        }
-        catch (BadCredentialsException e) {
+        } catch (BadCredentialsException e) {
             return ResponseEntity.ok(new AuthenticationResponse(null, "Incorrect username or password."));
         } catch (Exception e) {
             return ResponseEntity.ok(new AuthenticationResponse(null, "Username does not exist."));

@@ -1,0 +1,4 @@
+upto $50
+upto $100
+upto $500
+above $100

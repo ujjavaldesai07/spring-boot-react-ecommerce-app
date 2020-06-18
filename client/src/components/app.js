@@ -1,12 +1,12 @@
 import React from "react";
-import NavBar from "./navBar";
-import TabDataList from "./tabDataList";
+import NavBar from "./screens/navBar";
+import TabDataList from "./parts/tabDataList";
 import history from "../history";
 import {Router, Route} from 'react-router-dom';
-import MainScreen from "./mainScreen";
-import LoginScreen from "./loginScreen";
-import SignUpScreen from "./signupScreen";
-import VerificationScreen from "./verificationScreen";
+import MainScreen from "./screens/main/mainScreen";
+import LoginScreen from "./screens/loginScreen";
+import SignUpScreen from "./screens/signupScreen";
+import FilterScreen from "./screens/filter/filterScreen";
 
 const App = () => {
     return (
@@ -17,7 +17,7 @@ const App = () => {
                 <Route path="/" exact component={MainScreen}/>
                 <Route path="/login" exact component={LoginScreen}/>
                 <Route path="/signup" exact component={SignUpScreen}/>
-                <Route path="/verification_email" exact component={VerificationScreen}/>
+                <Route path="/:products" component={FilterScreen}/>
             </Router>
         </div>
     )
