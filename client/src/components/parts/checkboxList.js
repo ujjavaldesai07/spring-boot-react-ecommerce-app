@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function CheckboxList() {
+export default function CheckboxList(props) {
     const classes = useStyles();
     const [checked, setChecked] = React.useState([0]);
 
@@ -38,6 +38,37 @@ export default function CheckboxList() {
         setChecked(newChecked);
     };
 
+    if(!props.attrList) {
+        return null
+    }
+
+    const renderCheckBoxList = () => {
+        let count = 0;
+        console.log("fontSize = " + props.fontSize)
+        return props.attrList.map(({id, type}) => {
+            if(count === 6) {
+                return null
+            }
+            count = count+1
+            return (
+                <ListItem classes={{root: classes.listItemRoot}} key={id} role={undefined} dense button onClick={handleToggle(id)}>
+                    <ListItemIcon classes={{root: classes.listItemIconRoot}}>
+                        <Checkbox
+                            size="small"
+                            edge="start"
+                            checked={checked.indexOf(id) !== -1}
+                            tabIndex={-1}
+                            disableRipple
+                            inputProps={{ 'aria-labelledby': id }}
+                        />
+                    </ListItemIcon>
+                    <ListItemText id={id} primary={type} style={{fontSize: props.fontSize}}
+                    disableTypography/>
+                </ListItem>
+            );
+        })
+    }
+
     return (
         <List
             // subheader={
@@ -46,25 +77,7 @@ export default function CheckboxList() {
             // </ListSubheader>
         // }
             className={classes.root}>
-            {[0, 1, 2, 3].map((value) => {
-                const labelId = `checkbox-list-label-${value}`;
-
-                return (
-                    <ListItem classes={{root: classes.listItemRoot}} key={value} role={undefined} dense button onClick={handleToggle(value)}>
-                        <ListItemIcon classes={{root: classes.listItemIconRoot}}>
-                            <Checkbox
-                                size="small"
-                                edge="start"
-                                checked={checked.indexOf(value) !== -1}
-                                tabIndex={-1}
-                                disableRipple
-                                inputProps={{ 'aria-labelledby': labelId }}
-                            />
-                        </ListItemIcon>
-                        <ListItemText id={labelId} primary={`Line item ${value + 1}`} />
-                    </ListItem>
-                );
-            })}
+            {renderCheckBoxList()}
         </List>
     );
 }

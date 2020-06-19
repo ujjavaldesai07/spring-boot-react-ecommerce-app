@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface SortByCategoryRepository extends JpaRepository<SortByCategory, Integer> {
 
-    SortByCategory findBySortBy(String sortBy);
-
     @Query(value = "SELECT s FROM SortByCategory s")
     List<SortByCategory> getAllData();
+
+    SortByCategory findByType(String line);
 }

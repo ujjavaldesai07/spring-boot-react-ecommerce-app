@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface PriceRangeCategoryRepository extends JpaRepository<PriceRangeCategory, Integer> {
 
-    PriceRangeCategory findByPriceRange(String priceRange);
-
     @Query(value = "SELECT p FROM PriceRangeCategory p")
     List<PriceRangeCategory> getAllData();
+
+    PriceRangeCategory findByType(String line);
 }

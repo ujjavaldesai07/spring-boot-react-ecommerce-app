@@ -1,4 +1,4 @@
-package com.ujjaval.ecommerce.commondataservice.dao.sql.info;
+package com.ujjaval.ecommerce.commondataservice.dao.sql.info.impl;
 
 import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
 import lombok.Getter;
@@ -78,7 +78,7 @@ public class ProductInfoRepositoryImpl {
                     break;
                 case brand:
                     prepareConditionListById(mapParams, entry.getValue(), mapParametersKey,
-                            conditions, "p.productBrand.id");
+                            conditions, "p.productBrandCategory.id");
                     break;
                 case price:
                     // eg bt:100,1000

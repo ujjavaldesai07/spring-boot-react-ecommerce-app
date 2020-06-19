@@ -7,4 +7,5 @@ export const HANDLE_TAB_HOVER_EVENT = 6;
 export const HANDLE_TOKEN_ID = 7;
 export const HANDLE_IMAGE_CLICK_EVENT = 8;
 export const HANDLE_MAIN_SCREEN = 9;
-export const HANDLE_FILTER_SCREEN = 10;
+export const HANDLE_FILTER_PRODUCTS = 10;
+export const HANDLE_FILTER_ATTRIBUTES = 11;

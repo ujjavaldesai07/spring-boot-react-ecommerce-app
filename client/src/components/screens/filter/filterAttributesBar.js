@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
@@ -7,10 +7,11 @@ import Grid from "@material-ui/core/Grid";
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 
 import RadioButtonsGroup from "../../parts/radioButton";
-import CheckboxList from "../../parts/checkboxList";
-import TitleComponent from "../../parts/titleComponent";
-import CollapsableSearch from "../../parts/collapsableSearch";
-import DisplayFilterProducts from "./filterProductsDisplay";
+import TitleHeader from "../../parts/titleHeader";
+import {connect, useSelector} from "react-redux";
+import {loadFilterAttributes} from "../../../actions";
+import FilterProductsDisplay from "./filterProductsDisplay";
+import FilterCheckBoxSection from "./filterCheckBoxSection";
 
 const drawerWidth = 240;
 
@@ -47,15 +48,12 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function FilterScreenAttributesBar(props) {
+function FilterAttributesBar(props) {
     const {window} = props;
     const classes = useStyles();
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = React.useState(false);
-
-    const handleDrawerToggle = () => {
-        setMobileOpen(!mobileOpen);
-    };
+    const filterAttributes = useSelector(state => state.filterAttributesReducer)
 
     // const handleSearchClick = () => {
     //     ReactDOM.render(
@@ -77,48 +75,39 @@ function FilterScreenAttributesBar(props) {
     //     };
     // })
 
-    const handleSearchClick = () => {
+    useEffect(() => {
+        props.loadFilterAttributes();
+    }, [props]);
 
+    if(!filterAttributes) {
+        return null
+    }
+
+    const handleDrawerToggle = () => {
+        setMobileOpen(!mobileOpen);
+    };
+
+    const renderRadioButtonGroup = (attributeList, title) => {
+        return (
+            <>
+                <div style={{paddingLeft: '15px', paddingTop: '10px'}}>
+                    <TitleHeader title={title} variant="subtitle1" fontWeight="bold" fontSize="1.2rem"/>
+                    <RadioButtonsGroup attributeList={attributeList} title={title.replace(/\s/g, '')}/>
+                </div>
+                <Divider/>
+            </>
+        )
     }
 
     const drawer = (
         <div>
+            {renderRadioButtonGroup(filterAttributes.sortByCategoryList, "Sort by")}
+            {renderRadioButtonGroup(filterAttributes.genderList, "Gender")}
+            <FilterCheckBoxSection title="Apparel" attrList={filterAttributes.clothesTypeList}/>
             <Divider/>
-            <div style={{paddingLeft: '15px', paddingTop: '10px'}}>
-                <TitleComponent title="SORT BY" variant="h6" fontWeight="bold"/>
-                <RadioButtonsGroup/>
-            </div>
+            <FilterCheckBoxSection title="Brand" attrList={filterAttributes.brandList}/>
+            {/*<CheckboxList/>*/}
             <Divider/>
-            <div style={{paddingLeft: '15px', paddingTop: '10px'}}>
-                <TitleComponent title="CLOTHES FOR" variant="h6" fontWeight="bold"/>
-                <RadioButtonsGroup/>
-            </div>
-            <Divider/>
-
-            <Grid container style={{paddingTop: '10px'}}>
-                <Grid item xs={1}/>
-                <Grid item xs={6}>
-                    <TitleComponent title="BRANDS" variant="h6" fontWeight="bold"/>
-                </Grid>
-                <Grid item xs={4}>
-                    <CollapsableSearch handleOnClick={handleSearchClick}/>
-                </Grid>
-            </Grid>
-
-            <CheckboxList/>
-            <Divider/>
-            <Grid container style={{paddingTop: '10px'}}>
-                <Grid item xs={1}/>
-                <Grid item xs={6}>
-                    <TitleComponent title="COLOR" variant="h6" fontWeight="bold"/>
-                </Grid>
-                <Grid item xs={4}>
-                    <CollapsableSearch handleOnClick={handleSearchClick}/>
-                </Grid>
-            </Grid>
-            <CheckboxList/>
-            <Divider/>
-            <CheckboxList/>
         </div>
     );
 
@@ -160,11 +149,10 @@ function FilterScreenAttributesBar(props) {
             </nav>
             <main className={classes.content}>
                 <Grid container spacing={0} style={{padding: '10px 0 0 30px'}}>
-                    <DisplayFilterProducts/>
+                    <FilterProductsDisplay/>
                 </Grid>
             </main>
         </div>
     );
 }
-
-export default FilterScreenAttributesBar;
+export default connect(null, {loadFilterAttributes})(FilterAttributesBar);

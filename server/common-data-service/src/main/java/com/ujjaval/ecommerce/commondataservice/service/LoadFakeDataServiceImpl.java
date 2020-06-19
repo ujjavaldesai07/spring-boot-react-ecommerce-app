@@ -122,7 +122,7 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                 switch (type) {
                     case "brand":
                         BrandImages brandImages = new BrandImages(title, filePath);
-                        ProductBrandCategory productBrandCategory = productBrandCategoryRepository.findByBrand(title);
+                        ProductBrandCategory productBrandCategory = productBrandCategoryRepository.findByType(title);
                         if (productBrandCategory != null) {
                             brandImages.setProductBrandCategory(productBrandCategory);
                             brandImagesRepository.save(brandImages);
@@ -131,9 +131,9 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                     case "category":
                         ClothesTypeImages clothesTypeImages = new ClothesTypeImages(title, filePath);
                         ClothesTypeCategory clothesTypeCategory =
-                                clothesTypeCategoryRepository.findByClothesType(title);
+                                clothesTypeCategoryRepository.findByType(title);
 
-                        GenderCategory genderCategory = genderCategoryRepository.findByGender(gender);
+                        GenderCategory genderCategory = genderCategoryRepository.findByType(gender);
                         if (clothesTypeCategory != null) {
                             clothesTypeImages.setClothesTypeCategory(clothesTypeCategory);
                             clothesTypeImages.setGenderCategory(genderCategory);
@@ -178,7 +178,7 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                 case SORT_BY:
                     for (String line; (line = reader.readLine()) != null; ) {
                         System.out.println("SortBy Line = " + line);
-                        SortByCategory sortByCategory = sortByCategoryRepository.findBySortBy(line);
+                        SortByCategory sortByCategory = sortByCategoryRepository.findByType(line);
                         if (sortByCategory == null) {
                             sortByCategory = new SortByCategory(line);
                             sortByCategoryRepository.save(sortByCategory);
@@ -188,7 +188,7 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                 case PRICE_RANGE:
                     for (String line; (line = reader.readLine()) != null; ) {
                         System.out.println("PriceRange Line = " + line);
-                        PriceRangeCategory priceRangeCategory = priceRangeCategoryRepository.findByPriceRange(line);
+                        PriceRangeCategory priceRangeCategory = priceRangeCategoryRepository.findByType(line);
                         if (priceRangeCategory == null) {
                             priceRangeCategory = new PriceRangeCategory(line);
                             priceRangeCategoryRepository.save(priceRangeCategory);
@@ -248,9 +248,9 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                 }
 
 
-                GenderCategory genderCategory = genderCategoryRepository.findByGender(gender);
-                ClothesTypeCategory clothesTypeCategory = clothesTypeCategoryRepository.findByClothesType(clothesType);
-                ProductBrandCategory productBrandCategory = productBrandCategoryRepository.findByBrand(brandName);
+                GenderCategory genderCategory = genderCategoryRepository.findByType(gender);
+                ClothesTypeCategory clothesTypeCategory = clothesTypeCategoryRepository.findByType(clothesType);
+                ProductBrandCategory productBrandCategory = productBrandCategoryRepository.findByType(brandName);
 
                 if (genderCategory == null) {
                     genderCategory = new GenderCategory(gender);

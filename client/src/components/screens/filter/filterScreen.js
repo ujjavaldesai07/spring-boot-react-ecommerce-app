@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {makeStyles, useTheme} from '@material-ui/core/styles';
-import FilterScreenAttributesBar from "./filterAttributesBar";
+import FilterAttributesBar from "./filterAttributesBar";
+import DropdownSection from "../../parts/dropDown";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -14,7 +15,10 @@ function FilterScreen(props) {
     const classes = useStyles();
     return (
         <div>
-            <FilterScreenAttributesBar/>
+            <div style={{float: 'right'}}>
+            <DropdownSection/>
+            </div>
+            <FilterAttributesBar/>
         </div>
     );
 }

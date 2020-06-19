@@ -2,22 +2,26 @@ import React, {useEffect} from 'react';
 import Grid from '@material-ui/core/Grid';
 import {Link} from "react-router-dom";
 import {connect, useSelector} from "react-redux";
-import {loadFilterScreen} from "../../../actions";
+import {loadFilterProducts} from "../../../actions";
 
 const FilterProductsDisplay = props => {
     const {filterQuery} = useSelector(state => state.imageClickEventReducer)
-    const filterScreenData = useSelector(state => state.filterScreenReducer)
+    const filterProducts = useSelector(state => state.filterProductsReducer)
 
     useEffect(() => {
-        props.loadFilterScreen(filterQuery);
+        props.loadFilterProducts(filterQuery);
     }, [props, filterQuery]);
 
-    const renderImageList = (imageList) => {
-        if (imageList == null) {
+    if (!filterProducts) {
+        return null
+    }
+
+    const renderImageList = imageList => {
+        if (!imageList) {
             return null
         }
 
-        return imageList.map(({id, name, imageName}) => {
+        return imageList.map( ({id, name, imageName}) => {
             return (
                 <Grid key={id} item xs={3}>
                     <Link to=".">
@@ -30,8 +34,8 @@ const FilterProductsDisplay = props => {
 
     return (
         <>
-            {renderImageList(filterScreenData)}
+            {renderImageList(filterProducts)}
         </>
     )
 };
-export default connect(null, {loadFilterScreen})(FilterProductsDisplay);
+export default connect(null, {loadFilterProducts})(FilterProductsDisplay);

@@ -4,20 +4,36 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 
-export default function RadioButtonsGroup() {
+export default function RadioButtonsGroup(props) {
     const [value, setValue] = React.useState('female');
 
     const handleChange = (event) => {
         setValue(event.target.value);
     };
 
+    const renderRadioButtonList = rbList => {
+        if (!rbList) {
+            return null
+        }
+        let count = 0
+        return rbList.map(({id, type}) => {
+
+            if (count === 4) {
+                return null
+            }
+            count = count + 1
+
+            return <FormControlLabel key={id}
+                value={id}
+                control={<Radio size="small"/>}
+                label={type}/>
+        })
+    }
+
     return (
         <FormControl component="fieldset">
-            <RadioGroup aria-label="gender" name="gender1" value={value} onChange={handleChange}>
-                <FormControlLabel value="Men" control={<Radio size="small"/>} label="Men" />
-                <FormControlLabel value="Women" control={<Radio size="small"/>} label="Women" />
-                <FormControlLabel value="Boys" control={<Radio size="small"/>} label="Boys" />
-                <FormControlLabel value="Girls" control={<Radio size="small"/>} label="Girls" />
+            <RadioGroup aria-label={props.title} name={props.title} value={value} onChange={handleChange}>
+                {renderRadioButtonList(props.attributeList)}
             </RadioGroup>
         </FormControl>
     );

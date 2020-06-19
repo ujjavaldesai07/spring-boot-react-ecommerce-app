@@ -20,9 +20,9 @@ public class SortByCategory {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int id;
 
-    private String sortBy;
+    private String type;
 
-    public SortByCategory(String sortBy) {
-        this.sortBy = sortBy;
+    public SortByCategory(String type) {
+        this.type = type;
     }
 }

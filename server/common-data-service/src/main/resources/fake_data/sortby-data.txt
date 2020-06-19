@@ -1,4 +1,4 @@
-High to Low
-Low to High
 Newest
 Ratings
+Low to High
+High to Low

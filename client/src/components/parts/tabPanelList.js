@@ -39,7 +39,7 @@ TabPanel.propTypes = {
     value: PropTypes.any.isRequired,
 };
 
-export default function TabDataList() {
+export default function TabPanelList() {
     const classes = useTabStyles();
     const {index} = useSelector(state => state.tabHoverEventReducer);
 

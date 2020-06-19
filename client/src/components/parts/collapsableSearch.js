@@ -49,12 +49,10 @@ export default function CollapsableSearch(props) {
     const [searchIcon, setSearchIcon] = useState(true);
 
     const handleClick = () => {
-        console.log('State = ' + !searchIcon)
         props.handleOnClick()
         setSearchIcon(!searchIcon)
     }
 
-    console.log('searchIcon = ' + searchIcon)
     return (
         <div className={classes.root}>
             <div className={classes.search}>

@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface GenderCategoryRepository extends JpaRepository<GenderCategory, Integer> {
 
-    GenderCategory findByGender(String gender);
-
     @Query(value = "SELECT g FROM GenderCategory g")
     List<GenderCategory> getAllData();
+
+    GenderCategory findByType(String gender);
 }
