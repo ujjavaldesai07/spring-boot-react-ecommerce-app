@@ -1,6 +1,6 @@
 import {
     HANDLE_SIGN_IN, HANDLE_SIGN_UP, HANDLE_SIGN_UP_ERROR, HANDLE_MAIN_SCREEN,
-    HANDLE_SIGN_OUT, HANDLE_TOKEN_ID, HANDLE_SIGN_IN_ERROR, HANDLE_FILTER_SCREEN,
+    HANDLE_SIGN_OUT, HANDLE_TOKEN_ID, HANDLE_SIGN_IN_ERROR, HANDLE_FILTER_PRODUCTS, HANDLE_FILTER_ATTRIBUTES,
 } from './types';
 import authApi from "../api/authServiceApi";
 import history from "../history";
@@ -66,15 +66,15 @@ export const signUp = formValues => async (dispatch) => {
 }
 
 export const loadMainScreen = () => async dispatch => {
-    console.log("Calling the commonService API...")
     const response = await commonServiceApi.get('/main');
+    // console.log("LoadMainScreen API = " + JSON.parse(JSON.stringify(response.data)))
     if(response != null) {
         dispatch({type: HANDLE_MAIN_SCREEN, payload: JSON.parse(JSON.stringify(response.data))});
     }
 };
 
-export const loadFilterScreen = filterQuery => async dispatch => {
-    console.log("Calling the commonService API for filter screen... = " + filterQuery)
+export const loadFilterProducts = filterQuery => async dispatch => {
+    console.log("Calling Products API....")
 
     // Reloading or direct url
     if(!filterQuery) {
@@ -85,9 +85,19 @@ export const loadFilterScreen = filterQuery => async dispatch => {
     if(filterQuery) {
         const response = await commonServiceApi.get('/products?q=' + filterQuery);
         if(response != null) {
-            dispatch({type: HANDLE_FILTER_SCREEN, payload: JSON.parse(JSON.stringify(response.data))});
+            // console.log("Products = " + JSON.stringify(response.data))
+            dispatch({type: HANDLE_FILTER_PRODUCTS, payload: JSON.parse(JSON.stringify(response.data))});
         }
     }
+};
+
+export const loadFilterAttributes = () => async dispatch => {
+    console.log("Calling Filter API....")
+        const response = await commonServiceApi.get('/filter');
+        if(response != null) {
+            // console.log("Filter = " + JSON.stringify(response.data))
+            dispatch({type: HANDLE_FILTER_ATTRIBUTES, payload: JSON.parse(JSON.stringify(response.data))});
+        }
 };
 
 // export const createStream = formValues => async (dispatch, getState) => {

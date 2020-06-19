@@ -20,9 +20,9 @@ public class PriceRangeCategory {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int id;
 
-    private String priceRange;
+    private String type;
 
-    public PriceRangeCategory(String priceRange) {
-        this.priceRange = priceRange;
+    public PriceRangeCategory(String type) {
+        this.type = type;
     }
 }

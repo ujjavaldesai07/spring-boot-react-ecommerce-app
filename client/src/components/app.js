@@ -1,6 +1,6 @@
 import React from "react";
 import NavBar from "./screens/navBar";
-import TabDataList from "./parts/tabDataList";
+import TabPanelList from "./parts/tabPanelList";
 import history from "../history";
 import {Router, Route} from 'react-router-dom';
 import MainScreen from "./screens/main/mainScreen";
@@ -13,7 +13,7 @@ const App = () => {
         <div>
             <Router history={history}>
                 <Route path="/" component={NavBar}/>
-                <Route path="/" component={TabDataList}/>
+                <Route path="/" component={TabPanelList}/>
                 <Route path="/" exact component={MainScreen}/>
                 <Route path="/login" exact component={LoginScreen}/>
                 <Route path="/signup" exact component={SignUpScreen}/>

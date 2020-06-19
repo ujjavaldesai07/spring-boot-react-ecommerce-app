@@ -21,7 +21,7 @@ public class ProductBrandCategory {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
 
-    private String brand;
+    private String type;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "productBrandCategory")
     @JsonIgnore
@@ -31,7 +31,7 @@ public class ProductBrandCategory {
     @JsonIgnore
     private List<BrandImages> brandImages;
 
-    public ProductBrandCategory(String brand) {
-        this.brand = brand;
+    public ProductBrandCategory(String type) {
+        this.type = type;
     }
 }

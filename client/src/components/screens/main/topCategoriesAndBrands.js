@@ -38,7 +38,6 @@ const TopCategoriesAndBrands = props => {
                     break
                 case queryType.clothesTypes:
                     if (info.clothesTypeInfo && info.genderInfo) {
-
                         filterQuery = `clothestype=${info.clothesTypeInfo.id}::gender=${info.genderInfo.id}`
                     }
                     break

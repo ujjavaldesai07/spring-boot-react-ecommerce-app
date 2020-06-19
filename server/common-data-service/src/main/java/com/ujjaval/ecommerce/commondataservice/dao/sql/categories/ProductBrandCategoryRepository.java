@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface ProductBrandCategoryRepository extends JpaRepository<ProductBrandCategory, Integer> {
 
-    ProductBrandCategory findByBrand(String brand);
-
     @Query(value = "SELECT p FROM ProductBrandCategory p")
     List<ProductBrandCategory> getAllData();
+
+    ProductBrandCategory findByType(String brandName);
 }

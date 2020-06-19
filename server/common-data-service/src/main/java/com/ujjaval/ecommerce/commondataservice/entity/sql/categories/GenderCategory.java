@@ -21,7 +21,7 @@ public class GenderCategory {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
 
-    private String gender;
+    private String type;
 
     @OneToMany(mappedBy = "genderCategory")
     @JsonIgnore
@@ -31,7 +31,7 @@ public class GenderCategory {
     @JsonIgnore
     private List<ClothesTypeImages> clothesTypeImages;
 
-    public GenderCategory(String gender) {
-        this.gender = gender;
+    public GenderCategory(String type) {
+        this.type = type;
     }
 }
