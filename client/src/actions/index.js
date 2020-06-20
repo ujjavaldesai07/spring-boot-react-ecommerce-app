@@ -79,7 +79,7 @@ export const loadFilterProducts = filterQuery => async dispatch => {
     // Reloading or direct url
     if(!filterQuery) {
         let url = window.location.href.split("products?q=")
-        filterQuery = url? url[1] : undefined
+        filterQuery = url? url[1] : "gender=men"
     }
 
     if(filterQuery) {

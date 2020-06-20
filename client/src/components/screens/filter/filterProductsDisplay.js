@@ -3,6 +3,7 @@ import Grid from '@material-ui/core/Grid';
 import {Link} from "react-router-dom";
 import {connect, useSelector} from "react-redux";
 import {loadFilterProducts} from "../../../actions";
+import {Divider} from "@material-ui/core";
 
 const FilterProductsDisplay = props => {
     const {filterQuery} = useSelector(state => state.imageClickEventReducer)

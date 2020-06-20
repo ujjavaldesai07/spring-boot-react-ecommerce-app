@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {Button, Dimmer, Segment, Grid} from 'semantic-ui-react';
+import {Button, Dimmer, Segment, Grid, Dropdown, Menu} from 'semantic-ui-react';
 
 export const StyledSegment = styled(Segment)({
     border: 'none !important',
@@ -20,7 +20,6 @@ export const StyledLoginScreenGrid = styled(Grid)({
     paddingTop: '100px !important'
 });
 
-export const StyledFixedSegment = styled(Segment)({
-    position: 'fixed !important'
+export const StyledDropdown = styled(Dropdown)({
+    width: "225px"
 });
-

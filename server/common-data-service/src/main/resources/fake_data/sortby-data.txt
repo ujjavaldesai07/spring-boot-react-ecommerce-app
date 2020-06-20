@@ -1,4 +1,4 @@
-Newest
-Ratings
-Low to High
-High to Low
+What's New
+Popularity
+Price: Low To High
+Price: High To Low

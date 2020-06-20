@@ -135,7 +135,7 @@ const NavBar = props => {
     );
 
     return (
-        <div style={{paddingBottom: '65px'}}>
+        <div style={{paddingBottom: '62px'}}>
             <AppBar color="default" className={classes.appBarRoot}>
                 <Toolbar>
                     <IconButton

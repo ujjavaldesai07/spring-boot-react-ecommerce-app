@@ -12,6 +12,8 @@ import {connect, useSelector} from "react-redux";
 import {loadFilterAttributes} from "../../../actions";
 import FilterProductsDisplay from "./filterProductsDisplay";
 import FilterCheckBoxSection from "./filterCheckBoxSection";
+import DropdownSection from "../../parts/dropDown";
+import {Link} from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -34,14 +36,13 @@ const useStyles = makeStyles((theme) => ({
     // necessary for content to be below app bar
     toolbar: theme.mixins.toolbar,
     drawerPaper: {
+        top: '120px',
         width: drawerWidth,
         position: "fixed",
-        zIndex: "1002",
-        paddingTop: "65px",
     },
     content: {
         flexGrow: 1,
-        padding: theme.spacing(3),
+        paddingTop: "85px",
     },
     inputIconRoot: {
         backgroundColor: 'yellow',
@@ -79,7 +80,7 @@ function FilterAttributesBar(props) {
         props.loadFilterAttributes();
     }, [props]);
 
-    if(!filterAttributes) {
+    if (!filterAttributes) {
         return null
     }
 
@@ -90,18 +91,17 @@ function FilterAttributesBar(props) {
     const renderRadioButtonGroup = (attributeList, title) => {
         return (
             <>
+                <Divider/>
                 <div style={{paddingLeft: '15px', paddingTop: '10px'}}>
                     <TitleHeader title={title} variant="subtitle1" fontWeight="bold" fontSize="1.2rem"/>
                     <RadioButtonsGroup attributeList={attributeList} title={title.replace(/\s/g, '')}/>
                 </div>
-                <Divider/>
             </>
         )
     }
 
     const drawer = (
         <div>
-            {renderRadioButtonGroup(filterAttributes.sortByCategoryList, "Sort by")}
             {renderRadioButtonGroup(filterAttributes.genderList, "Gender")}
             <FilterCheckBoxSection title="Apparel" attrList={filterAttributes.clothesTypeList}/>
             <Divider/>
@@ -115,6 +115,18 @@ function FilterAttributesBar(props) {
 
     return (
         <div className={classes.root}>
+            <Grid container style={{padding: '20px 10px 30px 0', backgroundColor: "white", position: "fixed"}}
+                  justify="flex-end">
+                <Grid item md={2}>
+                    <DropdownSection options={filterAttributes.sortByCategoryList}/>
+                </Grid>
+            </Grid>
+            <Grid style={{position: "fixed", top: "80px", fontWeight: "bold", fontSize: "1.2rem", paddingLeft: "15px"}}>
+                <span>FILTERS</span>
+                <Link to=".">
+                    <span style={{paddingLeft: "65px", fontSize: "1rem", color: "red"}}>CLEAR ALL</span>
+                </Link>
+            </Grid>
             <CssBaseline/>
             <nav className={classes.drawer}>
                 {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
@@ -155,4 +167,5 @@ function FilterAttributesBar(props) {
         </div>
     );
 }
+
 export default connect(null, {loadFilterAttributes})(FilterAttributesBar);
