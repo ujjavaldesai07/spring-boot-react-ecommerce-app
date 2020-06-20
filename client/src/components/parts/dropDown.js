@@ -1,16 +1,41 @@
-import React from 'react'
-import { Dropdown, Menu } from 'semantic-ui-react'
+import React, {useState} from 'react'
+import {Menu} from 'semantic-ui-react'
+import {StyledDropdown} from "../../styles/semanticUI/customStyles";
 
-const options = [
-    { key: 1, text: 'Choice 1', value: 1 },
-    { key: 2, text: 'Choice 2', value: 2 },
-    { key: 3, text: 'Choice 3', value: 3 },
-]
+const DropdownSection = props => {
 
-const DropdownSection = () => (
-    <Menu compact>
-        <Dropdown text='Dropdown' options={options} simple item />
-    </Menu>
-)
+    const [state, setState] = useState({activeId: 1, activeText: undefined})
+    let activeText
+
+    if (!props.options) {
+        return null
+    }
+
+    let modifiedOptions = props.options.map(({id, type}) => {
+        return {
+            key: id,
+            text: type,
+            value: id
+        }
+    })
+
+    const handleDropdownChange = (e, {value}) => {
+        activeText = modifiedOptions[value - 1].text
+        setState({activeId: value, activeText})
+    }
+
+    return (
+        <Menu compact>
+            <StyledDropdown options={modifiedOptions}
+                            simple item
+                            id="customDropdown"
+                            text={`Sort by: ${state.activeText ? state.activeText : modifiedOptions[0].text}`}
+                            onChange={handleDropdownChange}
+                            value={state.activeId}/>
+
+        </Menu>
+
+    )
+}
 
 export default DropdownSection

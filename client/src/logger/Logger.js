@@ -1,77 +1,76 @@
 class Logger {
+    static Levels = {
+        ERROR:1,
+        WARN:2,
+        INFO:3,
+        DEBUG:4,
+        DISABLE:99,
+        MAX_LEVEL:100
+    };
 
-    static get ERROR()  { return 3; }
-    static get WARN()   { return 4; }
-    static get INFO()   { return 6; }
-    static get DEBUG()  { return 7; }
+    static globalLoggerLevel = Logger.Levels.MAX_LEVEL;
 
-    constructor(options) {
-
-        if(options.client_only) {
-            this.client_only
-            return
-        }
-
-        if ( !options || typeof options !== 'object' ) {
-            throw new Error('options are required, and must be an object');
-        }
-
-        if (!options.url) {
-            throw new Error('options must include a url property');
-        }
-
-        this.url         =   options.url;
-        this.headers     =   options.headers || [ { 'Content-Type' : 'application/json' } ];
-        this.level       =   options.level || Logger.ERROR;
-        this.batch_size =   options.batch_size || 10;
-        this.messages   =   [];
-
+    constructor(level = Logger.globalLoggerLevel) {
+        this.currentLevel = level
+        console.log("constructor Level = " + level)
     }
 
-    send(messages) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', this.url, true);
+    disable() {
+        this.currentLevel = Logger.Levels.DISABLE
+    }
 
-        this.headers.forEach(function(header){
-            xhr.setRequestHeader(
-                Object.keys(header)[0],
-                header[Object.keys(header)[0]]
-            );
-        });
+    enable(level = Logger.Levels.ERROR) {
+        this.currentLevel = level
+    }
 
-        var data = JSON.stringify({
-            context   :   navigator.userAgent,
-            messages  :   messages
-        });
-        xhr.send(data);
+    send(level, message) {
+        switch (level) {
+            case Logger.Levels.DEBUG:
+                console.log(`%c[${this.getCurrentTime()}] [DEBUG]: ${message}`, "color:orange; font-size: 15px; font-weight: bold")
+                break
+            case Logger.Levels.INFO:
+                console.log(`%c[${this.getCurrentTime()}] [INFO]: ${message}`, "color:green; font-size: 15px; font-weight: bold")
+                break
+            case Logger.Levels.WARN:
+                console.log(`%c[${this.getCurrentTime()}] [WARN]: ${message}`, "color:yellow; font-size: 15px; font-weight: bold")
+                break
+            case Logger.Levels.ERROR:
+                console.log(`%c[${this.getCurrentTime()}] [ERROR]: ${message}`, "color:red; font-size: 15px; font-weight: bold")
+                break
+        }
     }
 
     log(level, message) {
-        if (level <= this.level) {
-            this.messages.push({
-                level : level,
-                message : message
-            });
-            if (this.messages.length >= this.batch_size) {
-                this.send(this.messages.splice(0, this.batch_size));
-            }
+        console.log("Level = " + level)
+        if(level === Logger.Levels.DISABLE) {
+            return;
+        }
+
+        if(Logger.globalLoggerLevel <= level || this.currentLevel <= level) {
+            this.send(level, message)
         }
     }
 
+    getCurrentTime() {
+        let d = new Date();
+        return `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}.${d.getMilliseconds()}`
+    }
+
     error(message) {
-        this.log(Logger.ERROR, message);
+        this.log(Logger.Levels.ERROR, message);
     }
 
     warn(message) {
-        this.log(Logger.WARN, message);
+        this.log(Logger.Levels.WARN, message);
     }
 
     info(message) {
-        this.log(Logger.INFO, message);
+        this.log(Logger.Levels.INFO, message);
     }
 
     debug(message) {
-        this.log(Logger.DEBUG, message);
+        this.log(Logger.Levels.DEBUG, message);
     }
-
 }
+
+export default Logger;
