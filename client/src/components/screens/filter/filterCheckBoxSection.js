@@ -5,22 +5,29 @@ import TitleHeader from "../../parts/titleHeader";
 import CollapsableSearch from "../../parts/collapsableSearch";
 import CheckboxList from "../../parts/checkboxList";
 
-
 export default function FilterCheckBoxSection(props) {
     const handleSearchClick = () => {
 
+    }
+
+    const addCollapsableSearch = () => {
+        if(!props.searchBar)
+            return null
+        return (
+            <Grid item xs={4}>
+                <CollapsableSearch handleOnClick={handleSearchClick}/>
+            </Grid>
+        )
     }
 
     return (
         <>
             <Grid container style={{paddingTop: '10px'}}>
                 <Grid item xs={1}/>
-                <Grid item xs={6}>
+                <Grid item xs={6} style={{paddingTop: '2px'}}>
                     <TitleHeader title={props.title} fontWeight="bold" fontSize="1.2rem"/>
                 </Grid>
-                <Grid item xs={4}>
-                    <CollapsableSearch handleOnClick={handleSearchClick}/>
-                </Grid>
+                {addCollapsableSearch()}
             </Grid>
 
             <CheckboxList attrList={props.attrList} fontSize="1rem"/>
