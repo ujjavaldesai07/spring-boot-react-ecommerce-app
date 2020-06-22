@@ -1,6 +1,6 @@
 import {
     HANDLE_SIGN_IN, HANDLE_SIGN_UP, HANDLE_SIGN_UP_ERROR, HANDLE_MAIN_SCREEN,
-    HANDLE_SIGN_OUT, HANDLE_TOKEN_ID, HANDLE_SIGN_IN_ERROR, HANDLE_FILTER_PRODUCTS, HANDLE_FILTER_ATTRIBUTES,
+    HANDLE_SIGN_OUT, HANDLE_TOKEN_ID, HANDLE_SIGN_IN_ERROR, LOAD_FILTER_PRODUCTS, LOAD_FILTER_ATTRIBUTES,
 } from './types';
 import authApi from "../api/authServiceApi";
 import history from "../history";
@@ -86,7 +86,7 @@ export const loadFilterProducts = filterQuery => async dispatch => {
         const response = await commonServiceApi.get('/products?q=' + filterQuery);
         if(response != null) {
             // console.log("Products = " + JSON.stringify(response.data))
-            dispatch({type: HANDLE_FILTER_PRODUCTS, payload: JSON.parse(JSON.stringify(response.data))});
+            dispatch({type: LOAD_FILTER_PRODUCTS, payload: JSON.parse(JSON.stringify(response.data))});
         }
     }
 };
@@ -96,7 +96,7 @@ export const loadFilterAttributes = () => async dispatch => {
         const response = await commonServiceApi.get('/filter');
         if(response != null) {
             // console.log("Filter = " + JSON.stringify(response.data))
-            dispatch({type: HANDLE_FILTER_ATTRIBUTES, payload: JSON.parse(JSON.stringify(response.data))});
+            dispatch({type: LOAD_FILTER_ATTRIBUTES, payload: JSON.parse(JSON.stringify(response.data))});
         }
 };
 

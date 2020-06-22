@@ -5,6 +5,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
+import {useSelector} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -23,19 +24,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CheckboxList(props) {
     const classes = useStyles();
-    const [checked, setChecked] = React.useState([0]);
 
     const handleToggle = (value) => () => {
-        const currentIndex = checked.indexOf(value);
-        const newChecked = [...checked];
-
-        if (currentIndex === -1) {
-            newChecked.push(value);
-        } else {
-            newChecked.splice(currentIndex, 1);
-        }
-
-        setChecked(newChecked);
+        props.onChangeHandler(value, props.checkBoxGroupId)
     };
 
     if(!props.attrList) {
@@ -44,19 +35,33 @@ export default function CheckboxList(props) {
 
     const renderCheckBoxList = () => {
         let count = 0;
-        console.log("fontSize = " + props.fontSize)
+        let selectedIds = []
+
+        if(props.selectedAttributes && props.selectedAttributes.length > 0) {
+            props.selectedAttributes.forEach(function ({id}) {
+                selectedIds.push(id)
+            })
+        }
+
+        // console.log(`${props.title} ===== NEW ======`)
         return props.attrList.map(({id, type}) => {
             if(count === 6) {
                 return null
             }
             count = count+1
+
+            // if(selectedIds.length > 0) {
+            //     console.log("id = " + id + ", selectedIds.includes(id) = " + selectedIds.includes(id))
+            // }
+
             return (
-                <ListItem classes={{root: classes.listItemRoot}} key={id} role={undefined} dense button onClick={handleToggle(id)}>
+                <ListItem classes={{root: classes.listItemRoot}} key={id} role={undefined}
+                          dense button onClick={handleToggle(id)}>
                     <ListItemIcon classes={{root: classes.listItemIconRoot}}>
                         <Checkbox
                             size="small"
                             edge="start"
-                            checked={checked.indexOf(id) !== -1}
+                            checked={selectedIds.length > 0? selectedIds.includes(id): false}
                             tabIndex={-1}
                             disableRipple
                             inputProps={{ 'aria-labelledby': id }}
