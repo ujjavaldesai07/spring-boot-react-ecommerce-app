@@ -1,7 +1,7 @@
 package com.ujjaval.ecommerce.commondataservice.model;
 
 import com.ujjaval.ecommerce.commondataservice.dto.BrandImagesDTO;
-import com.ujjaval.ecommerce.commondataservice.dto.ClothesTypeImagesDTO;
+import com.ujjaval.ecommerce.commondataservice.dto.ApparelImagesDTO;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.images.CarouselImages;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,14 +17,14 @@ import java.util.List;
 public class MainScreenResponse {
 
     private List<BrandImagesDTO> brands;
-    private List<ClothesTypeImagesDTO> clothesTypes;
+    private List<ApparelImagesDTO> apparels;
     private List<CarouselImages> carousels;
 
     public MainScreenResponse(List<BrandImagesDTO> brands,
-                              List<ClothesTypeImagesDTO> clothesTypes,
+                              List<ApparelImagesDTO> apparels,
                               List<CarouselImages> carousels) {
         this.brands = brands;
-        this.clothesTypes = clothesTypes;
+        this.apparels = apparels;
         this.carousels = carousels;
     }
 }

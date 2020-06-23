@@ -2,7 +2,7 @@ package com.ujjaval.ecommerce.commondataservice.controller;
 
 import com.sun.net.httpserver.Authenticator;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
-import com.ujjaval.ecommerce.commondataservice.model.FilterAttributesComponentResponse;
+import com.ujjaval.ecommerce.commondataservice.model.FilterAttributesResponse;
 import com.ujjaval.ecommerce.commondataservice.model.MainScreenResponse;
 import com.ujjaval.ecommerce.commondataservice.service.interfaces.CommonDataService;
 import com.ujjaval.ecommerce.commondataservice.service.interfaces.LoadFakeDataService;
@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class CommonDataController {
@@ -54,7 +55,6 @@ public class CommonDataController {
             }
 
         } else {
-
             for (String condition : separatedConditions) {
                 String[] categories = condition.split("=");
                 if (categories.length > 1) {
@@ -62,7 +62,9 @@ public class CommonDataController {
                 }
             }
         }
+
         List<ProductInfo> productInfoList = commonDataService.getFilterProductsComponentList(conditionMap);
+
         if (productInfoList == null) {
             return new ResponseEntity<Error>(HttpStatus.CONFLICT);
         }
@@ -91,7 +93,7 @@ public class CommonDataController {
 
     @GetMapping("/filter")
     public ResponseEntity<?> getFilterAttributesComponent() throws UnknownHostException {
-        FilterAttributesComponentResponse filterScreenInfoList = commonDataService.getFilterAttributesComponentList();
+        FilterAttributesResponse filterScreenInfoList = commonDataService.getFilterAttributesComponentList();
         if (filterScreenInfoList == null) {
             return new ResponseEntity<Error>(HttpStatus.CONFLICT);
         }

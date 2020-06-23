@@ -6,8 +6,8 @@ import {HANDLE_IMAGE_CLICK_EVENT} from "../../../actions/types";
 import {useDispatch} from "react-redux";
 
 const queryType = {
-    brands: 1,
-    clothesTypes: 2
+    brand: 1,
+    apparel: 2
 }
 
 
@@ -33,12 +33,12 @@ const TopCategoriesAndBrands = props => {
             let filterQuery = null
 
             switch (filterQueryType) {
-                case queryType.brands:
+                case queryType.brand:
                     filterQuery = info.brandInfo ? `brand=${info.brandInfo.id}` : null
                     break
-                case queryType.clothesTypes:
-                    if (info.clothesTypeInfo && info.genderInfo) {
-                        filterQuery = `clothestype=${info.clothesTypeInfo.id}::gender=${info.genderInfo.id}`
+                case queryType.apparel:
+                    if (info.apparelInfo && info.genderInfo) {
+                        filterQuery = `apparel=${info.apparelInfo.id}::gender=${info.genderInfo.id}`
                     }
                     break
                 default:
@@ -61,7 +61,7 @@ const TopCategoriesAndBrands = props => {
         return null;
     }
 
-    if (!props.clothesTypeImages) {
+    if (!props.apparelImages) {
         return null;
     }
 
@@ -71,13 +71,13 @@ const TopCategoriesAndBrands = props => {
                 #Shop Top Brands
             </Typography>
             <Grid container spacing={0} style={{padding: '10px 0 0 30px'}}>
-                {renderImageList(props.brandImages, queryType.brands)}
+                {renderImageList(props.brandImages, queryType.brand)}
             </Grid>
             <Typography variant="h5" noWrap style={{padding: '30px 0 0 30px', textDecoration: 'underline'}}>
                 #Shop Top Categories
             </Typography>
             <Grid container spacing={0} style={{padding: '20px 0 70px 30px'}}>
-                {renderImageList(props.clothesTypeImages, queryType.clothesTypes)}
+                {renderImageList(props.apparelImages, queryType.apparel)}
             </Grid>
         </div>
     )

@@ -1,20 +1,19 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 
-import RadioButtonsGroup from "../../parts/radioButton";
+import RadioButtonsGroup from "../../parts/radioButtonGroup";
 import TitleHeader from "../../parts/titleHeader";
 import {connect, useDispatch, useSelector} from "react-redux";
-import {loadFilterAttributes} from "../../../actions";
+import {loadFilterAttributes, loadFilterProducts} from "../../../actions";
 import FilterCheckBoxSection from "./filterCheckBoxSection";
-import DropdownSection from "../../parts/dropDown";
+import Button from '@material-ui/core/Button';
+
 import {Link} from "react-router-dom";
-import {SET_FILTER_ATTRIBUTES} from "../../../actions/types";
-import mapDispatchToProps from "react-redux/lib/connect/mapDispatchToProps";
-import {func} from "prop-types";
+import {CLEAR_FILTER_ATTRIBUTES, SET_FILTER_ATTRIBUTES} from "../../../actions/types";
 
 
 const drawerWidth = 240;
@@ -60,8 +59,9 @@ function FilterNavBar(props) {
     const classes = useStyles();
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = React.useState(false);
-    const filterAttributes = useSelector(state => state.filterAttributesReducer)
+    const selectedFilterAttributes = useSelector(state => state.selectedFilterAttributesReducer)
     const dispatch = useDispatch()
+    const filterAttributes = useSelector(state => state.filterAttributesReducer)
 
     // const handleSearchClick = () => {
     //     ReactDOM.render(
@@ -83,9 +83,9 @@ function FilterNavBar(props) {
     //     };
     // })
 
-    useEffect(() => {
-        props.loadFilterAttributes();
-    }, [props]);
+    // useEffect(() => {
+    //     props.loadFilterAttributes();
+    // }, [props]);
 
     if (!filterAttributes) {
         return null
@@ -95,11 +95,20 @@ function FilterNavBar(props) {
         setMobileOpen(!mobileOpen);
     };
 
+    const handleClearAllClick = () => {
+        dispatch({
+            type: CLEAR_FILTER_ATTRIBUTES,
+            payload: null
+        })
+
+        props.loadFilterProducts("category=all::page=0,20");
+    }
+
     const handleRadioButtonChange = id => {
         dispatch({
             type: SET_FILTER_ATTRIBUTES,
             payload: {
-                gender: [filterAttributes.genderList[id - 1]]
+                gender: [filterAttributes.genders[id - 1].id]
             }
         })
     }
@@ -110,7 +119,7 @@ function FilterNavBar(props) {
                 dispatch({
                     type: SET_FILTER_ATTRIBUTES,
                     payload: {
-                        apparel: filterAttributes.clothesTypeList[value - 1]
+                        apparel: filterAttributes.apparels[value - 1].id
                     }
                 })
                 break
@@ -118,7 +127,7 @@ function FilterNavBar(props) {
                 dispatch({
                     type: SET_FILTER_ATTRIBUTES,
                     payload: {
-                        brand: filterAttributes.brandList[value - 1]
+                        brand: filterAttributes.brands[value - 1].id
                     }
                 })
                 break
@@ -126,7 +135,7 @@ function FilterNavBar(props) {
                 dispatch({
                     type: SET_FILTER_ATTRIBUTES,
                     payload: {
-                        price: filterAttributes.priceRangeCategoryList[value - 1]
+                        price: filterAttributes.priceRanges[value - 1].id
                     }
                 })
                 break
@@ -142,15 +151,17 @@ function FilterNavBar(props) {
                 fontSize: "1.2rem", padding: "10px 0 10px 15px"
             }}>
                 <span>FILTERS</span>
-                <Link to=".">
-                    <span style={{paddingLeft: "65px", fontSize: "0.9rem", color: "red"}}>CLEAR ALL</span>
-                </Link>
+                <span style={{paddingLeft: "65px"}}>
+                        <Button onClick={handleClearAllClick} style={{fontWeight: "bold"}}
+                                color="secondary">CLEAR ALL</Button>
+                    </span>
             </div>
             <Divider/>
             <div style={{padding: '10px 0 8px 15px'}}>
                 <TitleHeader title="Gender" variant="subtitle1" fontWeight="bold" fontSize="1.2rem"/>
                 <RadioButtonsGroup onChangeHandler={handleRadioButtonChange}
-                                   attributeList={filterAttributes.genderList}
+                                   attributeList={filterAttributes.genders}
+                                   selectedAttributeId={selectedFilterAttributes.gender}
                                    title="Gender"/>
             </div>
             <Divider/>
@@ -158,23 +169,28 @@ function FilterNavBar(props) {
                                    searchBar="true"
                                    title="Apparel"
                                    checkBoxGroupId={CheckBoxGroup.APPAREL}
-                                   attrList={filterAttributes.clothesTypeList}/>
+                                   selectedAttributeList={selectedFilterAttributes.apparel}
+                                   attrList={filterAttributes.apparels}/>
             <Divider/>
             <FilterCheckBoxSection onChangeHandler={handleCheckBoxChange}
                                    searchBar="true"
                                    title="Brand"
                                    checkBoxGroupId={CheckBoxGroup.BRAND}
-                                   attrList={filterAttributes.brandList}/>
+                                   selectedAttributeList={selectedFilterAttributes.brand}
+                                   attrList={filterAttributes.brands}/>
             <Divider/>
             <FilterCheckBoxSection onChangeHandler={handleCheckBoxChange}
                                    title="Price"
                                    checkBoxGroupId={CheckBoxGroup.PRICE}
-                                   attrList={filterAttributes.priceRangeCategoryList}/>
+                                   selectedAttributeList={selectedFilterAttributes.price}
+                                   attrList={filterAttributes.priceRanges}/>
             <Divider/>
         </div>
     );
 
     const container = window !== undefined ? () => window().document.body : undefined;
+
+    console.log("Calling Filter NavBar....")
 
     return (
         <div className={classes.root}>
@@ -201,7 +217,7 @@ function FilterNavBar(props) {
                             keepMounted: true, // Better open performance on mobile.
                         }}
                     >
-                        {drawer}
+                        {/*{drawer}*/}
                     </Drawer>
                 </Hidden>
                 <Hidden xsDown implementation="css">
@@ -220,4 +236,4 @@ function FilterNavBar(props) {
     );
 }
 
-export default connect(null, {loadFilterAttributes})(FilterNavBar);
+export default connect(null, {loadFilterAttributes, loadFilterProducts})(FilterNavBar);

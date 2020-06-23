@@ -12,7 +12,7 @@ class Logger {
 
     constructor(level = Logger.globalLoggerLevel) {
         this.currentLevel = level
-        console.log("constructor Level = " + level)
+        // console.log("constructor Level = " + level)
     }
 
     disable() {

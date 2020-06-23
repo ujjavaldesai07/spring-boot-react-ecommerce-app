@@ -20,8 +20,9 @@ const DropdownSection = props => {
     })
 
     const handleDropdownChange = (e, {value}) => {
-        activeText = modifiedOptions[value - 1].text
-        setState({activeId: value, activeText})
+        // activeText = modifiedOptions[value - 1].text
+        // setState({activeId: value, activeText})
+        props.onChangeHandler(value, modifiedOptions[value - 1].text)
     }
 
     return (
@@ -29,10 +30,13 @@ const DropdownSection = props => {
             <StyledDropdown options={modifiedOptions}
                             simple item
                             id="customDropdown"
-                            text={`Sort by: ${state.activeText ? state.activeText
+                            // text={`Sort by: ${state.activeText ? state.activeText
+                            //     : modifiedOptions ? modifiedOptions[0].text : null}`}
+                            text={`Sort by: ${props.activeInfo[1] ? props.activeInfo[1]
                                 : modifiedOptions ? modifiedOptions[0].text : null}`}
                             onChange={handleDropdownChange}
-                            value={state.activeId}/>
+                            // value={state.activeId}/>
+                            value={props.activeInfo[0]}/>
 
         </Menu>
 

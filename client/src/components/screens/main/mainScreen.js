@@ -23,7 +23,7 @@ const MainScreen = props => {
         <Dimmer.Dimmable as={StyledSegment} dimmed={hover}>
             <DocumentTitle title="Online Shopping for Women, Men, Kids Fashion & Lifestyle - Shoppers"/>
             <VerticalSlider carouselImages={mainScreenData.carousels}/>
-            <TopCategoriesAndBrands brandImages={mainScreenData.brands} clothesTypeImages={mainScreenData.clothesTypes}/>
+            <TopCategoriesAndBrands brandImages={mainScreenData.brands} apparelImages={mainScreenData.apparels}/>
             <StyledDimmer active={hover}/>
         </Dimmer.Dimmable>
     )

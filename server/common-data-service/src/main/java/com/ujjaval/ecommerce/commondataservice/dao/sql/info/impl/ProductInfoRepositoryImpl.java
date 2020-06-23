@@ -16,7 +16,7 @@ import java.util.Map;
 public class ProductInfoRepositoryImpl {
 
     enum QueryType {
-        gender, clothestype, brand, price, sortby;
+        gender, apparel, brand, price, category, sortby, page;
 
         enum MathOperator {
             bt, lt, gt
@@ -31,7 +31,7 @@ public class ProductInfoRepositoryImpl {
     @Setter
     @NoArgsConstructor
     class MapParameterKey {
-        private Integer key=1;
+        private Integer key = 1;
 
         public void increment() {
             ++key;
@@ -45,12 +45,12 @@ public class ProductInfoRepositoryImpl {
                                          List<String> conditions, String field) {
         List<String> tempList = new ArrayList<>();
 
-        for(String val: data.split(",")) {
+        for (String val : data.split(",")) {
             mapParameters.put(mapParametersKey.getKey(), Integer.parseInt(val));
             tempList.add("?" + mapParametersKey.getKey());
             mapParametersKey.increment();
         }
-        if(data.length() > 0) {
+        if (data.length() > 0) {
             conditions.add(String.format("(%s IN (%s))", field, String.join(",", tempList)));
         }
     }
@@ -60,11 +60,12 @@ public class ProductInfoRepositoryImpl {
             return null;
         }
 
+        String[] pageInfo = null;
         List<String> conditions = new ArrayList<>();
         String sortBy = " order by p.ratings desc";
         HashMap<Integer, Object> mapParams = new HashMap<>();
-
         MapParameterKey mapParametersKey = new MapParameterKey();
+        TypedQuery<ProductInfo> query = null;
 
         for (Map.Entry<String, String> entry : conditionMap.entrySet()) {
             switch (QueryType.valueOf(entry.getKey())) {
@@ -72,9 +73,9 @@ public class ProductInfoRepositoryImpl {
                     prepareConditionListById(mapParams, entry.getValue(), mapParametersKey,
                             conditions, "p.genderCategory.id");
                     break;
-                case clothestype:
+                case apparel:
                     prepareConditionListById(mapParams, entry.getValue(), mapParametersKey,
-                            conditions, "p.clothesTypeCategory.id");
+                            conditions, "p.apparelCategory.id");
                     break;
                 case brand:
                     prepareConditionListById(mapParams, entry.getValue(), mapParametersKey,
@@ -87,7 +88,7 @@ public class ProductInfoRepositoryImpl {
                         case bt:
                             String[] range = extractedValue.split(",");
                             conditions.add(String.format(" (p.price between ?%d AND ?%d)", mapParametersKey.getKey(),
-                                    mapParametersKey.getKey()+1));
+                                    mapParametersKey.getKey() + 1));
                             mapParams.put(mapParametersKey.getKey(), Double.parseDouble(range[0]));
                             mapParametersKey.increment();
                             mapParams.put(mapParametersKey.getKey(), Double.parseDouble(range[1]));
@@ -108,6 +109,12 @@ public class ProductInfoRepositoryImpl {
                     }
                     break;
 
+                case category:
+                    if (entry.getValue().equals("all")) {
+                        System.out.println("Coming here in the category......");
+                        query = entityManager.createQuery("select p from ProductInfo p ", ProductInfo.class);
+                    }
+                    break;
                 case sortby:
                     switch (QueryType.SortOperator.valueOf(entry.getValue())) {
                         case lh:
@@ -124,23 +131,34 @@ public class ProductInfoRepositoryImpl {
                             break;
                     }
                     break;
+                case page:
+                    pageInfo = entry.getValue().split(",");
+                    System.out.println("pageInfo[0] = " + pageInfo[0] + ", pageInfo[1] = " + pageInfo[1]);
+                    break;
                 default:
                     System.out.println("UnsupportedType");
             }
         }
 
-        if (conditions.isEmpty()) {
-            System.out.println("No Conditions are found....");
-            return null;
+        System.out.println("condition = " + String.join(" AND ", conditions));
+
+        if (query == null && !conditions.isEmpty()) {
+            System.out.println("Creating specific query....");
+            query = entityManager.createQuery("select p from ProductInfo p where "
+                    + String.join(" AND ", conditions) + sortBy, ProductInfo.class);
+
+            mapParams.forEach(query::setParameter);
         }
 
-        System.out.println("condition = " +  String.join(" AND ", conditions));
+        if (query != null) {
+            if (pageInfo != null && pageInfo.length == 2) {
+                return query.setFirstResult(Integer.parseInt(pageInfo[0]))
+                        .setMaxResults(Integer.parseInt(pageInfo[1]))
+                        .getResultList();
+            }
 
-        TypedQuery<ProductInfo> query = entityManager.createQuery("select p from ProductInfo p where "
-                + String.join(" AND ", conditions) + sortBy, ProductInfo.class);
-
-        mapParams.forEach(query::setParameter);
-
-        return query.getResultList();
+            return query.getResultList();
+        }
+        return null;
     }
 }

@@ -10,3 +10,4 @@ export const HANDLE_MAIN_SCREEN = 9;
 export const LOAD_FILTER_PRODUCTS = 10;
 export const LOAD_FILTER_ATTRIBUTES = 11;
 export const SET_FILTER_ATTRIBUTES = 12;
+export const CLEAR_FILTER_ATTRIBUTES = 13;

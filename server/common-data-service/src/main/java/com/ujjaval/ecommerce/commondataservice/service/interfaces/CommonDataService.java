@@ -1,9 +1,10 @@
 package com.ujjaval.ecommerce.commondataservice.service.interfaces;
 
 import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
-import com.ujjaval.ecommerce.commondataservice.model.FilterAttributesComponentResponse;
+import com.ujjaval.ecommerce.commondataservice.model.FilterAttributesResponse;
 import com.ujjaval.ecommerce.commondataservice.model.MainScreenResponse;
 
+import java.awt.print.Pageable;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
@@ -16,8 +17,9 @@ public interface CommonDataService {
 
     public MainScreenResponse getMainScreenDataList() throws UnknownHostException;
 
-    public FilterAttributesComponentResponse getFilterAttributesComponentList();
+    public FilterAttributesResponse getFilterAttributesComponentList();
 
-    public List<ProductInfo> getFilterProductsComponentList(HashMap<String, String> conditionMap) throws UnknownHostException;
+    public List<ProductInfo> getFilterProductsComponentList(HashMap<String,
+            String> conditionMap) throws UnknownHostException;
 }
 

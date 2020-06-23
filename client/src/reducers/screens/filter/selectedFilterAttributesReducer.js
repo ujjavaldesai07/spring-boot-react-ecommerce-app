@@ -1,50 +1,39 @@
-import {SET_FILTER_ATTRIBUTES} from "../../../actions/types";
+import {CLEAR_FILTER_ATTRIBUTES, SET_FILTER_ATTRIBUTES} from "../../../actions/types";
 
 const INITIAL_FILTER_STATE = {
     gender: [],
     apparel: [],
     brand: [],
-    price: []
+    price: [],
+    page: [0, 12],
+    sortBy: [1, undefined, "newest"]
 }
-
-// const checkObjectAlreadyExist = (prevStateObjList, newObj) => {
-//     let alreadyExist = false
-//     let newState = null
-//     if (prevStateObjList && prevStateObjList.length > 0) {
-//         console.log("newObj.Id1 == " + newObj.id)
-//         newState = prevStateObjList.filter(obj => {
-//             console.log("newObj.Id2 == " + newObj.id)
-//             if (obj.id !== newObj.id) {
-//                 console.log("newObj.Id3 == " + newObj.id)
-//                 return newObj
-//             }
-//             alreadyExist = true
-//         })
-//     }
-//     if (alreadyExist) {
-//         return newState
-//     }
-//     return null
-// }
 
 const checkObjectAlreadyExist = (prevState, payload, objName) => {
     let alreadyExist = false
-    let newState = null
+    let newArray = []
     if (prevState[objName] && prevState[objName].length > 0) {
-        newState = prevState[objName].filter(obj => {
-            if (obj.id !== payload[objName].id) {
-                return payload[objName]
+        newArray = prevState[objName].filter(id => {
+            if (id === payload[objName]) {
+                alreadyExist = true
+                return null
             }
-            alreadyExist = true
+            return payload[objName]
         })
     }
+
     if (alreadyExist) {
-        return {...prevState, [objName]: newState};
+        console.log("newArray = " + newArray)
+        console.log("alreadyExist = " +  JSON.stringify({...prevState, [objName]: newArray}))
+        return {...prevState, [objName]: newArray};
     }
 
     if (prevState[objName]) {
-        return {...prevState, [objName]: [...(prevState[objName]), payload[objName]]};
+        console.log("prevState[objName] = " + JSON.stringify({...prevState, [objName]: [...prevState[objName], payload[objName]]}))
+        return {...prevState, [objName]: [...prevState[objName], payload[objName]]};
     }
+
+    console.log("prevState[objName] is null = " + JSON.stringify({...prevState, [objName]: payload[objName]}))
     return {...prevState, [objName]: payload[objName]};
 }
 
@@ -66,6 +55,18 @@ export default (state = INITIAL_FILTER_STATE, action) => {
             if (action.payload.price) {
                 return checkObjectAlreadyExist(state, action.payload, "price");
             }
+
+            if (action.payload.page) {
+                return {...state, page: action.payload.page};
+            }
+
+            if (action.payload.sortBy) {
+                return {...state, sortBy: action.payload.sortBy};
+            }
+
+            break
+        case CLEAR_FILTER_ATTRIBUTES:
+            return INITIAL_FILTER_STATE
 
         default:
             return state;

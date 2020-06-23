@@ -2,7 +2,7 @@ package com.ujjaval.ecommerce.commondataservice.entity.sql.categories;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
-import com.ujjaval.ecommerce.commondataservice.entity.sql.images.ClothesTypeImages;
+import com.ujjaval.ecommerce.commondataservice.entity.sql.images.ApparelImages;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,7 +29,7 @@ public class GenderCategory {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "genderCategory")
     @JsonIgnore
-    private List<ClothesTypeImages> clothesTypeImages;
+    private List<ApparelImages> apparelImages;
 
     public GenderCategory(String type) {
         this.type = type;

@@ -1,11 +1,11 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 
 import {makeStyles, useTheme} from '@material-ui/core/styles';
-import DropdownSection from "../../parts/dropDown";
 import Grid from '@material-ui/core/Grid';
-import {Link} from "react-router-dom";
 import FilterNavBar from "./filterNavBar";
 import FilterProductsDisplay from "./filterProductsDisplay";
+import {connect} from "react-redux";
+import {loadFilterAttributes} from "../../../actions";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -16,6 +16,13 @@ const useStyles = makeStyles((theme) => ({
 
 function FilterScreen(props) {
     const classes = useStyles();
+
+    useEffect(() => {
+        console.log("Component did update filter attributes")
+        props.loadFilterAttributes();
+    }, [props]);
+
+    console.log("Calling Filter Screen....")
     return (
         <Grid container>
             <Grid item md={2}>
@@ -28,4 +35,4 @@ function FilterScreen(props) {
     );
 }
 
-export default FilterScreen;
+export default connect(null, {loadFilterAttributes})(FilterScreen);

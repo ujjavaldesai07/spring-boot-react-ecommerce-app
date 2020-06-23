@@ -32,7 +32,7 @@ class LoggerConfig {
     static subscribeAllLoggers() {
         this.setLoggerMap()
         LoggerRegisterInfo.map(({id, level}) => {
-            console.log("Subscribing Logger id = " + id + ", Level = " + level)
+            // console.log("Subscribing Logger id = " + id + ", Level = " + level)
             this.loggerMap.set(id, new Logger(level))
         })
     }

@@ -74,19 +74,23 @@ export const loadMainScreen = () => async dispatch => {
 };
 
 export const loadFilterProducts = filterQuery => async dispatch => {
-    console.log("Calling Products API....")
+
+    console.log("Calling Products API.... =" + filterQuery)
 
     // Reloading or direct url
     if(!filterQuery) {
         let url = window.location.href.split("products?q=")
-        filterQuery = url? url[1] : "gender=men"
+        filterQuery = url? url[1] : "category=all::page=0,12"
     }
 
+    filterQuery = filterQuery.replace(/\s/g, '');
+
     if(filterQuery) {
-        const response = await commonServiceApi.get('/products?q=' + filterQuery);
+        const response = await commonServiceApi.get(`/products?q=${filterQuery}`);
         if(response != null) {
             // console.log("Products = " + JSON.stringify(response.data))
             dispatch({type: LOAD_FILTER_PRODUCTS, payload: JSON.parse(JSON.stringify(response.data))});
+            history.push('/products?q=' + filterQuery);
         }
     }
 };
@@ -99,32 +103,3 @@ export const loadFilterAttributes = () => async dispatch => {
             dispatch({type: LOAD_FILTER_ATTRIBUTES, payload: JSON.parse(JSON.stringify(response.data))});
         }
 };
-
-// export const createStream = formValues => async (dispatch, getState) => {
-//     const {userId} = getState().auth;
-//     const response = await streams.post('/streams', {...formValues, userId});
-//     dispatch({type: CREATE_STREAM, payload: response.data});
-//     history.push('/');
-// };
-//
-// export const fetchStreams = () => async dispatch => {
-//     const response = await streams.get('/streams');
-//     dispatch({type: FETCH_STREAMS, payload: response.data});
-// };
-//
-// export const fetchStream = id => async dispatch => {
-//     const response = await streams.get(`/streams/${id}`);
-//     dispatch({type: FETCH_STREAM, payload: response.data});
-// };
-//
-// export const deleteStream = id => async dispatch => {
-//     await streams.delete(`/streams/${id}`);
-//     dispatch({type: DELETE_STREAM, payload: id});
-//     history.push('/');
-// };
-//
-// export const editStream = (id, formValues) => async dispatch => {
-//     const response = await streams.patch( `/streams/${id}`, formValues);
-//     dispatch({type: EDIT_STREAM, payload: response.data});
-//     history.push('/');
-// };
