@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect} from 'react';
 import Grid from '@material-ui/core/Grid';
 import {Link} from "react-router-dom";
 import {connect, useDispatch, useSelector} from "react-redux";
@@ -6,11 +6,12 @@ import {loadFilterProducts} from "../../../actions";
 import Rating from '@material-ui/lab/Rating';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import {makeStyles} from "@material-ui/core/styles";
-import Chip from "@material-ui/core/Chip";
 import Box from '@material-ui/core/Box';
 import {Divider} from "@material-ui/core";
-import CloseIcon from '@material-ui/icons/Close';
+import FilterChips from "./filterChips";
+import Pagination from '@material-ui/lab/Pagination';
 import {SET_FILTER_ATTRIBUTES} from "../../../actions/types";
+import DropdownSection from "../../parts/dropDown";
 
 const useStyles = makeStyles((theme) => ({
     content: {
@@ -25,17 +26,92 @@ const FilterProductsDisplay = props => {
     const {filterQuery} = useSelector(state => state.imageClickEventReducer)
     const filterProducts = useSelector(state => state.filterProductsReducer)
     const selectedFilterAttributes = useSelector(state => state.selectedFilterAttributesReducer)
+    const filterAttributes = useSelector(state => state.filterAttributesReducer)
     const dispatch = useDispatch()
 
     useEffect(() => {
-        props.loadFilterProducts(filterQuery);
+        console.log("Component Did Mount.... filterQuery = " + filterQuery)
+        if(!filterQuery) {
+            props.loadFilterProducts(null);
+        } else {
+            props.loadFilterProducts(`${filterQuery}::${selectedFilterAttributes.page.toString()}::sortby=${selectedFilterAttributes.sortBy[2]}`);
+        }
     }, [props, filterQuery]);
 
-    if (!filterProducts || !selectedFilterAttributes) {
+    const getQuery = () => {
+        let filterAttr = ["gender", "apparel", "brand", "price", "page"]
+        let filterQuery = ''
+        let categoryPresentInQuery = false
+        filterAttr.forEach(function (attr) {
+            if (selectedFilterAttributes[attr].length > 0) {
+                filterQuery = filterQuery.concat(`${attr}=${selectedFilterAttributes[attr].toString()}::`)
+
+                if(attr[0] === "g" || attr[0] === "a" || attr[0] === "b") {
+                    categoryPresentInQuery = true
+                }
+            }
+        })
+
+        if(!categoryPresentInQuery) {
+            return null
+        }
+
+        if(selectedFilterAttributes.sortBy.length > 0) {
+            filterQuery = filterQuery.concat(`sortby=${selectedFilterAttributes.sortBy[2]}`)
+        }
+        console.log("filterQuery = " + filterQuery)
+        return filterQuery
+    }
+
+    useEffect(() => {
+        console.log("Component Did Update....")
+        let query = getQuery()
+        if (query && query.length > 0) {
+            console.log("Loading filter products................")
+            props.loadFilterProducts(getQuery());
+        }
+    }, [selectedFilterAttributes]);
+
+    if (!filterProducts || !selectedFilterAttributes || !filterAttributes) {
         return null
     }
 
     console.log("selectedFilterAttributes = " + JSON.stringify(selectedFilterAttributes))
+
+    const handleChangePage = (event, page) => {
+        dispatch({
+            type: SET_FILTER_ATTRIBUTES,
+            payload: {
+                page: [page * 12, 12]
+            }
+        })
+    }
+
+    const dropdownHandler = (id, text) => {
+        let queryValue = "newest"
+        switch (id) {
+            case 1:
+                queryValue = "newest"
+                break
+            case 2:
+                queryValue = "ratings"
+                break
+            case 3:
+                queryValue = "lh"
+                break
+            case 4:
+                queryValue = "hl"
+                break
+            default:
+                throw new Error("Unsupported datatype")
+        }
+        dispatch({
+            type: SET_FILTER_ATTRIBUTES,
+            payload: {
+                sortBy: [id, text, queryValue]
+            }
+        })
+    }
 
     const renderImageList = imageList => {
         if (!imageList) {
@@ -74,70 +150,31 @@ const FilterProductsDisplay = props => {
         });
     };
 
-    const addBoxTagToList = (boxDataList, category) => {
-        let chipBoxList = []
-        if (boxDataList && boxDataList.length) {
-            boxDataList.forEach(function ({type, id}) {
-                chipBoxList.push(
-                    <Box key={`${category}-${id}`} width="auto" display="inline-block" p={0.2}>
-                        <Chip label={type}
-                              color="primary"
-                              onDelete={handleDelete(`${category}-${id}`)}/>
-                    </Box>
-                )
-            })
-        }
-        return chipBoxList
-    }
-
-    const renderChipBoxes = () => {
-        if (selectedFilterAttributes) {
-            let chipBoxList = []
-            if (selectedFilterAttributes["apparel"]) {
-                chipBoxList = chipBoxList.concat(addBoxTagToList(selectedFilterAttributes["apparel"], "apparel"))
-            }
-            if (selectedFilterAttributes["brand"]) {
-                chipBoxList = chipBoxList.concat(addBoxTagToList(selectedFilterAttributes["brand"], "brand"))
-            }
-            if (selectedFilterAttributes["price"]) {
-                chipBoxList = chipBoxList.concat(addBoxTagToList(selectedFilterAttributes["price"], "price"))
-            }
-            return chipBoxList
-        }
-        return null
-    }
-
-    const handleDelete = (id) => () => {
-        const splitId = id.split("-")
-        if (selectedFilterAttributes[splitId[0]]
-            && selectedFilterAttributes[splitId[0]].length > 0) {
-            for (let i = 0; i < selectedFilterAttributes[splitId[0]].length; i++) {
-                if (selectedFilterAttributes[splitId[0]][i].id === parseInt(splitId[1])) {
-                    dispatch({
-                        type: SET_FILTER_ATTRIBUTES,
-                        payload: {
-                            [splitId[0]]: selectedFilterAttributes[splitId[0]][i]
-                        }
-                    })
-                    return
-                }
-            }
-        }
-    }
+    console.log("Calling Filter Products Display....")
 
     return (
         <>
-            <span>
-            <Box width="75%" style={{padding: "20px 0 30px 20px"}}>
-                {renderChipBoxes()}
+            <span style={{display: "flex", padding: "20px 0 20px 0"}}>
+            <Box width="75%" style={{padding: "26px 0 30px 20px"}}>
+                <FilterChips/>
             </Box>
-                {/*<Box width="25%" style={{display: "inline-flex"}}>*/}
-                {/*     <DropdownSection options={filterAttributes.sortByCategoryList}/>*/}
-                {/*</Box>*/}
+                <Box width="auto">
+                     <DropdownSection
+                         options={filterAttributes.sorts}
+                         activeInfo={selectedFilterAttributes.sortBy}
+                         onChangeHandler={dropdownHandler}/>
+                </Box>
             </span>
             <Divider/>
             <Grid container spacing={0} style={{padding: "20px 0 0 20px"}}>
                 {renderImageList(filterProducts)}
+            </Grid>
+            <Divider/>
+            <Grid container direction="column"
+                  alignItems="center"
+                  justify="center"
+                  style={{paddingTop: "20px"}}>
+                <Pagination onChange={handleChangePage} count={5} color="secondary"/>
             </Grid>
         </>
     )

@@ -5,7 +5,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
-import {useSelector} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -21,6 +20,8 @@ const useStyles = makeStyles((theme) => ({
         paddingBottom: '0 !important'
     }
 }));
+
+const DISPLAY_MAX_ITEMS = 6
 
 export default function CheckboxList(props) {
     const classes = useStyles();
@@ -38,14 +39,14 @@ export default function CheckboxList(props) {
         let selectedIds = []
 
         if(props.selectedAttributes && props.selectedAttributes.length > 0) {
-            props.selectedAttributes.forEach(function ({id}) {
+            props.selectedAttributes.forEach(function (id) {
                 selectedIds.push(id)
             })
         }
 
         // console.log(`${props.title} ===== NEW ======`)
         return props.attrList.map(({id, type}) => {
-            if(count === 6) {
+            if(count === DISPLAY_MAX_ITEMS) {
                 return null
             }
             count = count+1
@@ -73,6 +74,8 @@ export default function CheckboxList(props) {
             );
         })
     }
+
+    console.log("Calling CheckboxList....")
 
     return (
         <List

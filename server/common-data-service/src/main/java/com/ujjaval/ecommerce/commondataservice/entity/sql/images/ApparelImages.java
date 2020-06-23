@@ -1,7 +1,7 @@
 package com.ujjaval.ecommerce.commondataservice.entity.sql.images;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.ClothesTypeCategory;
+import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.ApparelCategory;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.GenderCategory;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +15,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @ToString
 @Entity
-public class ClothesTypeImages {
+public class ApparelImages {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
@@ -25,16 +25,16 @@ public class ClothesTypeImages {
     private String filePath;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "clothestype_id", referencedColumnName = "id")
+    @JoinColumn(name = "apparel_id", referencedColumnName = "id")
     @JsonIgnore
-    private ClothesTypeCategory clothesTypeCategory;
+    private ApparelCategory apparelCategory;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "gender_id")
     @JsonIgnore
     private GenderCategory genderCategory;
 
-    public ClothesTypeImages(String title, String filePath) {
+    public ApparelImages(String title, String filePath) {
         this.title = title;
         this.filePath = filePath;
     }

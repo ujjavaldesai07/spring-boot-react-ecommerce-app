@@ -9,13 +9,13 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString
-public class ClothesTypeImagesDTO {
+public class ApparelImagesDTO {
 
     private String title;
 
     private String filePath;
 
-    private ClothesTypeDTO clothesTypeInfo;
+    private ApparelDTO apparelInfo;
 
     private GenderDTO genderInfo;
 
@@ -25,7 +25,7 @@ public class ClothesTypeImagesDTO {
 @Setter
 @NoArgsConstructor
 @ToString
-class ClothesTypeDTO {
+class ApparelDTO {
     private int id;
 }
 

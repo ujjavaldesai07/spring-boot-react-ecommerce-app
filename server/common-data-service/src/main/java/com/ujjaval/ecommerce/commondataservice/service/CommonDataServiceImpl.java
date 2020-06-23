@@ -3,23 +3,25 @@ package com.ujjaval.ecommerce.commondataservice.service;
 import com.ujjaval.ecommerce.commondataservice.dao.sql.categories.*;
 import com.ujjaval.ecommerce.commondataservice.dao.sql.images.BrandImagesRepository;
 import com.ujjaval.ecommerce.commondataservice.dao.sql.images.CarouselImagesRepository;
-import com.ujjaval.ecommerce.commondataservice.dao.sql.images.ClothesTypeImagesRepository;
+import com.ujjaval.ecommerce.commondataservice.dao.sql.images.ApparelImagesRepository;
 import com.ujjaval.ecommerce.commondataservice.dao.sql.info.*;
 import com.ujjaval.ecommerce.commondataservice.dto.BrandImagesDTO;
-import com.ujjaval.ecommerce.commondataservice.dto.ClothesTypeImagesDTO;
+import com.ujjaval.ecommerce.commondataservice.dto.ApparelImagesDTO;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.images.BrandImages;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.images.CarouselImages;
-import com.ujjaval.ecommerce.commondataservice.entity.sql.images.ClothesTypeImages;
+import com.ujjaval.ecommerce.commondataservice.entity.sql.images.ApparelImages;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
-import com.ujjaval.ecommerce.commondataservice.model.FilterAttributesComponentResponse;
+import com.ujjaval.ecommerce.commondataservice.model.FilterAttributesResponse;
 import com.ujjaval.ecommerce.commondataservice.model.MainScreenResponse;
 import com.ujjaval.ecommerce.commondataservice.service.interfaces.CommonDataService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -50,7 +52,7 @@ public class CommonDataServiceImpl implements CommonDataService {
     private GenderCategoryRepository genderCategoryRepository;
 
     @Autowired
-    private ClothesTypeCategoryRepository clothesTypeCategoryRepository;
+    private ApparelCategoryRepository apparelCategoryRepository;
 
     @Autowired
     private ProductBrandCategoryRepository productBrandCategoryRepository;
@@ -59,7 +61,7 @@ public class CommonDataServiceImpl implements CommonDataService {
     private BrandImagesRepository brandImagesRepository;
 
     @Autowired
-    private ClothesTypeImagesRepository clothesTypeImagesRepository;
+    private ApparelImagesRepository apparelImagesRepository;
 
     @Autowired
     private CarouselImagesRepository carouselImagesRepository;
@@ -135,10 +137,10 @@ public class CommonDataServiceImpl implements CommonDataService {
             info.setFilePath(appendHostUrl(info.getFilePath()));
         }
 
-        List<ClothesTypeImages> clothesTypeList = clothesTypeImagesRepository.getAllData();
-        listType = new TypeToken<List<ClothesTypeImagesDTO>>() {}.getType();
-        List<ClothesTypeImagesDTO> clothesTypeDTOList = modelMapper.map(clothesTypeList, listType);
-        for(ClothesTypeImagesDTO info: clothesTypeDTOList) {
+        List<ApparelImages> apparelList = apparelImagesRepository.getAllData();
+        listType = new TypeToken<List<ApparelImagesDTO>>() {}.getType();
+        List<ApparelImagesDTO> apparelDTOList = modelMapper.map(apparelList, listType);
+        for(ApparelImagesDTO info: apparelDTOList) {
             info.setFilePath(appendHostUrl(info.getFilePath()));
         }
 
@@ -147,14 +149,14 @@ public class CommonDataServiceImpl implements CommonDataService {
             info.setFilePath(appendHostUrl(info.getFilePath()));
         }
 
-        return new MainScreenResponse(brandDTOList, clothesTypeDTOList, carouselList);
+        return new MainScreenResponse(brandDTOList, apparelDTOList, carouselList);
     }
 
-    public FilterAttributesComponentResponse getFilterAttributesComponentList() {
-        return new FilterAttributesComponentResponse(
+    public FilterAttributesResponse getFilterAttributesComponentList() {
+        return new FilterAttributesResponse(
                 productBrandCategoryRepository.getAllData(),
                 genderCategoryRepository.getAllData(),
-                clothesTypeCategoryRepository.getAllData(),
+                apparelCategoryRepository.getAllData(),
                 sortByCategoryRepository.getAllData(),
                 priceRangeCategoryRepository.getAllData()
                 );
@@ -167,7 +169,6 @@ public class CommonDataServiceImpl implements CommonDataService {
         for(ProductInfo info: productList) {
             info.setImageName(appendHostUrl(info.getImageName()));
         }
-        return productInfoRepository.getProductInfoByCategories(conditionMap);
+        return productList;
     }
-
 }

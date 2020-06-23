@@ -1,7 +1,7 @@
 package com.ujjaval.ecommerce.commondataservice.entity.sql.info;
 
 import com.fasterxml.jackson.annotation.*;
-import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.ClothesTypeCategory;
+import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.ApparelCategory;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.GenderCategory;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.ProductBrandCategory;
 import lombok.Getter;
@@ -44,7 +44,7 @@ public class ProductInfo {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subcategory_id")
     @JsonIgnore
-    private ClothesTypeCategory clothesTypeCategory;
+    private ApparelCategory apparelCategory;
 
     private double price;
 
@@ -63,7 +63,7 @@ public class ProductInfo {
     private List<OrderInfo> orders;
 
     public ProductInfo(int sellerId, String name, Date publicationDate, ProductBrandCategory productBrandCategory,
-                       GenderCategory genderCategory, ClothesTypeCategory clothesTypeCategory,
+                       GenderCategory genderCategory, ApparelCategory apparelCategory,
                        double price, int availableQuantity, int deliveryTime, float ratings,
                        boolean verificationStatus, String imageName) {
         this.sellerId = sellerId;
@@ -71,7 +71,7 @@ public class ProductInfo {
         this.publicationDate = publicationDate;
         this.productBrandCategory = productBrandCategory;
         this.genderCategory = genderCategory;
-        this.clothesTypeCategory = clothesTypeCategory;
+        this.apparelCategory = apparelCategory;
         this.price = price;
         this.availableQuantity = availableQuantity;
         this.deliveryTime = deliveryTime;

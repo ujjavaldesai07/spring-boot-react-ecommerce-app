@@ -3,16 +3,16 @@ package com.ujjaval.ecommerce.commondataservice.service;
 import com.ujjaval.ecommerce.commondataservice.dao.sql.categories.*;
 import com.ujjaval.ecommerce.commondataservice.dao.sql.images.BrandImagesRepository;
 import com.ujjaval.ecommerce.commondataservice.dao.sql.images.CarouselImagesRepository;
-import com.ujjaval.ecommerce.commondataservice.dao.sql.images.ClothesTypeImagesRepository;
+import com.ujjaval.ecommerce.commondataservice.dao.sql.images.ApparelImagesRepository;
 import com.ujjaval.ecommerce.commondataservice.dao.sql.info.ProductInfoRepository;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.PriceRangeCategory;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.SortByCategory;
-import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.ClothesTypeCategory;
+import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.ApparelCategory;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.GenderCategory;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.ProductBrandCategory;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.images.BrandImages;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.images.CarouselImages;
-import com.ujjaval.ecommerce.commondataservice.entity.sql.images.ClothesTypeImages;
+import com.ujjaval.ecommerce.commondataservice.entity.sql.images.ApparelImages;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
 import com.ujjaval.ecommerce.commondataservice.service.interfaces.LoadFakeDataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
     private GenderCategoryRepository genderCategoryRepository;
 
     @Autowired
-    private ClothesTypeCategoryRepository clothesTypeCategoryRepository;
+    private ApparelCategoryRepository apparelCategoryRepository;
 
     @Autowired
     private ProductBrandCategoryRepository productBrandCategoryRepository;
@@ -56,7 +56,7 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
     private BrandImagesRepository brandImagesRepository;
 
     @Autowired
-    private ClothesTypeImagesRepository clothesTypeImagesRepository;
+    private ApparelImagesRepository apparelImagesRepository;
 
     @Autowired
     private CarouselImagesRepository carouselImagesRepository;
@@ -129,15 +129,15 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                         }
                         break;
                     case "category":
-                        ClothesTypeImages clothesTypeImages = new ClothesTypeImages(title, filePath);
-                        ClothesTypeCategory clothesTypeCategory =
-                                clothesTypeCategoryRepository.findByType(title);
+                        ApparelImages apparelImages = new ApparelImages(title, filePath);
+                        ApparelCategory apparelCategory =
+                                apparelCategoryRepository.findByType(title);
 
                         GenderCategory genderCategory = genderCategoryRepository.findByType(gender);
-                        if (clothesTypeCategory != null) {
-                            clothesTypeImages.setClothesTypeCategory(clothesTypeCategory);
-                            clothesTypeImages.setGenderCategory(genderCategory);
-                            clothesTypeImagesRepository.save(clothesTypeImages);
+                        if (apparelCategory != null) {
+                            apparelImages.setApparelCategory(apparelCategory);
+                            apparelImages.setGenderCategory(genderCategory);
+                            apparelImagesRepository.save(apparelImages);
                         }
                         break;
                     case "carousel":
@@ -228,12 +228,12 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
             for (String line; (line = reader.readLine()) != null; ) {
                 String[] result = line.split("\\|");
                 String gender = result[1];
-                String clothesType = result[2];
+                String apparel = result[2];
                 String brandName = result[3];
                 String productName = result[4];
                 String price = result[5];
                 String fileName = result[6];
-                String filePath = String.format("%s/%s/%s", removeSpaces(gender), removeSpaces(clothesType), removeSpaces(fileName));
+                String filePath = String.format("%s/%s/%s", removeSpaces(gender), removeSpaces(apparel), removeSpaces(fileName));
 
 //                System.out.println("MainCategory = " + gender + ", SubCategory = " + subCategory
 //                        + ", + BrandName = " + brandName + ", ProductName = " + productName + ", Price = "
@@ -249,7 +249,7 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
 
 
                 GenderCategory genderCategory = genderCategoryRepository.findByType(gender);
-                ClothesTypeCategory clothesTypeCategory = clothesTypeCategoryRepository.findByType(clothesType);
+                ApparelCategory apparelCategory = apparelCategoryRepository.findByType(apparel);
                 ProductBrandCategory productBrandCategory = productBrandCategoryRepository.findByType(brandName);
 
                 if (genderCategory == null) {
@@ -257,9 +257,9 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                     genderCategoryRepository.save(genderCategory);
                 }
 
-                if (clothesTypeCategory == null) {
-                    clothesTypeCategory = new ClothesTypeCategory(clothesType);
-                    clothesTypeCategoryRepository.save(clothesTypeCategory);
+                if (apparelCategory == null) {
+                    apparelCategory = new ApparelCategory(apparel);
+                    apparelCategoryRepository.save(apparelCategory);
                 }
 
                 if (productBrandCategory == null) {
@@ -268,7 +268,7 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                 }
 
                 ProductInfo productInfo = new ProductInfo(1, productName, generateRandomDate(), productBrandCategory,
-                        genderCategory, clothesTypeCategory, Integer.parseInt(price),
+                        genderCategory, apparelCategory, Integer.parseInt(price),
                         generateRandomInt(1, 10), generateRandomInt(2, 5),
                         generateRandomFloat(0, 5, 1), true, filePath);
 
