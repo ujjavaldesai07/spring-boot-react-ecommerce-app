@@ -5,6 +5,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
+import log from "loglevel";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -26,35 +27,29 @@ const DISPLAY_MAX_ITEMS = 6
 export default function CheckboxList(props) {
     const classes = useStyles();
 
-    const handleToggle = (value) => () => {
-        props.onChangeHandler(value, props.checkBoxGroupId)
-    };
-
     if(!props.attrList) {
+        log.debug(`[CheckboxList] props.attrList is null`)
         return null
     }
 
+    const handleToggle = (value) => () => {
+        log.debug(`[CheckboxList] handleToggle for CheckboxList value = ${value},
+         props.checkBoxGroupId = ${props.checkBoxGroupId} `)
+        props.onChangeHandler(value, props.checkBoxGroupId)
+    };
+
     const renderCheckBoxList = () => {
         let count = 0;
-        let selectedIds = []
 
-        if(props.selectedAttributes && props.selectedAttributes.length > 0) {
-            props.selectedAttributes.forEach(function (id) {
-                selectedIds.push(id)
-            })
-        }
+        log.debug(`[CheckboxList] renderCheckBoxList props.selectedAttributes = ${JSON.stringify(props.selectedIdList)}`)
 
-        // console.log(`${props.title} ===== NEW ======`)
         return props.attrList.map(({id, type}) => {
             if(count === DISPLAY_MAX_ITEMS) {
                 return null
             }
             count = count+1
 
-            // if(selectedIds.length > 0) {
-            //     console.log("id = " + id + ", selectedIds.includes(id) = " + selectedIds.includes(id))
-            // }
-
+            log.trace(`[CheckboxList] renderCheckBoxList id = ${id}, type = ${type}`)
             return (
                 <ListItem classes={{root: classes.listItemRoot}} key={id} role={undefined}
                           dense button onClick={handleToggle(id)}>
@@ -62,7 +57,7 @@ export default function CheckboxList(props) {
                         <Checkbox
                             size="small"
                             edge="start"
-                            checked={selectedIds.length > 0? selectedIds.includes(id): false}
+                            checked={props.selectedIdList.length > 0? props.selectedIdList.includes(id): false}
                             tabIndex={-1}
                             disableRipple
                             inputProps={{ 'aria-labelledby': id }}
@@ -75,15 +70,10 @@ export default function CheckboxList(props) {
         })
     }
 
-    console.log("Calling CheckboxList....")
-
+    log.debug(`[CheckboxList] props.attrList = ${JSON.stringify(props.attrList)}`)
+    log.info(`[CheckboxList] Rendering CheckboxList Component`)
     return (
         <List
-            // subheader={
-            // <ListSubheader component="div" id="nested-list-subheader">
-            //     Nested List Items
-            // </ListSubheader>
-        // }
             className={classes.root}>
             {renderCheckBoxList()}
         </List>

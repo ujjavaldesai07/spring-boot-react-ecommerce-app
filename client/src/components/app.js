@@ -7,8 +7,10 @@ import MainScreen from "./screens/main/mainScreen";
 import LoginScreen from "./screens/loginScreen";
 import SignUpScreen from "./screens/signupScreen";
 import FilterScreen from "./screens/filter/filterScreen";
+import log from "loglevel";
 
 const App = () => {
+    log.info(`[SignUpScreen]: Rendering App Component`)
     return (
         <div>
             <Router history={history}>

@@ -5,24 +5,15 @@ import {connect, useDispatch, useSelector} from "react-redux";
 import {loadFilterProducts} from "../../../actions";
 import Rating from '@material-ui/lab/Rating';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
-import {makeStyles} from "@material-ui/core/styles";
 import Box from '@material-ui/core/Box';
 import {Divider} from "@material-ui/core";
 import FilterChips from "./filterChips";
 import Pagination from '@material-ui/lab/Pagination';
 import {SET_FILTER_ATTRIBUTES} from "../../../actions/types";
 import DropdownSection from "../../parts/dropDown";
-
-const useStyles = makeStyles((theme) => ({
-    content: {
-        flexGrow: 1,
-        backgroundColor: theme.palette.background.default,
-        paddingTop: "85px",
-    },
-}));
+import log from "loglevel";
 
 const FilterProductsDisplay = props => {
-    const classes = useStyles()
     const {filterQuery} = useSelector(state => state.imageClickEventReducer)
     const filterProducts = useSelector(state => state.filterProductsReducer)
     const selectedFilterAttributes = useSelector(state => state.selectedFilterAttributesReducer)
@@ -30,16 +21,23 @@ const FilterProductsDisplay = props => {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        console.log("Component Did Mount.... filterQuery = " + filterQuery)
+        log.debug(`[FilterProductsDisplay] Components did mount for filterQuery Dependency
+         selectedFilterAttributes = ${JSON.stringify(selectedFilterAttributes)}`)
+
         if (!filterQuery) {
+            log.info(`[FilterProductsDisplay] filter Query is null`)
             props.loadFilterProducts(null);
         } else {
+            log.info(`[FilterProductsDisplay] filterQuery = ${filterQuery}`)
             props.loadFilterProducts(`${filterQuery}::${selectedFilterAttributes.page.toString()}::sortby=${selectedFilterAttributes.sortBy[2]}`);
         }
         window.scrollTo(0, 0)
     }, [filterQuery]);
 
-    const getQuery = () => {
+    const prepareQueryParameters = () => {
+        log.debug(`[FilterProductsDisplay] prepareQueryParameters
+         selectedFilterAttributes = ${JSON.stringify(selectedFilterAttributes)}`)
+
         let filterAttr = ["gender", "apparel", "brand", "page"]
         let filterQuery = []
         let categoryPresentInQuery = false
@@ -84,22 +82,28 @@ const FilterProductsDisplay = props => {
     }
 
     useEffect(() => {
-        console.log("Component Did Update....")
-        let query = getQuery()
+
+        let query = prepareQueryParameters()
+
+        log.info(`[FilterProductsDisplay] Component did mount for query = ${query}`)
+
         if (query && query.length > 0) {
-            console.log("Loading filter products................")
-            props.loadFilterProducts(getQuery());
+            log.info(`[FilterProductsDisplay] loading filter products`)
+            props.loadFilterProducts(prepareQueryParameters());
+        } else {
+            log.info(`[FilterProductsDisplay] query not found`)
         }
+
         window.scrollTo(0, 0)
     }, [selectedFilterAttributes]);
 
     if (!filterProducts || !selectedFilterAttributes || !filterAttributes) {
+        log.debug(`[FilterProductsDisplay] filterProducts or selectedFilterAttributes or filterAttributes is null`)
         return null
     }
 
-    console.log("selectedFilterAttributes = " + JSON.stringify(selectedFilterAttributes))
-
     const handleChangePage = (event, page) => {
+        log.debug(`[FilterProductsDisplay] dispatching SET_FILTER_ATTRIBUTES for page`)
         dispatch({
             type: SET_FILTER_ATTRIBUTES,
             payload: {
@@ -109,6 +113,8 @@ const FilterProductsDisplay = props => {
     }
 
     const dropdownHandler = (id, text) => {
+        log.debug(`[FilterProductsDisplay] dropdownHandler id = ${id}, text = ${text}`)
+
         let queryValue = "newest"
         switch (id) {
             case 1:
@@ -126,6 +132,8 @@ const FilterProductsDisplay = props => {
             default:
                 throw new Error("Unsupported datatype")
         }
+
+        log.debug(`[FilterProductsDisplay] dispatching SET_FILTER_ATTRIBUTES for sortBy`)
         dispatch({
             type: SET_FILTER_ATTRIBUTES,
             payload: {
@@ -136,10 +144,14 @@ const FilterProductsDisplay = props => {
 
     const renderImageList = imageList => {
         if (!imageList) {
+            log.debug(`[FilterProductsDisplay] Rendering renderImageList and imageList is null`)
             return null
         }
 
+        log.debug(`[FilterProductsDisplay] Rendering renderImageList imageList`)
+
         return imageList.map((info) => {
+            log.trace(`[FilterProductsDisplay] Rendering imageList info = ${info}`)
             return (
                 <Grid item key={info.id} md={3} style={{padding: "10px 0 30px 0"}}>
                     <Link to=".">
@@ -171,8 +183,11 @@ const FilterProductsDisplay = props => {
         });
     };
 
-    console.log("Calling Filter Products Display....")
+    log.trace(`[FilterProductsDisplay] filterAttributes = ${JSON.stringify(filterAttributes)}`)
+    log.trace(`[FilterProductsDisplay] filterProducts = ${JSON.stringify(filterProducts)}`)
+    log.debug(`[FilterProductsDisplay] selectedFilterAttributes = ${JSON.stringify(selectedFilterAttributes)}`)
 
+    log.info(`[FilterProductsDisplay] Rendering FilterProductsDisplay Component`)
     return (
         <>
             <span style={{display: "flex", padding: "20px 0 20px 0"}}>

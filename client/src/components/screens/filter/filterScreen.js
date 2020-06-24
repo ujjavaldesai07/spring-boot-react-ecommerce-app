@@ -5,16 +5,17 @@ import FilterNavBar from "./filterNavBar";
 import FilterProductsDisplay from "./filterProductsDisplay";
 import {connect} from "react-redux";
 import {loadFilterAttributes} from "../../../actions";
+import log from 'loglevel';
 
 function FilterScreen(props) {
 
+    // load filter attributes from API
     useEffect(() => {
-        console.log("Component did update filter attributes")
+        log.info("[FilterScreen] Component did mount and filter attributes API is called.")
         props.loadFilterAttributes();
-
     }, [props]);
 
-    console.log("Calling Filter Screen....")
+    log.info("[FilterScreen] Rendering FilterScreen Component.")
     return (
         <Grid container>
             <Grid item md={2}>

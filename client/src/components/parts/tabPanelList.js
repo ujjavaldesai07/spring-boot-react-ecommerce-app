@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Paper from '@material-ui/core/Paper';
 import useTabStyles from "../../styles/materialUI/tabStyles";
 import {useSelector} from 'react-redux';
+import log from "loglevel";
 
 function TabPanel(props) {
     const {children, value, index, ...other} = props;
@@ -44,9 +45,11 @@ export default function TabPanelList() {
     const {index} = useSelector(state => state.tabHoverEventReducer);
 
     if (index === -1) {
+        log.debug(`[TabPanelList]: index is null`)
         return null;
     }
 
+    log.info(`[TabPanelList]: Rendering TabPanelList Component with index = ${index}`)
     return (
         <div className={classes.root}>
             <TabPanel value={index} index={0}>

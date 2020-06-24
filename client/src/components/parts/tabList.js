@@ -4,6 +4,7 @@ import Tab from '@material-ui/core/Tab';
 import useTabStyles from "../../styles/materialUI/tabStyles";
 import {useDispatch, useSelector} from 'react-redux';
 import {HANDLE_TAB_HOVER_EVENT} from "../../actions/types";
+import log from "loglevel";
 
 function a11yProps(index) {
     return {
@@ -26,7 +27,9 @@ export default function TabList() {
     ];
 
     const renderTabs = () => {
+        log.debug(`[TabList]: renderTabs is invoked`)
         return tabsConfig.map(({index, label, style}) => {
+            log.trace(`[TabList]: renderTabs index = ${index}, label = ${label}, style = ${style}`)
             return <Tab key={index} label={label} onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
                         className={style} {...a11yProps(index)}/>
@@ -34,6 +37,9 @@ export default function TabList() {
     }
 
     const handleMouseEnter = (event) => {
+        log.debug(`[TabList]: dispatching HANDLE_TAB_HOVER_EVENT with
+         index = ${parseInt(event.target.id.split('-')[2])} and hover = true`)
+
         dispatch({
             type: HANDLE_TAB_HOVER_EVENT,
             payload: {
@@ -44,6 +50,7 @@ export default function TabList() {
     }
 
     const handleMouseLeave = () => {
+        log.debug(`[TabList]: dispatching HANDLE_TAB_HOVER_EVENT with index and hover as false`)
         dispatch({
             type: HANDLE_TAB_HOVER_EVENT, payload: {
                 index: false,
@@ -52,12 +59,14 @@ export default function TabList() {
         });
     }
 
-    // Sometimes a race condition occurs with spit out index as NAN
+    // Sometimes a race condition occurs which spits out the index as NAN
     // So reset the value of index to default
     if (isNaN(index)) {
+        log.debug(`[TabList]: index is null and is set to false`)
         index = false;
     }
 
+    log.info(`[TabList]: Rendering TabList Component`)
     return (
         <Tabs style={{paddingTop: '10px'}} value={index}
               aria-label="simple-tabs"
