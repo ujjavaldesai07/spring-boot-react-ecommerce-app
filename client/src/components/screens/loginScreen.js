@@ -7,12 +7,15 @@ import {StyledLoginScreenGrid, StyledWebButton} from "../../styles/semanticUI/cu
 import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 import {Typography} from "@material-ui/core";
 import {Link} from "react-router-dom";
+import log from "loglevel";
 
 const LoginScreen = (props) => {
     const onSubmit = formValues => {
+        log.debug(`[LoginScreen]: formValues = ${JSON.stringify(formValues)}`)
         props.signIn(formValues)
     };
 
+    log.info(`[LoginScreen]: Rendering LoginScreen Component`)
     return (
         <StyledLoginScreenGrid centered>
             <Grid.Row>

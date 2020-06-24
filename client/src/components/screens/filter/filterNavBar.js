@@ -11,10 +11,8 @@ import {connect, useDispatch, useSelector} from "react-redux";
 import {loadFilterAttributes, loadFilterProducts} from "../../../actions";
 import FilterCheckBoxSection from "./filterCheckBoxSection";
 import Button from '@material-ui/core/Button';
-
-import {Link} from "react-router-dom";
 import {CLEAR_FILTER_ATTRIBUTES, SET_FILTER_ATTRIBUTES} from "../../../actions/types";
-
+import log from "loglevel";
 
 const drawerWidth = 240;
 const CheckBoxGroup = {
@@ -88,14 +86,17 @@ function FilterNavBar(props) {
     // }, [props]);
 
     if (!filterAttributes) {
+        log.debug(`[FilterNavBar] filterAttributes is null`)
         return null
     }
 
     const handleDrawerToggle = () => {
+        log.debug(`[FilterNavBar] handleDrawerToggle is called`)
         setMobileOpen(!mobileOpen);
     };
 
     const handleClearAllClick = () => {
+        log.debug(`[FilterNavBar] handleClearAllClick is called`)
         dispatch({
             type: CLEAR_FILTER_ATTRIBUTES,
             payload: null
@@ -103,10 +104,13 @@ function FilterNavBar(props) {
     }
 
     const handleRadioButtonChange = searchValue => {
-        console.log("searchValue = " + searchValue)
+        log.debug(`[FilterNavBar] handleRadioButtonChange searchValue = ${searchValue}`)
         for(let i = 0; i < filterAttributes.genders.length; i++) {
             if(searchValue.charAt(0).localeCompare(filterAttributes.genders[i].type.charAt(0)) === 0
                 && searchValue.localeCompare(filterAttributes.genders[i].type) === 0) {
+
+                log.debug(`[FilterNavBar] handleRadioButtonChange id = ${filterAttributes.genders[i].id}`)
+
                 dispatch({
                     type: SET_FILTER_ATTRIBUTES,
                     payload: {
@@ -119,6 +123,7 @@ function FilterNavBar(props) {
     }
 
     const handleCheckBoxChange = (value, checkBoxGroupId) => {
+        log.debug(`[FilterNavBar] handleCheckBoxChange value = ${value}, checkBoxGroupId= ${checkBoxGroupId}`)
         switch (checkBoxGroupId) {
             case CheckBoxGroup.APPAREL:
                 dispatch({
@@ -165,7 +170,9 @@ function FilterNavBar(props) {
             <div style={{padding: '10px 0 8px 15px'}}>
                 <TitleHeader title="Gender" variant="subtitle1" fontWeight="bold" fontSize="1.2rem"/>
                 <RadioButtonsGroup onChangeHandler={handleRadioButtonChange}
-                                   attrList={filterAttributes.genders.filter(obj => {
+                                   attrList={
+                                       // eslint-disable-next-line array-callback-return
+                                       filterAttributes.genders.filter(obj => {
                                        if(obj.id < 5) {
                                            return obj
                                        }
@@ -200,7 +207,8 @@ function FilterNavBar(props) {
 
     const container = window !== undefined ? () => window().document.body : undefined;
 
-    console.log("Calling Filter NavBar....")
+    log.debug(`[FilterNavBar] selectedFilterAttributes = ${JSON.stringify(selectedFilterAttributes)}`)
+    log.info("[FilterNavBar] Rendering FilterNavBar Component.")
 
     return (
         <div className={classes.root}>
@@ -225,8 +233,7 @@ function FilterNavBar(props) {
                         }}
                         ModalProps={{
                             keepMounted: true, // Better open performance on mobile.
-                        }}
-                    >
+                        }}>
                         {/*{drawer}*/}
                     </Drawer>
                 </Hidden>
@@ -236,8 +243,7 @@ function FilterNavBar(props) {
                             paper: classes.drawerPaper,
                         }}
                         variant="permanent"
-                        open
-                    >
+                        open>
                         {drawer}
                     </Drawer>
                 </Hidden>

@@ -4,12 +4,15 @@ import {connect} from 'react-redux';
 import {signUp} from "../../actions";
 import {Grid} from "semantic-ui-react";
 import {StyledLoginScreenGrid} from "../../styles/semanticUI/customStyles";
+import log from "loglevel";
 
-const SignupScreen = (props) => {
+const SignUpScreen = (props) => {
     const onSubmit = formValues => {
+        log.debug(`[SignUpScreen]: onSubmit formValues = ${JSON.stringify(formValues)}`)
         props.signUp(formValues)
     };
 
+    log.info(`[SignUpScreen]: Rendering SignUpScreen Component`)
     return (
         <StyledLoginScreenGrid centered>
             <Grid.Column width={4}>
@@ -25,4 +28,4 @@ const SignupScreen = (props) => {
     )
 }
 
-export default connect(null, {signUp})(SignupScreen);
+export default connect(null, {signUp})(SignUpScreen);

@@ -22,6 +22,7 @@ import TabList from "../parts/tabList";
 import {Link} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {HANDLE_TOKEN_ID} from "../../actions/types";
+import log from "loglevel";
 
 // css styles
 const iconButtonLabel = {
@@ -42,9 +43,12 @@ const NavBar = props => {
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
     useEffect(() => {
+        log.info(`[NavBar]: Component did update.`)
         if(isSignedIn === null) {
+            log.info(`[NavBar]: isSignedIn is null`)
             let tokenIdFromCookie = Cookies.get(HANDLE_TOKEN_ID)
             if(tokenIdFromCookie) {
+                log.info(`[NavBar]: Token set from Cookie`)
                 props.setTokenFromCookie(tokenIdFromCookie)
             }
         }
@@ -134,6 +138,7 @@ const NavBar = props => {
         </Menu>
     );
 
+    log.info(`[NavBar]: Rendering NavBar Component`)
     return (
         <div style={{paddingBottom: '62px'}}>
             <AppBar color="default" className={classes.appBarRoot}>

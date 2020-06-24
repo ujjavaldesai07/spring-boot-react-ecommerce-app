@@ -1,5 +1,6 @@
 import React from 'react';
 import Swiper from 'react-id-swiper';
+import log from 'loglevel';
 
 const VerticalSlider = props => {
     const params = {
@@ -19,21 +20,26 @@ const VerticalSlider = props => {
         }
     }
 
-    if(!props.carouselImages) {
+    if (!props.carouselImages) {
+        log.debug("[VerticalSlider]: props.carouselImages is null")
         return null
     }
 
     const renderImageList = (imageList) => {
-        if(imageList == null) {
+        if (imageList == null) {
+            log.debug("[VerticalSlider]: imageList is null")
             return null
         }
-
-       return imageList.map(({id, filePath}) => {
-           return (
+        log.trace("[VerticalSlider]: Rendering renderImageList imageList = " + JSON.stringify(imageList))
+        return imageList.map(({id, filePath}) => {
+            log.trace(`[VerticalSlider]: Rendering renderImageList imageList filePath = ${filePath}`)
+            return (
                 <img key={id} src={filePath} alt={filePath}/>
-           )
+            )
         });
     };
+
+    log.info("[VerticalSlider]: Rendering VerticalSlider Component")
     return (
         <Swiper {...params} >
             {renderImageList(props.carouselImages)}

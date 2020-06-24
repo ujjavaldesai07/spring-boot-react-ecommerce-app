@@ -1,17 +1,17 @@
-import React, {useState} from 'react'
+import React from 'react'
 import {Menu} from 'semantic-ui-react'
 import {StyledDropdown} from "../../styles/semanticUI/customStyles";
+import log from "loglevel";
 
 const DropdownSection = props => {
 
-    const [state, setState] = useState({activeId: 1, activeText: undefined})
-    let activeText
-
     if (!props.options) {
+        log.debug(`[DropdownSection]: props.options = ${props.options}`)
         return null
     }
 
     let modifiedOptions = props.options.map(({id, type}) => {
+        log.trace(`[DropdownSection]: modifiedOptions id = ${id}, type = ${type}`)
         return {
             key: id,
             text: type,
@@ -20,22 +20,20 @@ const DropdownSection = props => {
     })
 
     const handleDropdownChange = (e, {value}) => {
-        // activeText = modifiedOptions[value - 1].text
-        // setState({activeId: value, activeText})
+        log.debug(`[DropdownSection]: handleDropdownChange`)
         props.onChangeHandler(value, modifiedOptions[value - 1].text)
     }
 
+    log.debug(`[DropdownSection]: props.activeInfo = ${JSON.stringify(props.activeInfo)}`)
+    log.info(`[DropdownSection]: Rendering DropdownSection Component`)
     return (
         <Menu compact>
             <StyledDropdown options={modifiedOptions}
                             simple item
                             id="customDropdown"
-                            // text={`Sort by: ${state.activeText ? state.activeText
-                            //     : modifiedOptions ? modifiedOptions[0].text : null}`}
                             text={`Sort by: ${props.activeInfo[1] ? props.activeInfo[1]
                                 : modifiedOptions ? modifiedOptions[0].text : null}`}
                             onChange={handleDropdownChange}
-                            // value={state.activeId}/>
                             value={props.activeInfo[0]}/>
 
         </Menu>

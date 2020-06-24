@@ -1,39 +1,31 @@
 import React from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {makeStyles} from "@material-ui/core/styles";
 import Chip from "@material-ui/core/Chip";
 import Box from '@material-ui/core/Box';
 import {SET_FILTER_ATTRIBUTES} from "../../../actions/types";
+import log from "loglevel";
 
-const useStyles = makeStyles((theme) => ({
-    content: {
-        flexGrow: 1,
-        backgroundColor: theme.palette.background.default,
-        paddingTop: "85px",
-    },
-}));
-
-const FilterChips = props => {
-    const classes = useStyles()
+const FilterChips = () => {
     const filterAttributes = useSelector(state => state.filterAttributesReducer)
     const selectedFilterAttributes = useSelector(state => state.selectedFilterAttributesReducer)
     const dispatch = useDispatch()
 
     if (!selectedFilterAttributes) {
+        log.debug(`[FilterChips] selectedFilterAttributes is null`)
         return null
     }
-
-    console.log("selectedFilterAttributes = " + JSON.stringify(selectedFilterAttributes))
 
     const addBoxTagToList = (boxDataList, category, categoryList) => {
         let chipBoxList = []
         if (boxDataList && boxDataList.length > 0) {
-            console.log("boxDataList = " + JSON.stringify(boxDataList) + ", len = " + boxDataList.length)
+            log.debug(`[FilterChips] addBoxTagToList boxDataList = ${JSON.stringify(boxDataList)}`)
+
             boxDataList.forEach(function (id) {
-                console.log("id ==== " + id)
+                log.trace(`[FilterChips] renderChipBoxes boxDataList id = ${id}`)
+
                 chipBoxList.push(
                     <Box key={`${category}-${id}`} width="auto" display="inline-block" p={0.2}>
-                        <Chip label={filterAttributes[categoryList][id-1].type}
+                        <Chip label={filterAttributes[categoryList][id - 1].type}
                               color="primary"
                               onDelete={handleDelete(`${category}-${id}`)}/>
                     </Box>
@@ -44,7 +36,10 @@ const FilterChips = props => {
     }
 
     const renderChipBoxes = () => {
+        log.info(`[FilterChips] renderChipBoxes is invoked`)
         if (selectedFilterAttributes) {
+            log.debug(`[FilterChips] renderChipBoxes selectedFilterAttributes = ${selectedFilterAttributes}`)
+
             let chipBoxList = []
             if (selectedFilterAttributes["apparel"]) {
                 chipBoxList = chipBoxList.concat(addBoxTagToList(selectedFilterAttributes["apparel"], "apparel",
@@ -58,17 +53,25 @@ const FilterChips = props => {
                 chipBoxList = chipBoxList.concat(addBoxTagToList(selectedFilterAttributes["price"], "price",
                     "priceRanges"))
             }
+
+            log.debug(`[FilterChips] renderChipBoxes chipBoxList = ${chipBoxList}`)
             return chipBoxList
         }
+
+        log.debug(`[FilterChips] renderChipBoxes is returning null`)
         return null
     }
 
     const handleDelete = (id) => () => {
+        log.info(`[FilterChips] handleDelete for chip for id = ${id}`)
         const splitId = id.split("-")
         if (selectedFilterAttributes[splitId[0]]
             && selectedFilterAttributes[splitId[0]].length > 0) {
+            log.debug(`[FilterChips] handleDelete for selectedFilterAttributes = ${selectedFilterAttributes}`)
             for (let i = 0; i < selectedFilterAttributes[splitId[0]].length; i++) {
+
                 if (selectedFilterAttributes[splitId[0]][i] === parseInt(splitId[1])) {
+                    log.debug(`[FilterChips] handleDelete for SET_FILTER_ATTRIBUTES for chip`)
                     dispatch({
                         type: SET_FILTER_ATTRIBUTES,
                         payload: {
@@ -81,7 +84,10 @@ const FilterChips = props => {
         }
     }
 
-    console.log("Calling Filter Chips....")
+    log.trace(`[FilterChips] filterAttributes = ${JSON.stringify(filterAttributes)}`)
+    log.debug(`[FilterChips] selectedFilterAttributes = ${JSON.stringify(selectedFilterAttributes)}`)
+
+    log.info(`[FilterChips] Rendering FilterChips Component`)
     return (
         <>
             {renderChipBoxes()}

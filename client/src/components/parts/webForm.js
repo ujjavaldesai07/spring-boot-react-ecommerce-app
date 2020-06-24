@@ -4,6 +4,7 @@ import {Form, Grid, Message} from 'semantic-ui-react'
 import {Typography} from "@material-ui/core";
 import {connect} from 'react-redux';
 import {StyledWebButton} from "../../styles/semanticUI/customStyles";
+import log from "loglevel";
 
 class WebForm extends React.Component {
     state = {
@@ -13,6 +14,8 @@ class WebForm extends React.Component {
     loading = false
 
     renderInput = ({input, label, meta: {error, touched}}) => {
+        log.debug(`[WebForm]: renderInput error = ${error} and touched = ${touched}`)
+
         let inputType;
         let icon, iconPosition;
         if (label.toLowerCase().includes('password')) {
@@ -25,6 +28,7 @@ class WebForm extends React.Component {
             iconPosition = 'left'
         }
         if (error && touched) {
+            log.debug(`[WebForm]: renderInput error && touched`)
             return (
                 <Form.Input {...input} fluid
                             input={inputType}
@@ -34,6 +38,7 @@ class WebForm extends React.Component {
                 />
             );
         } else {
+            log.debug(`[WebForm]: renderInput is not error && touched`)
             return (
                 <Form.Input {...input} fluid
                             input={inputType}
@@ -45,8 +50,11 @@ class WebForm extends React.Component {
     };
 
     renderField = fields => {
-        if (!fields)
+        if (!fields) {
+            log.debug(`[WebForm]: renderField fields is null`)
             return null
+        }
+        log.debug(`[WebForm]: renderField fields = ${JSON.stringify(fields)}`)
         return fields.map(field => {
             return <Field key={field}
                           name={field.split(" ").join("")}
@@ -57,6 +65,8 @@ class WebForm extends React.Component {
     }
 
     renderForgotPasswordField = () => {
+        log.debug(`[WebForm]: renderForgotPasswordField 
+            this.props.forgotPasswordField = ${this.props.forgotPasswordField}`)
         return this.props.forgotPasswordField ?
             (
                 <Grid centered padded="vertically">
@@ -72,6 +82,8 @@ class WebForm extends React.Component {
     }
 
     renderTermsConditionField = () => {
+        log.debug(`[WebForm]: renderTermsConditionField 
+            this.props.termsConditionField = ${this.props.termsConditionField}`)
         return this.props.termsConditionField ?
             <Form.Checkbox onChange={this.handleCheckboxChange}
                            label='I agree to the Terms and Conditions'/> : null
@@ -80,6 +92,9 @@ class WebForm extends React.Component {
     renderLoginError = () => {
         this.loading = false
         if (this.props.errorMsg || this.state.errorMsg) {
+            log.debug(`[WebForm]: renderLoginError 
+            error = ${this.props.errorMsg ? this.props.errorMsg: this.state.errorMsg}`)
+
             return <Message
                 error
                 header='Account Error'
@@ -91,6 +106,7 @@ class WebForm extends React.Component {
     }
 
     onSubmit = (formValues) => {
+        log.debug(`[WebForm]: onSubmit formValues = ${JSON.stringify(formValues)}`)
         if(this.props.formName === 'signup') {
             if(!this.isChecked) {
                 this.setState({errorMsg: 'please read the terms and condition and check the checkbox.'});
@@ -105,6 +121,7 @@ class WebForm extends React.Component {
     };
 
     render() {
+        log.info(`[WebForm]: Rendering WebForm Component this.state = ${JSON.stringify(this.state)}`)
         return (
             <>
                 <Grid centered padded="vertically" columns={8}>
@@ -142,6 +159,7 @@ class WebForm extends React.Component {
 }
 
 const validate = (formValues) => {
+    log.info(`[WebForm]: validate formValues = ${JSON.stringify(formValues)}`)
     const errors = {};
     const required = value => 'Please enter your ' + value;
     const email = value => value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) ?
@@ -178,10 +196,13 @@ const validate = (formValues) => {
             errors.ConfirmPassword = 'Confirm password did not matched';
         }
     }
+
+    log.debug(`[WebForm]: validate errors = ${JSON.stringify(errors)}`)
     return errors;
 }
 
 const mapStateToProps = state => {
+    log.debug(`[WebForm]: mapStateToProps state = ${JSON.stringify(state)}`)
     return {
         errorMsg: state.authenticate.errorMsg
     }

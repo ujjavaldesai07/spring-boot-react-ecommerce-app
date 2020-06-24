@@ -24,6 +24,7 @@ class Logger {
     }
 
     send(level, message) {
+        // eslint-disable-next-line default-case
         switch (level) {
             case Logger.Levels.DEBUG:
                 console.log(`%c[${this.getCurrentTime()}] [DEBUG]: ${message}`, "color:orange; font-size: 15px; font-weight: bold")

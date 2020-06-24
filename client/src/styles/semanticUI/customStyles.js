@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {Button, Dimmer, Segment, Grid, Dropdown, Menu} from 'semantic-ui-react';
+import {Button, Dimmer, Segment, Grid, Dropdown} from 'semantic-ui-react';
 
 export const StyledSegment = styled(Segment)({
     border: 'none !important',

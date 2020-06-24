@@ -3,16 +3,20 @@ import Grid from "@material-ui/core/Grid";
 import TitleHeader from "../../parts/titleHeader";
 import CollapsableSearch from "../../parts/collapsableSearch";
 import CheckboxList from "../../parts/checkboxList";
-
+import log from 'loglevel';
 
 export default function FilterCheckBoxSection(props) {
     const handleSearchClick = () => {
-
+        log.debug(`[FilterCheckBoxSection] handleSearchClick is called`)
     }
 
     const addCollapsableSearch = () => {
-        if(!props.searchBar)
+        if(!props.searchBar) {
+            log.debug(`[FilterCheckBoxSection] addCollapsableSearch is called`)
             return null
+        }
+
+        log.debug(`[FilterCheckBoxSection] addCollapsableSearch is called`)
         return (
             <Grid item xs={4}>
                 <CollapsableSearch handleOnClick={handleSearchClick}/>
@@ -20,7 +24,19 @@ export default function FilterCheckBoxSection(props) {
         )
     }
 
-    console.log("Calling Filter Checkbox.... = " + props.title)
+    const getSelectedIdList = () => {
+        let selectedIds = []
+        if(props.selectedAttributeList && props.selectedAttributeList.length > 0) {
+            props.selectedAttributeList.forEach(function (id) {
+                selectedIds.push(id)
+            })
+        }
+
+        log.debug(`[FilterCheckBoxSection] getSelectedIdList selectedIds = ${JSON.stringify(selectedIds)}`)
+        return selectedIds
+    }
+
+    log.info(`[FilterCheckBoxSection] Rendering FilterCheckBoxSection Component`)
 
     return (
         <>
@@ -36,8 +52,8 @@ export default function FilterCheckBoxSection(props) {
                           fontSize="1rem"
                           title={props.title}
                           checkBoxGroupId={props.checkBoxGroupId}
+                          selectedIdList={getSelectedIdList()}
                           onChangeHandler={props.onChangeHandler}
-                          selectedAttributes={props.selectedAttributeList}
             />
         </>
     );

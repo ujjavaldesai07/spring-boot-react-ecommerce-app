@@ -20,7 +20,6 @@ export default (state = INITIAL_STATE, action) => {
         case HANDLE_SIGN_UP:
             return {...state, account_status: action.payload};
         case HANDLE_SIGN_UP_ERROR:
-            console.log('action.payload = ' + action.payload)
             return {...state, errorMsg: action.payload};
         default:
             return state;

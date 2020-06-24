@@ -1,4 +1,5 @@
 import {HANDLE_IMAGE_CLICK_EVENT} from "../../actions/types";
+import log from "loglevel";
 
 const INITIAL_MOUSE_STATE = {
     filterQuery: null
@@ -7,7 +8,7 @@ const INITIAL_MOUSE_STATE = {
 export default (state = INITIAL_MOUSE_STATE, action) => {
     switch (action.type) {
         case HANDLE_IMAGE_CLICK_EVENT:
-            // console.log("Coming to reducer filterQuery = " + JSON.stringify(action.payload))
+            log.debug(`[IMAGE_CLICK_EVENT_REDUCER]: action.payload = ${JSON.stringify(action.payload)}`)
             return action.payload;
 
         default:
