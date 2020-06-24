@@ -18,7 +18,6 @@ import java.util.List;
 @Entity
 public class GenderCategory {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
 
     private String type;
@@ -31,7 +30,8 @@ public class GenderCategory {
     @JsonIgnore
     private List<ApparelImages> apparelImages;
 
-    public GenderCategory(String type) {
+    public GenderCategory(int id, String type) {
+        this.id = id;
         this.type = type;
     }
 }

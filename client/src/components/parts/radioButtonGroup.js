@@ -6,12 +6,7 @@ import FormControl from '@material-ui/core/FormControl';
 
 export default function RadioButtonsGroup(props) {
     const handleChange = (event) => {
-        for(let i = 0; i < props.attributeList.length; i++) {
-            if(event.target.value[0] === props.attributeList[i].type[0]) {
-                props.onChangeHandler(props.attributeList[i].id)
-                return
-            }
-        }
+        props.onChangeHandler(event.target.value)
     };
 
     const renderRadioButtonList = rbList => {
@@ -31,10 +26,9 @@ export default function RadioButtonsGroup(props) {
     return (
         <FormControl component="fieldset">
             <RadioGroup aria-label={props.title} name={props.title}
-                        value={props.selectedAttributeId.length > 0 && props.attributeList[props.selectedAttributeId-1]?
-                            props.attributeList[props.selectedAttributeId-1].type: false}
+                        value={props.selectedValue}
                         onChange={handleChange}>
-                {renderRadioButtonList(props.attributeList)}
+                {renderRadioButtonList(props.attrList)}
             </RadioGroup>
         </FormControl>
     );
