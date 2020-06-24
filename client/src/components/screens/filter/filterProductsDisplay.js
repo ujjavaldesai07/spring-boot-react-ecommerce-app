@@ -31,36 +31,56 @@ const FilterProductsDisplay = props => {
 
     useEffect(() => {
         console.log("Component Did Mount.... filterQuery = " + filterQuery)
-        if(!filterQuery) {
+        if (!filterQuery) {
             props.loadFilterProducts(null);
         } else {
             props.loadFilterProducts(`${filterQuery}::${selectedFilterAttributes.page.toString()}::sortby=${selectedFilterAttributes.sortBy[2]}`);
         }
-    }, [props, filterQuery]);
+        window.scrollTo(0, 0)
+    }, [filterQuery]);
 
     const getQuery = () => {
-        let filterAttr = ["gender", "apparel", "brand", "price", "page"]
-        let filterQuery = ''
+        let filterAttr = ["gender", "apparel", "brand", "page"]
+        let filterQuery = []
         let categoryPresentInQuery = false
         filterAttr.forEach(function (attr) {
             if (selectedFilterAttributes[attr].length > 0) {
-                filterQuery = filterQuery.concat(`${attr}=${selectedFilterAttributes[attr].toString()}::`)
+                filterQuery.push(`${attr}=${selectedFilterAttributes[attr].toString()}`)
 
-                if(attr[0] === "g" || attr[0] === "a" || attr[0] === "b") {
+                if (attr[0] === "g" || attr[0] === "a" || attr[0] === "b") {
                     categoryPresentInQuery = true
                 }
             }
         })
 
-        if(!categoryPresentInQuery) {
-            return null
+        if (!categoryPresentInQuery) {
+            filterQuery.push("category=all")
         }
 
-        if(selectedFilterAttributes.sortBy.length > 0) {
-            filterQuery = filterQuery.concat(`sortby=${selectedFilterAttributes.sortBy[2]}`)
+        if (selectedFilterAttributes.sortBy.length > 0) {
+            filterQuery.push(`sortby=${selectedFilterAttributes.sortBy[2]}`)
         }
-        console.log("filterQuery = " + filterQuery)
-        return filterQuery
+
+        if (selectedFilterAttributes.price.length > 0) {
+
+            selectedFilterAttributes.price.forEach(function (element) {
+
+                let priceRange = filterAttributes.priceRanges[element - 1].type
+                    .replace(new RegExp('\\$', 'g'), '')
+
+                if (priceRange[0] === "U") {
+                    filterQuery.push(`price=lt:${priceRange.split(" ")[1]}`)
+                } else if (priceRange[0] === "A") {
+                    filterQuery.push(`price=gt:${priceRange.split(" ")[1]}`)
+                } else {
+                    filterQuery.push(`price=bt:${priceRange.split("-")[0]},
+                    ${priceRange.split("-")[1]}`)
+                }
+
+            })
+        }
+
+        return filterQuery.join("::")
     }
 
     useEffect(() => {
@@ -70,6 +90,7 @@ const FilterProductsDisplay = props => {
             console.log("Loading filter products................")
             props.loadFilterProducts(getQuery());
         }
+        window.scrollTo(0, 0)
     }, [selectedFilterAttributes]);
 
     if (!filterProducts || !selectedFilterAttributes || !filterAttributes) {
@@ -155,7 +176,7 @@ const FilterProductsDisplay = props => {
     return (
         <>
             <span style={{display: "flex", padding: "20px 0 20px 0"}}>
-            <Box width="75%" style={{padding: "26px 0 30px 20px"}}>
+            <Box width="75%" style={{padding: "26px 0 0 20px"}}>
                 <FilterChips/>
             </Box>
                 <Box width="auto">
@@ -173,7 +194,7 @@ const FilterProductsDisplay = props => {
             <Grid container direction="column"
                   alignItems="center"
                   justify="center"
-                  style={{paddingTop: "20px"}}>
+                  style={{padding: "30px 0 100px 0"}}>
                 <Pagination onChange={handleChangePage} count={5} color="secondary"/>
             </Grid>
         </>

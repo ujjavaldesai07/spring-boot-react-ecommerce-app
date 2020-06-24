@@ -31,6 +31,14 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
         SORT_BY, PRICE_RANGE
     }
 
+
+    private final int WOMEN = 1;
+    private final int MEN = 2;
+    private final int GIRLS = 3;
+    private final int BOYS = 4;
+    private final int HOME_AND_LIVING = 5;
+    private final int ESSENTIALS = 6;
+
     private final String DATA_DIRECTORY = "fake_data";
     private final String MAIN_SCREEN_DATA = "main-screen-data.txt";
     private final String PRICE_RANGE_DATA = "price-range-data.txt";
@@ -247,13 +255,36 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                     return false;
                 }
 
-
                 GenderCategory genderCategory = genderCategoryRepository.findByType(gender);
                 ApparelCategory apparelCategory = apparelCategoryRepository.findByType(apparel);
                 ProductBrandCategory productBrandCategory = productBrandCategoryRepository.findByType(brandName);
 
                 if (genderCategory == null) {
-                    genderCategory = new GenderCategory(gender);
+                    int genderId;
+
+                    switch (gender.toLowerCase()) {
+                        case "women":
+                            genderId = WOMEN;
+                            break;
+                        case "men":
+                            genderId = MEN;
+                            break;
+                        case "boys":
+                            genderId = BOYS;
+                            break;
+                        case "girls":
+                            genderId = GIRLS;
+                            break;
+                        case "home & living":
+                            genderId = HOME_AND_LIVING;
+                            break;
+                        case "essentials":
+                            genderId = ESSENTIALS;
+                            break;
+                        default:
+                            throw new IllegalStateException("Unexpected value: " + gender.toLowerCase());
+                    }
+                    genderCategory = new GenderCategory(genderId, gender);
                     genderCategoryRepository.save(genderCategory);
                 }
 

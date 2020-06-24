@@ -100,17 +100,22 @@ function FilterNavBar(props) {
             type: CLEAR_FILTER_ATTRIBUTES,
             payload: null
         })
-
-        props.loadFilterProducts("category=all::page=0,20");
     }
 
-    const handleRadioButtonChange = id => {
-        dispatch({
-            type: SET_FILTER_ATTRIBUTES,
-            payload: {
-                gender: [filterAttributes.genders[id - 1].id]
+    const handleRadioButtonChange = searchValue => {
+        console.log("searchValue = " + searchValue)
+        for(let i = 0; i < filterAttributes.genders.length; i++) {
+            if(searchValue.charAt(0).localeCompare(filterAttributes.genders[i].type.charAt(0)) === 0
+                && searchValue.localeCompare(filterAttributes.genders[i].type) === 0) {
+                dispatch({
+                    type: SET_FILTER_ATTRIBUTES,
+                    payload: {
+                        gender: [filterAttributes.genders[filterAttributes.genders[i].id - 1].id]
+                    }
+                })
+                return
             }
-        })
+        }
     }
 
     const handleCheckBoxChange = (value, checkBoxGroupId) => {
@@ -160,8 +165,13 @@ function FilterNavBar(props) {
             <div style={{padding: '10px 0 8px 15px'}}>
                 <TitleHeader title="Gender" variant="subtitle1" fontWeight="bold" fontSize="1.2rem"/>
                 <RadioButtonsGroup onChangeHandler={handleRadioButtonChange}
-                                   attributeList={filterAttributes.genders}
-                                   selectedAttributeId={selectedFilterAttributes.gender}
+                                   attrList={filterAttributes.genders.filter(obj => {
+                                       if(obj.id < 5) {
+                                           return obj
+                                       }
+                                   })}
+                                   selectedValue={selectedFilterAttributes.gender.length > 0 ?
+                                       filterAttributes.genders[selectedFilterAttributes.gender[0] - 1].type: false}
                                    title="Gender"/>
             </div>
             <Divider/>

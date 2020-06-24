@@ -65,7 +65,6 @@ public class ProductInfoRepositoryImpl {
         String sortBy = " order by p.ratings desc";
         HashMap<Integer, Object> mapParams = new HashMap<>();
         MapParameterKey mapParametersKey = new MapParameterKey();
-        TypedQuery<ProductInfo> query = null;
 
         for (Map.Entry<String, String> entry : conditionMap.entrySet()) {
             switch (QueryType.valueOf(entry.getKey())) {
@@ -73,14 +72,17 @@ public class ProductInfoRepositoryImpl {
                     prepareConditionListById(mapParams, entry.getValue(), mapParametersKey,
                             conditions, "p.genderCategory.id");
                     break;
+
                 case apparel:
                     prepareConditionListById(mapParams, entry.getValue(), mapParametersKey,
                             conditions, "p.apparelCategory.id");
                     break;
+
                 case brand:
                     prepareConditionListById(mapParams, entry.getValue(), mapParametersKey,
                             conditions, "p.productBrandCategory.id");
                     break;
+
                 case price:
                     // eg bt:100,1000
                     String extractedValue = entry.getValue().substring(3);
@@ -112,9 +114,12 @@ public class ProductInfoRepositoryImpl {
                 case category:
                     if (entry.getValue().equals("all")) {
                         System.out.println("Coming here in the category......");
-                        query = entityManager.createQuery("select p from ProductInfo p ", ProductInfo.class);
+                        conditions.add(String.format(" (1 = ?%d)", mapParametersKey.getKey()));
+                        mapParams.put(mapParametersKey.getKey(), 1);
+                        mapParametersKey.increment();
                     }
                     break;
+
                 case sortby:
                     switch (QueryType.SortOperator.valueOf(entry.getValue())) {
                         case lh:
@@ -131,10 +136,12 @@ public class ProductInfoRepositoryImpl {
                             break;
                     }
                     break;
+
                 case page:
                     pageInfo = entry.getValue().split(",");
                     System.out.println("pageInfo[0] = " + pageInfo[0] + ", pageInfo[1] = " + pageInfo[1]);
                     break;
+
                 default:
                     System.out.println("UnsupportedType");
             }
@@ -142,23 +149,22 @@ public class ProductInfoRepositoryImpl {
 
         System.out.println("condition = " + String.join(" AND ", conditions));
 
-        if (query == null && !conditions.isEmpty()) {
-            System.out.println("Creating specific query....");
-            query = entityManager.createQuery("select p from ProductInfo p where "
-                    + String.join(" AND ", conditions) + sortBy, ProductInfo.class);
-
-            mapParams.forEach(query::setParameter);
+        if (conditions.isEmpty()) {
+            return null;
         }
 
-        if (query != null) {
-            if (pageInfo != null && pageInfo.length == 2) {
-                return query.setFirstResult(Integer.parseInt(pageInfo[0]))
-                        .setMaxResults(Integer.parseInt(pageInfo[1]))
-                        .getResultList();
-            }
+        TypedQuery<ProductInfo> query = entityManager.createQuery(
+                "select p from ProductInfo p where "
+                + String.join(" AND ", conditions) + sortBy, ProductInfo.class);
 
-            return query.getResultList();
+        mapParams.forEach(query::setParameter);
+
+        if (pageInfo != null && pageInfo.length == 2) {
+            return query.setFirstResult(Integer.parseInt(pageInfo[0]))
+                    .setMaxResults(Integer.parseInt(pageInfo[1]))
+                    .getResultList();
         }
-        return null;
+
+        return query.getResultList();
     }
 }
