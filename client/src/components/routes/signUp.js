@@ -1,12 +1,12 @@
 import React from "react";
-import WebForm from "../parts/webForm";
+import WebForm from "../ui/webForm";
 import {connect} from 'react-redux';
 import {signUp} from "../../actions";
 import {Grid} from "semantic-ui-react";
 import {StyledLoginScreenGrid} from "../../styles/semanticUI/customStyles";
 import log from "loglevel";
 
-const SignUpScreen = (props) => {
+const SignUp = (props) => {
     const onSubmit = formValues => {
         log.debug(`[SignUpScreen]: onSubmit formValues = ${JSON.stringify(formValues)}`)
         props.signUp(formValues)
@@ -28,4 +28,4 @@ const SignUpScreen = (props) => {
     )
 }
 
-export default connect(null, {signUp})(SignUpScreen);
+export default connect(null, {signUp})(SignUp);

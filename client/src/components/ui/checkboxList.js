@@ -70,7 +70,7 @@ export default function CheckboxList(props) {
         })
     }
 
-    log.debug(`[CheckboxList] props.attrList = ${JSON.stringify(props.attrList)}`)
+    log.trace(`[CheckboxList] props.attrList = ${JSON.stringify(props.attrList)}`)
     log.info(`[CheckboxList] Rendering CheckboxList Component`)
     return (
         <List

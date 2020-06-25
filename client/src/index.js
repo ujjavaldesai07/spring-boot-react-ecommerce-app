@@ -10,7 +10,7 @@ import thunk from "redux-thunk";
 import log from 'loglevel';
 
 // log.disableAll(true)
-// log.setLevel("info")
+log.setLevel("info")
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose();
 const store = createStore(

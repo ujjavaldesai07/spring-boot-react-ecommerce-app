@@ -2,7 +2,7 @@ import React from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import Chip from "@material-ui/core/Chip";
 import Box from '@material-ui/core/Box';
-import {SET_FILTER_ATTRIBUTES} from "../../../actions/types";
+import {SELECT_FILTER_ATTRIBUTES} from "../../../actions/types";
 import log from "loglevel";
 
 const FilterChips = () => {
@@ -73,7 +73,7 @@ const FilterChips = () => {
                 if (selectedFilterAttributes[splitId[0]][i] === parseInt(splitId[1])) {
                     log.debug(`[FilterChips] handleDelete for SET_FILTER_ATTRIBUTES for chip`)
                     dispatch({
-                        type: SET_FILTER_ATTRIBUTES,
+                        type: SELECT_FILTER_ATTRIBUTES,
                         payload: {
                             [splitId[0]]: selectedFilterAttributes[splitId[0]][i]
                         }

@@ -2,20 +2,23 @@ import React, {useEffect} from 'react';
 
 import Grid from '@material-ui/core/Grid';
 import FilterNavBar from "./filterNavBar";
-import FilterProductsDisplay from "./filterProductsDisplay";
+import FilterProductsDisplay from "./filterProductDisplay";
 import {connect} from "react-redux";
 import {loadFilterAttributes} from "../../../actions";
 import log from 'loglevel';
+import filterAttributesReducer from "../../../reducers/screens/filter/filterAttributesReducer";
 
-function FilterScreen(props) {
+function Product(props) {
 
-    // load filter attributes from API
+    // load product attributes from API
     useEffect(() => {
-        log.info("[FilterScreen] Component did mount and filter attributes API is called.")
+        log.info("[Product] Component did mount and product attributes API is called.")
         props.loadFilterAttributes();
-    }, [props]);
 
-    log.info("[FilterScreen] Rendering FilterScreen Component.")
+        // eslint-disable-next-line
+    }, [filterAttributesReducer]);
+
+    log.info("[Product] Rendering Product Component.")
     return (
         <Grid container>
             <Grid item md={2}>
@@ -28,4 +31,4 @@ function FilterScreen(props) {
     );
 }
 
-export default connect(null, {loadFilterAttributes})(FilterScreen);
+export default connect(null, {loadFilterAttributes})(React.memo(Product));

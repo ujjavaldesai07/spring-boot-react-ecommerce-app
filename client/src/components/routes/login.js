@@ -1,5 +1,5 @@
 import React from "react";
-import WebForm from "../parts/webForm";
+import WebForm from "../ui/webForm";
 import {Divider, Grid} from "semantic-ui-react";
 import {connect} from 'react-redux';
 import {signIn} from "../../actions";
@@ -9,7 +9,7 @@ import {Typography} from "@material-ui/core";
 import {Link} from "react-router-dom";
 import log from "loglevel";
 
-const LoginScreen = (props) => {
+const Login = (props) => {
     const onSubmit = formValues => {
         log.debug(`[LoginScreen]: formValues = ${JSON.stringify(formValues)}`)
         props.signIn(formValues)
@@ -59,4 +59,4 @@ const LoginScreen = (props) => {
     )
 }
 
-export default connect(null, {signIn})(LoginScreen);
+export default connect(null, {signIn})(Login);
