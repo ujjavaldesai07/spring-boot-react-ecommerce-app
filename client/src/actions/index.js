@@ -76,9 +76,9 @@ export const signUp = formValues => async (dispatch) => {
     }
 }
 
-export const loadMainScreen = () => async dispatch => {
+export const loadHomePage = () => async dispatch => {
     log.info(`[ACTION]: loadMainScreen API.`)
-    const response = await commonServiceApi.get('/main');
+    const response = await commonServiceApi.get('/home');
 
     if(response != null) {
         log.debug(`[ACTION]: loadMainScreen API = ${JSON.parse(JSON.stringify(response.data))}.`)
@@ -86,16 +86,9 @@ export const loadMainScreen = () => async dispatch => {
     }
 };
 
-export const loadFilterProducts = filterQuery => async dispatch => {
+export const loadProducts = filterQuery => async dispatch => {
 
     log.info(`[ACTION]: loadFilterProducts Calling Products API filterQuery = ${filterQuery}`)
-
-    // Reloading or direct url
-    if(!filterQuery) {
-        log.info(`[ACTION]: loadFilterProducts loading filterQuery is null and loading via URL`)
-        let url = window.location.href.split("products?q=")
-        filterQuery = url? url[1] : "category=all::page=0,12"
-    }
 
     filterQuery = filterQuery.replace(/\s/g, '');
 

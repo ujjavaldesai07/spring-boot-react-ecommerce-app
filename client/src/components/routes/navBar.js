@@ -18,7 +18,7 @@ import {
 } from '@material-ui/core';
 
 import useNavBarStyles from "../../styles/materialUI/navBarStyles";
-import TabList from "../parts/tabList";
+import TabList from "../ui/tabList";
 import {Link} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {HANDLE_TOKEN_ID} from "../../actions/types";
@@ -52,7 +52,8 @@ const NavBar = props => {
                 props.setTokenFromCookie(tokenIdFromCookie)
             }
         }
-    }, [props, isSignedIn]);
+        // eslint-disable-next-line
+    }, [isSignedIn]);
 
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);

@@ -1,8 +1,8 @@
 import React from 'react';
 import Grid from "@material-ui/core/Grid";
-import TitleHeader from "../../parts/titleHeader";
-import CollapsableSearch from "../../parts/collapsableSearch";
-import CheckboxList from "../../parts/checkboxList";
+import TitleHeader from "../../ui/titleHeader";
+import CollapsableSearch from "../../ui/collapsableSearch";
+import CheckboxList from "../../ui/checkboxList";
 import log from 'loglevel';
 
 export default function FilterCheckBoxSection(props) {

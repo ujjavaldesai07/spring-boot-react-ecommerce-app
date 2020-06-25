@@ -82,7 +82,7 @@ public class CommonDataController {
                 .body(new InputStreamResource(imgFile.getInputStream()));
     }
 
-    @GetMapping("/main")
+    @GetMapping("/home")
     public ResponseEntity<?> getMainScreenData() throws UnknownHostException {
         MainScreenResponse mainScreenInfoList = commonDataService.getMainScreenDataList();
         if (mainScreenInfoList == null) {

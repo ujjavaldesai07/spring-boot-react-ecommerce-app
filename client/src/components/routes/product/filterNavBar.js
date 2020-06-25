@@ -5,13 +5,13 @@ import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 
-import RadioButtonsGroup from "../../parts/radioButtonGroup";
-import TitleHeader from "../../parts/titleHeader";
+import RadioButtonsGroup from "../../ui/radioButtonGroup";
+import TitleHeader from "../../ui/titleHeader";
 import {connect, useDispatch, useSelector} from "react-redux";
-import {loadFilterAttributes, loadFilterProducts} from "../../../actions";
+import {loadFilterAttributes, loadProducts} from "../../../actions";
 import FilterCheckBoxSection from "./filterCheckBoxSection";
 import Button from '@material-ui/core/Button';
-import {CLEAR_FILTER_ATTRIBUTES, SET_FILTER_ATTRIBUTES} from "../../../actions/types";
+import {SELECT_FILTER_ATTRIBUTES} from "../../../actions/types";
 import log from "loglevel";
 
 const drawerWidth = 240;
@@ -98,8 +98,10 @@ function FilterNavBar(props) {
     const handleClearAllClick = () => {
         log.debug(`[FilterNavBar] handleClearAllClick is called`)
         dispatch({
-            type: CLEAR_FILTER_ATTRIBUTES,
-            payload: null
+            type: SELECT_FILTER_ATTRIBUTES,
+            payload: {
+                clearAll: true
+            }
         })
     }
 
@@ -112,7 +114,7 @@ function FilterNavBar(props) {
                 log.debug(`[FilterNavBar] handleRadioButtonChange id = ${filterAttributes.genders[i].id}`)
 
                 dispatch({
-                    type: SET_FILTER_ATTRIBUTES,
+                    type: SELECT_FILTER_ATTRIBUTES,
                     payload: {
                         gender: [filterAttributes.genders[filterAttributes.genders[i].id - 1].id]
                     }
@@ -127,7 +129,7 @@ function FilterNavBar(props) {
         switch (checkBoxGroupId) {
             case CheckBoxGroup.APPAREL:
                 dispatch({
-                    type: SET_FILTER_ATTRIBUTES,
+                    type: SELECT_FILTER_ATTRIBUTES,
                     payload: {
                         apparel: filterAttributes.apparels[value - 1].id
                     }
@@ -135,7 +137,7 @@ function FilterNavBar(props) {
                 break
             case CheckBoxGroup.BRAND:
                 dispatch({
-                    type: SET_FILTER_ATTRIBUTES,
+                    type: SELECT_FILTER_ATTRIBUTES,
                     payload: {
                         brand: filterAttributes.brands[value - 1].id
                     }
@@ -143,7 +145,7 @@ function FilterNavBar(props) {
                 break
             case CheckBoxGroup.PRICE:
                 dispatch({
-                    type: SET_FILTER_ATTRIBUTES,
+                    type: SELECT_FILTER_ATTRIBUTES,
                     payload: {
                         price: filterAttributes.priceRanges[value - 1].id
                     }
@@ -252,4 +254,4 @@ function FilterNavBar(props) {
     );
 }
 
-export default connect(null, {loadFilterAttributes, loadFilterProducts})(FilterNavBar);
+export default connect(null, {loadFilterAttributes, loadFilterProducts: loadProducts})(FilterNavBar);

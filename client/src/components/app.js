@@ -1,18 +1,20 @@
-import React from "react";
-import NavBar from "./screens/navBar";
-import TabPanelList from "./parts/tabPanelList";
+import React, {Suspense, lazy} from "react";
 import history from "../history";
 import {Router, Route} from 'react-router-dom';
-import MainScreen from "./screens/main/mainScreen";
-import LoginScreen from "./screens/loginScreen";
-import SignUpScreen from "./screens/signupScreen";
-import FilterScreen from "./screens/filter/filterScreen";
-import log from "loglevel";
+import log from "loglevel"
+import Spinner from "./ui/spinner";
+
+const NavBar = lazy(() => import('./routes/navBar'));
+const TabPanelList = lazy(() => import('./ui/tabPanelList'));
+const MainScreen = lazy(() => import('./routes/home/home'));
+const LoginScreen = lazy(() => import('./routes/login'));
+const SignUpScreen = lazy(() => import('./routes/signUp'));
+const FilterScreen = lazy(() => import('./routes/product/product'));
 
 const App = () => {
-    log.info(`[SignUpScreen]: Rendering App Component`)
+    log.info(`[App]: Rendering App Component`)
     return (
-        <div>
+        <Suspense fallback={<Spinner minHeight="100vh"/>}>
             <Router history={history}>
                 <Route path="/" component={NavBar}/>
                 <Route path="/" component={TabPanelList}/>
@@ -21,7 +23,7 @@ const App = () => {
                 <Route path="/signup" exact component={SignUpScreen}/>
                 <Route path="/:products" component={FilterScreen}/>
             </Router>
-        </div>
+        </Suspense>
     )
 }
 

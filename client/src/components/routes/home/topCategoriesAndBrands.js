@@ -2,7 +2,6 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import {Typography} from "@material-ui/core";
 import {Link} from "react-router-dom";
-import {HANDLE_IMAGE_CLICK_EVENT} from "../../../actions/types";
 import {useDispatch} from "react-redux";
 import log from 'loglevel';
 
@@ -27,16 +26,6 @@ const TopCategoriesAndBrands = props => {
     if (!props.apparelImages) {
         log.debug(`[TopCategoriesAndBrands]: props.apparelImages is null`)
         return null;
-    }
-
-    const handleImageClick = filterQuery => {
-        log.info(`[TopCategoriesAndBrands]: handleImageClick is dispatched with filterQuery = ${filterQuery}`)
-        dispatch({
-            type: HANDLE_IMAGE_CLICK_EVENT,
-            payload: {
-                filterQuery: filterQuery
-            }
-        });
     }
 
     const renderImageList = (imageList, filterQueryType) => {
@@ -67,7 +56,7 @@ const TopCategoriesAndBrands = props => {
             log.trace(`[TopCategoriesAndBrands]: filterQuery = ${filterQuery}, filterQueryType = ${filterQueryType}`)
             return (
                 <Grid key={info.title} item xs={2}>
-                    <Link to={`/products?q=${filterQuery}`} onClick={() => handleImageClick(filterQuery)}>
+                    <Link to={`/products?q=${filterQuery}`}>
                         <img src={info.filePath} alt={info.filePath} style={{width: '90%', height: '100%'}}
                              title={info.title}/>
                     </Link>

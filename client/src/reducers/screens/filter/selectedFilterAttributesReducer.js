@@ -1,13 +1,6 @@
-import {CLEAR_FILTER_ATTRIBUTES, SET_FILTER_ATTRIBUTES} from "../../../actions/types";
-
-const INITIAL_FILTER_STATE = {
-    gender: [],
-    apparel: [],
-    brand: [],
-    price: [],
-    page: [0, 12],
-    sortBy: [1, undefined, "newest"]
-}
+import {SELECT_FILTER_ATTRIBUTES} from "../../../actions/types";
+import log from 'loglevel';
+import {MAX_PRODUCTS_PER_PAGE, INITIAL_FILTER_ATTRIBUTES_STATE} from "../../../constants/constants";
 
 const checkObjectAlreadyExist = (prevState, payload, objName) => {
     let alreadyExist = false
@@ -23,25 +16,39 @@ const checkObjectAlreadyExist = (prevState, payload, objName) => {
     }
 
     if (alreadyExist) {
-        console.log("newArray = " + newArray)
-        console.log("alreadyExist = " +  JSON.stringify({...prevState, [objName]: newArray}))
-        return {...prevState, [objName]: newArray};
+        log.debug("[SelectedFilterAttributesReducer] alreadyExist = " +
+            JSON.stringify({
+                ...prevState, [objName]: newArray,
+                page: [0, MAX_PRODUCTS_PER_PAGE], clearAll: false
+            }))
+        return {...prevState, [objName]: newArray, page: [0, MAX_PRODUCTS_PER_PAGE], clearAll: false};
     }
 
     if (prevState[objName]) {
-        console.log("prevState[objName] = " + JSON.stringify({...prevState, [objName]: [...prevState[objName], payload[objName]]}))
-        return {...prevState, [objName]: [...prevState[objName], payload[objName]]};
+        log.debug("[SelectedFilterAttributesReducer] prevState[objName] = "
+            + JSON.stringify({
+                ...prevState, [objName]: [...prevState[objName], payload[objName]],
+                page: [0, MAX_PRODUCTS_PER_PAGE], clearAll: false
+            }))
+        return {
+            ...prevState, [objName]: [...prevState[objName], payload[objName]],
+            page: [0, MAX_PRODUCTS_PER_PAGE], clearAll: false
+        };
     }
 
-    console.log("prevState[objName] is null = " + JSON.stringify({...prevState, [objName]: payload[objName]}))
-    return {...prevState, [objName]: payload[objName]};
+    log.debug("[SelectedFilterAttributesReducer] prevState[objName] is null = "
+        + JSON.stringify({...prevState, [objName]: payload[objName]}))
+    return {
+        ...prevState, [objName]: payload[objName],
+        page: [0, MAX_PRODUCTS_PER_PAGE], clearAll: false
+    };
 }
 
-export default (state = INITIAL_FILTER_STATE, action) => {
+export default (state = INITIAL_FILTER_ATTRIBUTES_STATE, action) => {
     switch (action.type) {
-        case SET_FILTER_ATTRIBUTES:
+        case SELECT_FILTER_ATTRIBUTES:
             if (action.payload.gender) {
-                return {...state, gender: action.payload.gender};
+                return {...state, gender: action.payload.gender, page: [0, MAX_PRODUCTS_PER_PAGE], clearAll: false};
             }
 
             if (action.payload.apparel) {
@@ -61,13 +68,17 @@ export default (state = INITIAL_FILTER_STATE, action) => {
             }
 
             if (action.payload.sortBy) {
-                return {...state, sortBy: action.payload.sortBy};
+                return {...state, sortBy: action.payload.sortBy, page: [0, MAX_PRODUCTS_PER_PAGE]};
             }
 
-            break
-        case CLEAR_FILTER_ATTRIBUTES:
-            return INITIAL_FILTER_STATE
+            if (action.payload.clearAll) {
+                return {...INITIAL_FILTER_ATTRIBUTES_STATE, clearAll: action.payload.clearAll};
+            }
 
+            if (action.payload.reloadAttrState) {
+                return action.payload.reloadAttrState;
+            }
+            break
         default:
             return state;
     }
