@@ -5,12 +5,12 @@ import log from "loglevel";
 
 const DropdownSection = props => {
 
-    if (!props.options) {
-        log.debug(`[DropdownSection]: props.options = ${props.options}`)
+    if (!props.attrList) {
+        log.debug(`[DropdownSection]: props.options = ${props.attrList}`)
         return null
     }
 
-    let modifiedOptions = props.options.map(({id, type}) => {
+    let optionList = props.attrList.map(({id, type}) => {
         log.trace(`[DropdownSection]: modifiedOptions id = ${id}, type = ${type}`)
         return {
             key: id,
@@ -21,20 +21,19 @@ const DropdownSection = props => {
 
     const handleDropdownChange = (e, {value}) => {
         log.debug(`[DropdownSection]: handleDropdownChange`)
-        props.onChangeHandler(value, modifiedOptions[value - 1].text)
+        props.onChangeHandler(value, optionList[value - 1].text)
     }
 
-    log.debug(`[DropdownSection]: props.activeInfo = ${JSON.stringify(props.activeInfo)}`)
-    log.info(`[DropdownSection]: Rendering DropdownSection Component`)
+    log.info(`[DropdownSection]: Rendering DropdownSection Component props.selectedValue.value = ${props.selectedValue.value}`)
     return (
         <Menu compact>
-            <StyledDropdown options={modifiedOptions}
+            <StyledDropdown options={optionList}
                             simple item
                             id="customDropdown"
-                            text={`Sort by: ${props.activeInfo[1] ? props.activeInfo[1]
-                                : modifiedOptions ? modifiedOptions[0].text : null}`}
+                            text={`Sort by: ${props.selectedValue.value? props.selectedValue.value
+                                : optionList ? optionList[0].text : null}`}
                             onChange={handleDropdownChange}
-                            value={props.activeInfo[0]}/>
+                            value={props.selectedValue.id}/>
 
         </Menu>
 

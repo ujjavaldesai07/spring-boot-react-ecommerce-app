@@ -86,24 +86,24 @@ public class ProductInfoRepositoryImpl {
                 case price:
                     // eg bt:100,1000
                     String extractedValue = entry.getValue().substring(3);
+                    String[] prices = extractedValue.split(",");
                     switch (QueryType.MathOperator.valueOf(entry.getValue().substring(0, 2))) {
                         case bt:
-                            String[] range = extractedValue.split(",");
                             conditions.add(String.format(" (p.price between ?%d AND ?%d)", mapParametersKey.getKey(),
                                     mapParametersKey.getKey() + 1));
-                            mapParams.put(mapParametersKey.getKey(), Double.parseDouble(range[0]));
+                            mapParams.put(mapParametersKey.getKey(), Double.parseDouble(prices[0]));
                             mapParametersKey.increment();
-                            mapParams.put(mapParametersKey.getKey(), Double.parseDouble(range[1]));
+                            mapParams.put(mapParametersKey.getKey(), Double.parseDouble(prices[1]));
                             mapParametersKey.increment();
                             break;
                         case lt:
                             conditions.add(String.format(" (p.price <= ?%d)", mapParametersKey.getKey()));
-                            mapParams.put(mapParametersKey.getKey(), Double.parseDouble(extractedValue));
+                            mapParams.put(mapParametersKey.getKey(), Double.parseDouble(prices[0]));
                             mapParametersKey.increment();
                             break;
                         case gt:
                             conditions.add(String.format(" (p.price >= ?%d)", mapParametersKey.getKey()));
-                            mapParams.put(mapParametersKey.getKey(), Double.parseDouble(extractedValue));
+                            mapParams.put(mapParametersKey.getKey(), Double.parseDouble(prices[0]));
                             mapParametersKey.increment();
                             break;
                         default:
