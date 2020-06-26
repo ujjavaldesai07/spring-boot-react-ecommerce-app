@@ -87,10 +87,7 @@ export const loadHomePage = () => async dispatch => {
 };
 
 export const loadProducts = filterQuery => async dispatch => {
-
     log.info(`[ACTION]: loadFilterProducts Calling Products API filterQuery = ${filterQuery}`)
-
-    filterQuery = filterQuery.replace(/\s/g, '');
 
     if(filterQuery) {
         const response = await commonServiceApi.get(`/products?q=${filterQuery}`);

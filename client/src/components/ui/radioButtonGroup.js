@@ -35,7 +35,7 @@ export default function RadioButtonsGroup(props) {
     return (
         <FormControl component="fieldset">
             <RadioGroup aria-label={props.title} name={props.title}
-                        value={props.selectedValue}
+                        value={props.selectedValue? props.selectedValue: false}
                         onChange={handleChange}>
                 {renderRadioButtonList(props.attrList)}
             </RadioGroup>

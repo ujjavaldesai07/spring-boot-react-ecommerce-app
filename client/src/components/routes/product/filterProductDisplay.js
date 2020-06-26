@@ -5,12 +5,7 @@ import {connect, useDispatch, useSelector} from "react-redux";
 import {loadProducts} from "../../../actions";
 import Rating from '@material-ui/lab/Rating';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
-import Box from '@material-ui/core/Box';
-import {Divider} from "@material-ui/core";
-import FilterChips from "./filterChips";
-import Pagination from '@material-ui/lab/Pagination';
 import {SELECT_FILTER_ATTRIBUTES} from "../../../actions/types";
-import DropdownSection from "../../ui/dropDown";
 import log from "loglevel";
 import {PageNotFound} from "../../ui/pageNotFound";
 import {
@@ -20,37 +15,16 @@ import {
 
 const FilterProductDisplay = props => {
     const filterProducts = useSelector(state => state.filterProductsReducer)
-    const selectedFilterAttributes = useSelector(state => state.selectedFilterAttributesReducer)
-    const filterAttributes = useSelector(state => state.filterAttributesReducer)
+    const selectedGenders = useSelector(state => state.selectGenderReducer)
+    const selectedApparels = useSelector(state => state.selectApparelReducer)
+    const selectedBrands = useSelector(state => state.selectBrandReducer)
+    const selectedPriceRanges = useSelector(state => state.selectPriceReducer)
+    const selectedSortValue = useSelector(state => state.selectSortReducer)
     const dispatch = useDispatch()
 
-    const selectAttributesFromURI = () => {
+    const selectAttributesAndPrepareQueryFromURI = () => {
         let uri = window.location.href.split("products?q=")
-
-        const getPriceRangeId = (value) => {
-            log.info(`[FilterProductDisplay] getPriceRangeId value = ${value}`)
-
-            log.info(`filterAttributes = ${JSON.stringify(filterAttributes)}`)
-            let keyValue = value.split(":")
-
-            if (keyValue[0].localeCompare("bt") === 0) {
-                // search for the Id
-                filterAttributes.priceRanges.forEach(obj => {
-                    if (obj.type.includes(keyValue[0].split(",")[1], 2)) {
-                        return obj.id
-                    }
-                })
-
-            } else if (keyValue[0].localeCompare("lt") === 0) {
-                // returns first Id
-                return 1
-            } else {
-                // returns last Id
-                return filterAttributes.priceRanges.length
-            }
-        }
-
-        log.info(`[FilterProductDisplay] Page Reload is detected with query params = ${uri[1]}`)
+        log.info(`[FilterProductDisplay] (selectAttributesAndPrepareQueryFromURI) Page Reload is detected with query params = ${uri[1]}`)
 
         if (uri) {
             let queryParamStr = uri[1]
@@ -64,9 +38,8 @@ const FilterProductDisplay = props => {
                 let valueList = []
 
                 if (mapKey.includes("pr", 0)) {
-                    reloadAttrState[mapKey] = getPriceRangeId(mapValue)
+                    reloadAttrState[mapKey] = [...reloadAttrState[mapKey], parseInt(mapValue.split("id:")[1])]
                 } else {
-
                     try {
                         mapValue.split(",").forEach(value => {
                             valueList.push(parseInt(value))
@@ -90,14 +63,13 @@ const FilterProductDisplay = props => {
                     reloadAttrState
                 }
             })
-            return queryParam
+            return queryParam.join("::")
         }
         return null
     }
 
     const prepareQueryParameters = () => {
-        log.info(`[FilterProductDisplay] prepareQueryParameters
-         selectedFilterAttributes = ${JSON.stringify(selectedFilterAttributes)}`)
+        log.info(`[FilterProductDisplay] (prepareQueryParameters) selectedFilterAttributes = ${JSON.stringify(selectedFilterAttributes)}`)
 
         let filterQuery = []
 
@@ -105,23 +77,18 @@ const FilterProductDisplay = props => {
         // and will add the default category=all that returns all
         // the products
         if (selectedFilterAttributes.clearAll) {
+
             log.info(`[FilterProductDisplay] Clear All parameter is found true`)
             filterQuery.push("category=all")
+
         } else {
 
-            // page reload is fired
-            if (selectedFilterAttributes.gender.length === 0
-                && selectedFilterAttributes.apparel.length === 0
-                && selectedFilterAttributes.brand.length === 0) {
-                return selectAttributesFromURI();
-            }
-
-            let filterAttr = ["gender", "apparel", "brand", "page"]
             log.info(`[FilterProductDisplay] Searching for query params of categories`)
+            let filterAttr = ["gender", "apparel", "brand", "page"]
 
             filterAttr.forEach(function (attr) {
                 try {
-                    if (selectedFilterAttributes && selectedFilterAttributes[attr].length > 0) {
+                    if (selectedFilterAttributes[attr].length > 0) {
                         filterQuery.push(`${attr}=${selectedFilterAttributes[attr].toString()}`)
                     }
                 } catch (e) {
@@ -137,38 +104,47 @@ const FilterProductDisplay = props => {
 
         if (selectedFilterAttributes.price.length > 0) {
             selectedFilterAttributes.price.forEach(function (element) {
-
                 let priceRange = filterAttributes.priceRanges[element - 1].type
                     .replace(new RegExp('\\$', 'g'), '')
+                let priceRangeId = filterAttributes.priceRanges[element - 1].id
 
                 if (priceRange[0] === "U") {
-                    filterQuery.push(`price=lt:${priceRange.split(" ")[1]}`)
+                    filterQuery.push(`price=lt:${priceRange.split(" ")[1]},id:${priceRangeId}`)
                 } else if (priceRange[0] === "A") {
-                    filterQuery.push(`price=gt:${priceRange.split(" ")[1]}`)
+                    filterQuery.push(`price=gt:${priceRange.split(" ")[1]},id:${priceRangeId}`)
                 } else {
                     filterQuery.push(`price=bt:${priceRange.split("-")[0]},
-                    ${priceRange.split("-")[1]}`)
+                    ${priceRange.split("-")[1]},id:${priceRangeId}`)
                 }
 
             })
         }
-
         return filterQuery.join("::")
     }
 
 
     useEffect(() => {
         log.info(`[FilterProductDisplay] Component did mount.`)
+        let query
 
-        let query = prepareQueryParameters()
+        if ((selectedGenders.length + selectedApparels.length
+            + selectedBrands.length) === 0) {
 
-        log.info(`[FilterProductDisplay] prepareQueryParameters invoked and returned query = ${query}`)
-
-        if (query && query.length > 0) {
-            log.info(`[FilterProductDisplay] loading filter products`)
-            props.loadFilterProducts(prepareQueryParameters());
+            // page reload is fired or navigated from different page
+            // so extract the parameters from URI
+            query = selectAttributesAndPrepareQueryFromURI();
         } else {
-            log.info(`[FilterProductDisplay] query not found`)
+            query = prepareQueryParameters()
+        }
+
+        log.info(`[FilterProductDisplay]` +
+            `query = ${query}, length = ${query.length}, typeOf = ${typeof query}`)
+
+        if (query) {
+            log.info(`[FilterProductDisplay] loading filter products`)
+            props.loadFilterProducts(query.replace(/\s/g, ''));
+        } else {
+            log.info(`[FilterProductDisplay] query is null`)
         }
 
         window.scrollTo(0, 0)
@@ -268,40 +244,11 @@ const FilterProductDisplay = props => {
         });
     };
 
-    log.trace(`[FilterProductDisplay] filterAttributes = ${JSON.stringify(filterAttributes)}`)
-    log.trace(`[FilterProductDisplay] filterProducts = ${JSON.stringify(filterProducts)}`)
-    log.debug(`[FilterProductDisplay] selectedFilterAttributes = ${JSON.stringify(selectedFilterAttributes)}`)
-
     log.info(`[FilterProductDisplay] Rendering FilterProductDisplay Component`)
     return (
-        <>
-            <span style={{display: "flex", padding: "20px 0 20px 0"}}>
-            <Box width="75%" style={{padding: "26px 0 0 20px"}}>
-                <FilterChips/>
-            </Box>
-                <Box width="auto">
-                     <DropdownSection
-                         options={filterAttributes.sorts}
-                         activeInfo={selectedFilterAttributes.sortBy}
-                         onChangeHandler={dropdownHandler}/>
-                </Box>
-            </span>
-            <Divider/>
-            <Grid container spacing={0} style={{padding: "20px 0 0 20px"}}>
-                {renderImageList(filterProducts)}
-            </Grid>
-            <Divider/>
-            <Grid container direction="column"
-                  alignItems="center"
-                  justify="center"
-                  style={{padding: "30px 0 100px 0"}}>
-                <Pagination onChange={handleChangePage}
-                            page={selectedFilterAttributes.page[0] === 0 ?
-                                1 : (selectedFilterAttributes.page[0] / MAX_PRODUCTS_PER_PAGE) + 1}
-                            count={5}
-                            color="secondary"/>
-            </Grid>
-        </>
+        <Grid container spacing={0} style={{padding: "20px 0 0 20px"}}>
+            {renderImageList(filterProducts)}
+        </Grid>
     )
 };
 export default connect(null, {loadFilterProducts: loadProducts})(FilterProductDisplay);

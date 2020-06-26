@@ -5,7 +5,11 @@ import mainScreenReducer from "./screens/mainScreenReducer";
 import tabHoverEventReducer from "./events/tabHoverEventReducer";
 import filterProductsReducer from "./screens/filter/filterProductsReducer";
 import filterAttributesReducer from "./screens/filter/filterAttributesReducer";
-import selectedFilterAttributesReducer from "./screens/filter/selectedFilterAttributesReducer";
+import {
+    selectGenderReducer, selectApparelReducer,
+    selectBrandReducer, selectPriceReducer,
+    selectSortReducer
+} from "./screens/filter/selectedFilterAttributesReducer"
 
 
 export default combineReducers({
@@ -15,5 +19,9 @@ export default combineReducers({
     tabHoverEventReducer,
     filterProductsReducer,
     filterAttributesReducer,
-    selectedFilterAttributesReducer,
+    selectGenderReducer,
+    selectApparelReducer,
+    selectBrandReducer,
+    selectPriceReducer,
+    selectSortReducer
 });
