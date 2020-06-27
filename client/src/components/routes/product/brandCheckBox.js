@@ -7,12 +7,17 @@ import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
 import {ADD_APPAREL_CATEGORY, ADD_BRAND_CATEGORY} from "../../../actions/types";
 
-export default function BrandCheckBox(props) {
+export default function BrandCheckBox() {
     const TITLE = "Brand"
     const dispatch = useDispatch()
     const brandList = useSelector(state => state.filterAttributesReducer?
         state.filterAttributesReducer.brands : null)
     const selectedBrands = useSelector(state => state.selectBrandReducer)
+
+    if(!brandList) {
+        log.debug(`[BrandCheckBox] brandList is null`)
+        return null
+    }
 
     const handleSearchClick = () => {
         log.debug(`[BrandCheckBox] handleSearchClick is called`)
@@ -38,7 +43,7 @@ export default function BrandCheckBox(props) {
         })
     }
 
-    log.info(`[BrandCheckBox] selectedBrands = ${JSON.stringify(selectedBrands)}`)
+    log.debug(`[BrandCheckBox] selectedBrands = ${JSON.stringify(selectedBrands)}`)
 
     log.info(`[BrandCheckBox] Rendering BrandCheckBox Component`)
 

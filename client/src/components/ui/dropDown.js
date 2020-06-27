@@ -24,7 +24,7 @@ const DropdownSection = props => {
         props.onChangeHandler(value, optionList[value - 1].text)
     }
 
-    log.info(`[DropdownSection]: Rendering DropdownSection Component props.selectedValue.value = ${props.selectedValue.value}`)
+    log.debug(`[DropdownSection]: Rendering DropdownSection Component props.selectedValue.value = ${props.selectedValue.value}`)
     return (
         <Menu compact>
             <StyledDropdown options={optionList}

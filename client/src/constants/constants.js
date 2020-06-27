@@ -9,3 +9,5 @@ export const INITIAL_FILTER_ATTRIBUTES_STATE = {
     sortBy: [1, undefined, "newest"],
     clearAll: false
 }
+
+export const PRODUCT_ROUTE = '/products'

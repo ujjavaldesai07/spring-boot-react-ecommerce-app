@@ -11,15 +11,15 @@ export default function GenderRadioButton() {
     const gender = useSelector(state => state.selectGenderReducer)
 
     if(!genderList) {
-        log.info(`[FilterRadioButtonSection] genderList is null`)
+        log.debug(`[GenderRadioButton] genderList is null`)
         return null
     }
 
     const handleRadioButtonChange = value => {
-        log.debug(`[FilterRadioButtonSection] handleRadioButtonChange value = ${value}`)
+        log.debug(`[GenderRadioButton] handleRadioButtonChange value = ${value}`)
         for (let i = 0; i < genderList.length; i++) {
             if (value.charAt(0).localeCompare(genderList[i].type.charAt(0)) === 0) {
-                log.debug(`[FilterRadioButtonSection] handleRadioButtonChange id = ${genderList[i].id}`)
+                log.debug(`[GenderRadioButton] handleRadioButtonChange id = ${genderList[i].id}`)
                 dispatch({
                     type: ADD_GENDER_CATEGORY,
                     payload: {
@@ -32,7 +32,7 @@ export default function GenderRadioButton() {
         }
     }
 
-    log.info(`[FilterRadioButtonSection] Rendering FilterRadioButtonSection Component`)
+    log.info(`[GenderRadioButton] Rendering FilterRadioButtonSection Component`)
 
     return (
         <RadioButtonsGroup onChangeHandler={handleRadioButtonChange}

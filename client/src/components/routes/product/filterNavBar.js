@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
@@ -13,6 +13,12 @@ import BrandCheckBox from "./brandCheckBox";
 import PriceCheckBox from "./priceCheckBox";
 import Grid from "@material-ui/core/Grid";
 import ClearAllButton from "./clearAllButton";
+import filterAttributesReducer from "../../../reducers/screens/filter/filterAttributesReducer";
+import {connect, useDispatch, useSelector} from "react-redux";
+import {loadFilterAttributes, loadProducts} from "../../../actions";
+import {INITIAL_FILTER_ATTRIBUTES_STATE} from "../../../constants/constants";
+import {ADD_APPAREL_CATEGORY, BROWSER_RELOAD_STATE} from "../../../actions/types";
+import history from "../../../history";
 
 const drawerWidth = 240;
 
@@ -48,10 +54,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function FilterNavBar(props) {
-    const {window} = props;
+    const {window} = props
     const classes = useStyles();
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = React.useState(false);
+    const dispatch = useDispatch()
+
+    // load product attributes from API
+    useEffect(() => {
+        log.info("[FilterNavBar] Component did mount and filter attributes API is called.")
+        props.loadFilterAttributes();
+        props.loadProducts(history.location.search.split("?q=")[1])
+
+        // eslint-disable-next-line
+    }, [filterAttributesReducer]);
 
     const handleDrawerToggle = () => {
         log.debug(`[FilterNavBar] handleDrawerToggle is called`)
@@ -129,4 +145,4 @@ function FilterNavBar(props) {
     );
 }
 
-export default FilterNavBar;
+export default connect(null, {loadFilterAttributes, loadProducts})(FilterNavBar);

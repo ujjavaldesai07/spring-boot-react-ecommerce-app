@@ -32,9 +32,15 @@ export const selectGenderReducer = (state = [], action) => {
     switch (action.type) {
         case ADD_GENDER_CATEGORY:
             // if id found then remove it
-            let filterList = removeValueIfExist(state, action.payload.id)
-            if (filterList) {
-                return filterList
+            if(action.payload.id) {
+                let filterList = removeValueIfExist(state, action.payload.id)
+                if (filterList) {
+                    return filterList
+                }
+            }
+
+            if(action.payload.attrList) {
+                return action.payload.attrList;
             }
 
             return [action.payload]
@@ -48,10 +54,17 @@ export const selectGenderReducer = (state = [], action) => {
 export const selectApparelReducer = (state = [], action) => {
     switch (action.type) {
         case ADD_APPAREL_CATEGORY:
-            let filterList = removeValueIfExist(state, action.payload.id)
-            if (filterList) {
-                return filterList
+            if(action.payload.id) {
+                let filterList = removeValueIfExist(state, action.payload.id)
+                if (filterList) {
+                    return filterList
+                }
             }
+
+            if(action.payload.attrList) {
+                return state.concat(action.payload.attrList);
+            }
+
             return [...state, action.payload]
 
         case REMOVE_APPAREL_CATEGORY:
@@ -64,10 +77,17 @@ export const selectApparelReducer = (state = [], action) => {
 export const selectBrandReducer = (state = [], action) => {
     switch (action.type) {
         case ADD_BRAND_CATEGORY:
-            let filterList = removeValueIfExist(state, action.payload.id)
-            if (filterList) {
-                return filterList
+            if(action.payload.id) {
+                let filterList = removeValueIfExist(state, action.payload.id)
+                if (filterList) {
+                    return filterList
+                }
             }
+
+            if(action.payload.attrList) {
+                return state.concat(action.payload.attrList);
+            }
+
             return [...state, action.payload]
         case REMOVE_BRAND_CATEGORY:
             return []
@@ -79,10 +99,17 @@ export const selectBrandReducer = (state = [], action) => {
 export const selectPriceReducer = (state = [], action) => {
     switch (action.type) {
         case ADD_PRICE_CATEGORY:
-            let filterList = removeValueIfExist(state, action.payload.id)
-            if (filterList) {
-                return filterList
+            if(action.payload.id) {
+                let filterList = removeValueIfExist(state, action.payload.id)
+                if (filterList) {
+                    return filterList
+                }
             }
+
+            if(action.payload.attrList) {
+                return state.concat(action.payload.attrList);
+            }
+
             return [...state, action.payload]
         case REMOVE_PRICE_CATEGORY:
             return []
@@ -94,6 +121,10 @@ export const selectPriceReducer = (state = [], action) => {
 export const selectSortReducer = (state = {id: 1, value: null}, action) => {
     switch (action.type) {
         case SELECT_SORT_CATEGORY:
+            if(action.payload.attrList) {
+                return action.payload.attrList[0];
+            }
+
             return action.payload
         default:
             return state;

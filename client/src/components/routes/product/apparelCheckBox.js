@@ -7,12 +7,17 @@ import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
 import {ADD_APPAREL_CATEGORY} from "../../../actions/types";
 
-export default function ApparelCheckBox(props) {
+export default function ApparelCheckBox() {
     const TITLE = "Apparel"
     const dispatch = useDispatch()
     const apparelList = useSelector(state => state.filterAttributesReducer?
         state.filterAttributesReducer.apparels : null)
     const selectedApparels = useSelector(state => state.selectApparelReducer)
+
+    if(!apparelList) {
+        log.debug(`[ApparelCheckBox] apparelList is null`)
+        return null
+    }
 
     const handleSearchClick = () => {
         log.debug(`[ApparelCheckBox] handleSearchClick is called`)
@@ -37,7 +42,7 @@ export default function ApparelCheckBox(props) {
         })
     }
 
-    log.info(`[ApparelCheckBox] selectedApparels = ${JSON.stringify(selectedApparels)}`)
+    log.debug(`[ApparelCheckBox] selectedApparels = ${JSON.stringify(selectedApparels)}`)
 
     log.info(`[ApparelCheckBox] Rendering ApparelCheckBox Component`)
 
