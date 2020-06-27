@@ -27,6 +27,11 @@ public class ProductInfoRepositoryImpl {
         }
     }
 
+    private final int NEWEST = 1;
+    private final int POPULARITY = 2;
+    private final int LOW_TO_HIGH = 3;
+    private final int HIGH_TO_LOW = 4;
+
     @Getter
     @Setter
     @NoArgsConstructor
@@ -121,18 +126,18 @@ public class ProductInfoRepositoryImpl {
                     break;
 
                 case sortby:
-                    switch (QueryType.SortOperator.valueOf(entry.getValue())) {
-                        case lh:
-                            sortBy = " order by p.price asc";
+                    switch (Integer.parseInt(entry.getValue())) {
+                        case NEWEST:
+                            sortBy = " order by p.publicationDate desc";
                             break;
-                        case hl:
-                            sortBy = " order by p.price desc";
-                            break;
-                        case ratings:
+                        case POPULARITY:
                             sortBy = " order by p.ratings desc";
                             break;
-                        case newest:
-                            sortBy = " order by p.publicationDate desc";
+                        case LOW_TO_HIGH:
+                            sortBy = " order by p.price asc";
+                            break;
+                        case HIGH_TO_LOW:
+                            sortBy = " order by p.price desc";
                             break;
                     }
                     break;

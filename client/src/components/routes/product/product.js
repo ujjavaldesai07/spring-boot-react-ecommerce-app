@@ -1,12 +1,9 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 
 import Grid from '@material-ui/core/Grid';
 import FilterNavBar from "./filterNavBar";
-// import FilterProductsDisplay from "./filterProductDisplay";
-import {connect} from "react-redux";
-import {loadFilterAttributes} from "../../../actions";
+import FilterProductsDisplay from "./filterProductDisplay";
 import log from 'loglevel';
-import filterAttributesReducer from "../../../reducers/screens/filter/filterAttributesReducer";
 import Box from "@material-ui/core/Box";
 import FilterChips from "./filterChips";
 import DropdownSection from "../../ui/dropDown";
@@ -15,15 +12,7 @@ import Pagination from "@material-ui/lab/Pagination";
 import {MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
 import FilterDropdown from "./filterDropdown";
 
-function Product(props) {
-
-    // load product attributes from API
-    useEffect(() => {
-        log.info("[Product] Component did mount and filter attributes API is called.")
-        props.loadFilterAttributes();
-
-        // eslint-disable-next-line
-    }, [filterAttributesReducer]);
+function Product() {
 
     log.info("[Product] Rendering Product Component.")
     return (
@@ -41,7 +30,7 @@ function Product(props) {
                                 </Box>
             </span>
                 <Divider/>
-                {/*<FilterProductsDisplay/>*/}
+                <FilterProductsDisplay/>
                 <Divider/>
                 <Grid container direction="column"
                       alignItems="center"
@@ -58,4 +47,4 @@ function Product(props) {
     );
 }
 
-export default connect(null, {loadFilterAttributes})(Product);
+export default Product;

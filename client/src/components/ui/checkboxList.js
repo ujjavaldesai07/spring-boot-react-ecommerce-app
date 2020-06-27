@@ -33,13 +33,13 @@ export default function CheckboxList(props) {
     }
 
     const handleToggle = id => () => {
-        log.info(`[CheckboxList] handleToggle for CheckboxList value = ${id}`)
+        log.debug(`[CheckboxList] handleToggle for CheckboxList value = ${id}`)
 
         let value
         for(let i = 0; i < props.attrList.length; i++) {
             if(id === props.attrList[i].id) {
                 value = props.attrList[i].type
-                log.info(`[CheckboxList] handleToggle for CheckboxList value = ${value}`)
+                log.debug(`[CheckboxList] handleToggle for CheckboxList value = ${value}`)
             }
         }
 
@@ -87,7 +87,7 @@ export default function CheckboxList(props) {
     }
 
     log.trace(`[CheckboxList] props.attrList = ${JSON.stringify(props.attrList)}`)
-    log.info(`[CheckboxList] Rendering CheckboxList Component`)
+    log.debug(`[CheckboxList] Rendering CheckboxList Component`)
     return (
         <List
             className={classes.root}>

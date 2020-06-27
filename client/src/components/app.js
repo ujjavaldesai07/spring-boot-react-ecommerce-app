@@ -12,7 +12,7 @@ const SignUpScreen = lazy(() => import('./routes/signUp'));
 const FilterScreen = lazy(() => import('./routes/product/product'));
 
 const App = () => {
-    log.info(`[App]: Rendering App Component`)
+    log.info(`[App]: Rendering App Component window`)
     return (
         <Suspense fallback={<Spinner minHeight="100vh"/>}>
             <Router history={history}>

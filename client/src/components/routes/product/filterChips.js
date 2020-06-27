@@ -25,10 +25,10 @@ const FilterChips = () => {
 
     const addBoxTagToList = (selectedAttrList, categoryId) => {
         let chipBoxList = []
-        log.info(`[FilterChips] addBoxTagToList boxDataList = ${JSON.stringify(selectedAttrList)}`)
+        log.debug(`[FilterChips] addBoxTagToList boxDataList = ${JSON.stringify(selectedAttrList)}`)
 
         selectedAttrList.forEach(({id,value}) => {
-            log.info(`[FilterChips] renderChipBoxes id = ${id}, value = ${value}`)
+            log.debug(`[FilterChips] renderChipBoxes id = ${id}, value = ${value}`)
             chipBoxList.push(
                 <Box key={`${categoryId}-${id}`} width="auto" display="inline-block" p={0.2}>
                     <Chip label={value}
@@ -42,7 +42,7 @@ const FilterChips = () => {
     }
 
     const renderChipBoxes = () => {
-        log.info(`[FilterChips] renderChipBoxes is invoked`)
+        log.debug(`[FilterChips] renderChipBoxes is invoked`)
 
         let chipBoxList = []
         if (selectedGenders.length > 0) {
@@ -59,7 +59,7 @@ const FilterChips = () => {
         }
 
         if (chipBoxList) {
-            log.info(`[FilterChips] renderChipBoxes chipBoxList = ${chipBoxList}`)
+            log.debug(`[FilterChips] renderChipBoxes chipBoxList = ${chipBoxList}`)
             return chipBoxList
         }
 
@@ -68,7 +68,7 @@ const FilterChips = () => {
     }
 
     const findValueAndDispatch = (actionType, id, selectedAttrList) => {
-        log.info(`[FilterChips] findValueAndDispatch id = ${id}`+
+        log.debug(`[FilterChips] findValueAndDispatch id = ${id}`+
             `, actionType = ${actionType}, selectedAttrList = ${JSON.stringify(selectedAttrList)}`)
 
         for (let i = 0; i < selectedAttrList.length; i++) {

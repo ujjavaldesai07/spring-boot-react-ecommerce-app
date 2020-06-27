@@ -14,7 +14,7 @@ export default function RadioButtonsGroup(props) {
 
     const renderRadioButtonList = rbList => {
         if (!rbList) {
-            log.debug(`[RadioButtonsGroup]: rbList is null`)
+            log.info(`[RadioButtonsGroup]: rbList is null`)
             return null
         }
 
@@ -28,7 +28,7 @@ export default function RadioButtonsGroup(props) {
         })
     }
 
-    log.trace(`[RadioButtonsGroup]: props.attrList = ${props.attrList}`)
+    log.debug(`[RadioButtonsGroup]: props.attrList = ${props.attrList}`)
     log.debug(`[RadioButtonsGroup]: props.selectedValue = ${props.selectedValue}`)
     log.info(`[RadioButtonsGroup]: Rendering RadioButtonsGroup Component`)
 
