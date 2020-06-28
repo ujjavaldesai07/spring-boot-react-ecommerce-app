@@ -1,8 +1,11 @@
 import React from 'react';
 import Swiper from 'react-id-swiper';
 import log from 'loglevel';
+import {useSelector} from "react-redux";
 
 const VerticalSlider = props => {
+    const homeAPIData = useSelector(state => state.mainScreenReducer? state.mainScreenReducer : null)
+
     const params = {
         spaceBetween: 30,
         centeredSlides: true,
@@ -20,8 +23,11 @@ const VerticalSlider = props => {
         }
     }
 
-    if (!props.carouselImages) {
-        log.debug("[VerticalSlider]: props.carouselImages is null")
+    if (!homeAPIData) {
+        log.debug("[VerticalSlider]: homeAPIData is null")
+        return null
+    } else if (!homeAPIData.carousels) {
+        log.debug("[VerticalSlider]: homeAPIData.carousels is null")
         return null
     }
 
@@ -42,7 +48,7 @@ const VerticalSlider = props => {
     log.info("[VerticalSlider]: Rendering VerticalSlider Component")
     return (
         <Swiper {...params} >
-            {renderImageList(props.carouselImages)}
+            {renderImageList(homeAPIData.carousels)}
         </Swiper>
     )
 };

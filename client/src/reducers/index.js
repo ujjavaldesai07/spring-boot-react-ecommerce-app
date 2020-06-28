@@ -8,7 +8,7 @@ import filterAttributesReducer from "./screens/filter/filterAttributesReducer";
 import {
     selectGenderReducer, selectApparelReducer,
     selectBrandReducer, selectPriceReducer,
-    selectSortReducer
+    selectSortReducer, selectPageReducer
 } from "./screens/filter/selectedFilterAttributesReducer"
 
 
@@ -23,5 +23,6 @@ export default combineReducers({
     selectApparelReducer,
     selectBrandReducer,
     selectPriceReducer,
-    selectSortReducer
+    selectSortReducer,
+    selectPageReducer
 });

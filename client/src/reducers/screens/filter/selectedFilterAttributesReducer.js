@@ -1,9 +1,10 @@
 import {
     ADD_APPAREL_CATEGORY, ADD_BRAND_CATEGORY,
     ADD_GENDER_CATEGORY, ADD_PRICE_CATEGORY, REMOVE_APPAREL_CATEGORY, REMOVE_BRAND_CATEGORY,
-    REMOVE_GENDER_CATEGORY, REMOVE_PRICE_CATEGORY, SELECT_SORT_CATEGORY
+    REMOVE_GENDER_CATEGORY, REMOVE_PRICE_CATEGORY, SELECT_PRODUCT_PAGE, SELECT_SORT_CATEGORY
 } from "../../../actions/types";
 import log from 'loglevel';
+import {INITIAL_PAGINATION_STATE, INITIAL_SORT_STATE, MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
 
 const removeValueIfExist = (list, id) => {
     if(list.length === 0) {
@@ -118,13 +119,22 @@ export const selectPriceReducer = (state = [], action) => {
     }
 };
 
-export const selectSortReducer = (state = {id: 1, value: null}, action) => {
+export const selectSortReducer = (state = INITIAL_SORT_STATE, action) => {
     switch (action.type) {
         case SELECT_SORT_CATEGORY:
             if(action.payload.attrList) {
                 return action.payload.attrList[0];
             }
 
+            return action.payload
+        default:
+            return state;
+    }
+};
+
+export const selectPageReducer = (state = INITIAL_PAGINATION_STATE, action) => {
+    switch (action.type) {
+        case SELECT_PRODUCT_PAGE:
             return action.payload
         default:
             return state;

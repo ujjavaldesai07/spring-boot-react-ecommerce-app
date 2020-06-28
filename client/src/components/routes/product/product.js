@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 
 import Grid from '@material-ui/core/Grid';
 import FilterNavBar from "./filterNavBar";
@@ -6,13 +6,35 @@ import FilterProductsDisplay from "./filterProductDisplay";
 import log from 'loglevel';
 import Box from "@material-ui/core/Box";
 import FilterChips from "./filterChips";
-import DropdownSection from "../../ui/dropDown";
 import {Divider} from "@material-ui/core";
-import Pagination from "@material-ui/lab/Pagination";
-import {MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
 import FilterDropdown from "./filterDropdown";
+import FilterPagination from "./filterPagination";
+import {
+    REMOVE_APPAREL_CATEGORY,
+    REMOVE_BRAND_CATEGORY,
+    REMOVE_GENDER_CATEGORY,
+    REMOVE_PRICE_CATEGORY, SELECT_PRODUCT_PAGE, SELECT_SORT_CATEGORY
+} from "../../../actions/types";
+import {useDispatch} from "react-redux";
+import {INITIAL_PAGINATION_STATE, INITIAL_SORT_STATE} from "../../../constants/constants";
 
 function Product() {
+
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+
+        // componentWillUnmount
+        return () => {
+            log.info("[Product] Component will unmount...")
+            dispatch({type: REMOVE_GENDER_CATEGORY})
+            dispatch({type: REMOVE_APPAREL_CATEGORY})
+            dispatch({type: REMOVE_BRAND_CATEGORY})
+            dispatch({type: REMOVE_PRICE_CATEGORY})
+            dispatch({type: SELECT_PRODUCT_PAGE, payload: INITIAL_PAGINATION_STATE})
+            dispatch({type: SELECT_SORT_CATEGORY, payload: INITIAL_SORT_STATE})
+        };
+    })
 
     log.info("[Product] Rendering Product Component.")
     return (
@@ -32,16 +54,7 @@ function Product() {
                 <Divider/>
                 <FilterProductsDisplay/>
                 <Divider/>
-                <Grid container direction="column"
-                      alignItems="center"
-                      justify="center"
-                      style={{padding: "30px 0 100px 0"}}>
-                    {/*<Pagination onChange={handleChangePage}*/}
-                    {/*            page={selectedFilterAttributes.page[0] === 0 ?*/}
-                    {/*                1 : (selectedFilterAttributes.page[0] / MAX_PRODUCTS_PER_PAGE) + 1}*/}
-                    {/*            count={5}*/}
-                    {/*            color="secondary"/>*/}
-                </Grid>
+                <FilterPagination/>
             </Grid>
         </Grid>
     );
