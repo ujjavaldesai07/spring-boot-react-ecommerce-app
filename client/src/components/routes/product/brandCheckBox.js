@@ -5,7 +5,7 @@ import CollapsableSearch from "../../ui/collapsableSearch";
 import CheckboxList from "../../ui/checkboxList";
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
-import {ADD_APPAREL_CATEGORY, ADD_BRAND_CATEGORY} from "../../../actions/types";
+import {ADD_BRAND_CATEGORY} from "../../../actions/types";
 
 export default function BrandCheckBox() {
     const TITLE = "Brand"

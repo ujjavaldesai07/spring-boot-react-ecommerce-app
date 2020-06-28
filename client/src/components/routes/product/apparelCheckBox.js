@@ -5,7 +5,9 @@ import CollapsableSearch from "../../ui/collapsableSearch";
 import CheckboxList from "../../ui/checkboxList";
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
-import {ADD_APPAREL_CATEGORY} from "../../../actions/types";
+import {
+    ADD_APPAREL_CATEGORY
+} from "../../../actions/types";
 
 export default function ApparelCheckBox() {
     const TITLE = "Apparel"

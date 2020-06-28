@@ -2,8 +2,9 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import {Typography} from "@material-ui/core";
 import {Link} from "react-router-dom";
-import {useDispatch} from "react-redux";
 import log from 'loglevel';
+import {MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
+import {useSelector} from "react-redux";
 
 const queryType = {
     brand: 1,
@@ -15,17 +16,18 @@ const headerStyles = {
     textDecoration: 'underline',
 }
 
-const TopCategoriesAndBrands = props => {
-    const dispatch = useDispatch();
+const TopCategoriesAndBrands = () => {
+    const homeAPIData = useSelector(state => state.mainScreenReducer? state.mainScreenReducer : null)
 
-    if (!props.brandImages) {
-        log.debug(`[TopCategoriesAndBrands]: props.brandImages is null`)
-        return null;
-    }
-
-    if (!props.apparelImages) {
-        log.debug(`[TopCategoriesAndBrands]: props.apparelImages is null`)
-        return null;
+    if (!homeAPIData) {
+        log.debug("[TopCategoriesAndBrands]: homeAPIData is null")
+        return null
+    } else if (!homeAPIData.brands) {
+        log.debug("[TopCategoriesAndBrands]: homeAPIData.brands is null")
+        return null
+    } else if (!homeAPIData.apparels) {
+        log.debug("[TopCategoriesAndBrands]: homeAPIData.apparels is null")
+        return null
     }
 
     const renderImageList = (imageList, filterQueryType) => {
@@ -56,7 +58,7 @@ const TopCategoriesAndBrands = props => {
             log.trace(`[TopCategoriesAndBrands]: filterQuery = ${filterQuery}, filterQueryType = ${filterQueryType}`)
             return (
                 <Grid key={info.title} item xs={2}>
-                    <Link to={`/products?q=${filterQuery}`}>
+                    <Link to={`/products?q=${filterQuery}::page=0,${MAX_PRODUCTS_PER_PAGE}`}>
                         <img src={info.filePath} alt={info.filePath} style={{width: '90%', height: '100%'}}
                              title={info.title}/>
                     </Link>
@@ -73,13 +75,13 @@ const TopCategoriesAndBrands = props => {
                 #Shop Top Brands
             </Typography>
             <Grid container spacing={0} style={{padding: '10px 0 0 30px'}}>
-                {renderImageList(props.brandImages, queryType.brand)}
+                {renderImageList(homeAPIData.brands, queryType.brand)}
             </Grid>
             <Typography variant="h5" noWrap style={headerStyles}>
                 #Shop Top Categories
             </Typography>
             <Grid container spacing={0} style={{padding: '20px 0 70px 30px'}}>
-                {renderImageList(props.apparelImages, queryType.apparel)}
+                {renderImageList(homeAPIData.apparels, queryType.apparel)}
             </Grid>
         </div>
     )

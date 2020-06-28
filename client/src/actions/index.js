@@ -8,11 +8,6 @@ import {
     HANDLE_SIGN_IN_ERROR,
     LOAD_FILTER_PRODUCTS,
     LOAD_FILTER_ATTRIBUTES,
-    ADD_APPAREL_CATEGORY,
-    ADD_PRICE_CATEGORY,
-    ADD_BRAND_CATEGORY,
-    ADD_GENDER_CATEGORY,
-    SELECT_SORT_CATEGORY,
 } from './types';
 import authApi from "../api/authServiceApi";
 import history from "../history";
@@ -20,7 +15,6 @@ import {Base64} from 'js-base64';
 import Cookies from 'js-cookie';
 import commonServiceApi from "../api/commonServiceApi";
 import log from "loglevel";
-import {PRODUCT_ROUTE} from "../constants/constants";
 
 export const setTokenFromCookie = tokenId => {
     log.info(`[ACTION]: setTokenFromCookie tokenId = ${tokenId}`)
@@ -90,7 +84,7 @@ export const signUp = formValues => async (dispatch) => {
 }
 
 export const loadHomePage = () => async dispatch => {
-    log.info(`[ACTION]: loadMainScreen API.`)
+    log.info(`[ACTION]: loadHomePage Calling homepage API.`)
     const response = await commonServiceApi.get('/home');
 
     if (response != null) {
@@ -103,11 +97,13 @@ export const loadProducts = filterQuery => async dispatch => {
     log.info(`[ACTION]: loadFilterProducts Calling Products API filterQuery = ${filterQuery}`)
 
     if (filterQuery) {
-        const response = await commonServiceApi.get(`/products?q=${filterQuery}`);
+        // remove spaces from the url
+        let uri = `/products?q=${filterQuery.replace(/\s/g, '')}`
+        const response = await commonServiceApi.get(uri);
         if (response != null) {
+            window.history.pushState('', '', uri)
             log.trace(`[ACTION]: Products = ${JSON.stringify(response.data)}`)
             dispatch({type: LOAD_FILTER_PRODUCTS, payload: JSON.parse(JSON.stringify(response.data))});
-            history.push('/products?q=' + filterQuery);
         } else {
             log.info(`[ACTION]: unable to fetch response for Products API`)
         }
@@ -121,90 +117,7 @@ export const loadFilterAttributes = () => async dispatch => {
     if (response != null) {
         log.trace(`[ACTION]: Filter = ${JSON.stringify(response.data)}`)
         dispatch({type: LOAD_FILTER_ATTRIBUTES, payload: JSON.parse(JSON.stringify(response.data))});
-
-        if (history.location && history.location.pathname.localeCompare(PRODUCT_ROUTE) === 0) {
-            let filterAttributes = response.data
-
-            const attrInfoList = [
-                {
-                    type: ADD_GENDER_CATEGORY,
-                    attrStr: "gender",
-                    attrList: filterAttributes.genders
-                },
-                {
-                    type: ADD_APPAREL_CATEGORY,
-                    attrStr: "apparel",
-                    attrList: filterAttributes.apparels
-                },
-                {
-                    type: ADD_BRAND_CATEGORY,
-                    attrStr: "brand",
-                    attrList: filterAttributes.brands
-                },
-                {
-                    type: SELECT_SORT_CATEGORY,
-                    attrStr: "sortby",
-                    attrList: filterAttributes.sorts
-                },
-
-            ]
-
-            attrInfoList.forEach(({type, attrStr, attrList}) => {
-                setFilterAttributesFromURL(dispatch, filterAttributes, type, attrStr, attrList)
-            })
-        }
     } else {
         log.info(`[ACTION]: unable to fetch response for Filter API`)
     }
 };
-
-const setFilterAttributesFromURL = (dispatch, filterAttributes, actionType, attrString, attrList) => {
-
-    const getObjectFromList = (id, list) => {
-        for (let i = 0; i < list.length; i++) {
-            if (list[i].id === parseInt(id))
-                return list[i]
-        }
-        return null
-    }
-
-    let params = history.location.search
-    let attrParams = params.split(`${attrString}=`)
-
-    if (attrParams.length === 1) {
-        return
-    }
-
-    let values
-    let selectedAttrList = []
-
-    // 0th index consist of "?q=" which we are not interest
-    // actual data starts from pIndex=1
-    for (let pIndex = 1; pIndex < attrParams.length; ++pIndex) {
-        try {
-            values = attrParams[pIndex].split("::")[0].split(",")
-        } catch (e) {
-            log.error("Corrupted URL. Unable to decode url field")
-        }
-
-        if (values.length > 0) {
-            values.forEach(id => {
-                let attrObject = getObjectFromList(id, attrList)
-                if (attrObject) {
-                    selectedAttrList.push({
-                        id: attrObject.id,
-                        value: attrObject.type
-                    })
-                }
-            })
-        }
-    }
-
-    dispatch({
-        type: actionType,
-        payload: {
-            attrList: selectedAttrList
-        }
-    })
-
-}

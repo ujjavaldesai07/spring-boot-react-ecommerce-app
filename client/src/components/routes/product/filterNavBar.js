@@ -14,10 +14,8 @@ import PriceCheckBox from "./priceCheckBox";
 import Grid from "@material-ui/core/Grid";
 import ClearAllButton from "./clearAllButton";
 import filterAttributesReducer from "../../../reducers/screens/filter/filterAttributesReducer";
-import {connect, useDispatch, useSelector} from "react-redux";
+import {connect, useSelector} from "react-redux";
 import {loadFilterAttributes, loadProducts} from "../../../actions";
-import {INITIAL_FILTER_ATTRIBUTES_STATE} from "../../../constants/constants";
-import {ADD_APPAREL_CATEGORY, BROWSER_RELOAD_STATE} from "../../../actions/types";
 import history from "../../../history";
 
 const drawerWidth = 240;
@@ -58,13 +56,18 @@ function FilterNavBar(props) {
     const classes = useStyles();
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = React.useState(false);
-    const dispatch = useDispatch()
+    const filterAttributes = useSelector(state => state.filterAttributesReducer)
 
     // load product attributes from API
     useEffect(() => {
         log.info("[FilterNavBar] Component did mount and filter attributes API is called.")
+
+        // if filter attributes exist then we dont want to call the API again
+        // unless user tries to reload the page.
+        if(filterAttributes) {
+            return
+        }
         props.loadFilterAttributes();
-        props.loadProducts(history.location.search.split("?q=")[1])
 
         // eslint-disable-next-line
     }, [filterAttributesReducer]);
