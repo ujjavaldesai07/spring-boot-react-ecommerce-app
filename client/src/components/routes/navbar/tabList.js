@@ -1,9 +1,9 @@
 import React from 'react';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import useTabStyles from "../../styles/materialUI/tabStyles";
+import useTabStyles from "../../../styles/materialUI/tabStyles";
 import {useDispatch, useSelector} from 'react-redux';
-import {HANDLE_TAB_HOVER_EVENT} from "../../actions/types";
+import {HANDLE_TAB_HOVER_EVENT} from "../../../actions/types";
 import log from "loglevel";
 
 function a11yProps(index) {
@@ -25,16 +25,6 @@ export default function TabList() {
         {index: 3, label: 'ESSENTIALS', style: classes.tabRoot, color: '#0db7af'},
         {index: 4, label: 'HOME & LIVING', style: classes.tabRoot, color: '#f2c210'},
     ];
-
-    const renderTabs = () => {
-        log.debug(`[TabList]: renderTabs is invoked`)
-        return tabsConfig.map(({index, label, style}) => {
-            log.trace(`[TabList]: renderTabs index = ${index}, label = ${label}, style = ${style}`)
-            return <Tab key={index} label={label} onMouseEnter={handleMouseEnter}
-                        onMouseLeave={handleMouseLeave}
-                        className={style} {...a11yProps(index)}/>
-        })
-    }
 
     const handleMouseEnter = (event) => {
         log.debug(`[TabList]: dispatching HANDLE_TAB_HOVER_EVENT with
@@ -59,6 +49,20 @@ export default function TabList() {
         });
     }
 
+    const renderTabs = () => {
+        log.debug(`[TabList]: renderTabs is invoked`)
+        return tabsConfig.map(({index, label, style}) => {
+            log.trace(`[TabList]: renderTabs index = ${index}, label = ${label}, style = ${style}`)
+            return (
+                    <Tab key={index} label={label} onMouseEnter={handleMouseEnter}
+                         onMouseLeave={handleMouseLeave}
+                         className={style}
+                         classes={{wrapper: classes.tabsWrapper}}
+                         {...a11yProps(index)}/>
+            )
+        })
+    }
+
     // Sometimes a race condition occurs which spits out the index as NAN
     // So reset the value of index to default
     if (isNaN(index)) {
@@ -68,16 +72,15 @@ export default function TabList() {
 
     log.info(`[TabList]: Rendering TabList Component`)
     return (
-        <Tabs style={{paddingTop: '10px'}} value={index}
+        <Tabs value={index}
               aria-label="simple-tabs"
-              centered
               TabIndicatorProps={{
                   style: {
                       backgroundColor: index === false ? 'none' : tabsConfig[index].color,
-                      height: '4px'
+                      height: '4px',
                   }
               }}
-              classes={{root: classes.tabFlexContainer}}
+              classes={{root: classes.tabsFlexContainer}}
         >
             {renderTabs()}
         </Tabs>

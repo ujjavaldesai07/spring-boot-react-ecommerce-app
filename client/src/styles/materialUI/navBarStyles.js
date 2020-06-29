@@ -1,54 +1,122 @@
 import {fade, makeStyles} from "@material-ui/core/styles";
 
-const useNavBarStyles =  makeStyles(theme => ({
-    grow: {
-        flexGrow: 1,
+const useNavBarStyles = makeStyles(theme => ({
+    grow_1: {
+        flex: 1,
+    },
+    grow_3: {
+        flex: 2,
+    },
+    growQuarter: {
+        flexGrow: 0.25,
     },
     menuButton: {
         marginRight: theme.spacing(2),
     },
     appBarRoot: {
-      boxShadow: "none !important",
+        boxShadow: "none !important",
+        height: 80,
+        [theme.breakpoints.down("xs")]: {
+            height: 60,
+        }
+    },
+    toolBarRoot: {
+        minHeight: 80,
+        [theme.breakpoints.down("xs")]: {
+            minHeight: 60,
+        }
     },
     title: {
+        flexGrow: 1,
         display: "none",
+        fontSize: "2.3rem",
+        color: "black",
+        fontWeight: 700,
         [theme.breakpoints.up("sm")]: {
-            display: "block"
-        }
+            display: "block",
+            paddingBottom: 5,
+        },
+        [theme.breakpoints.down("sm")]: {
+            display: "block",
+            fontSize: "1.5rem",
+            paddingBottom: 0,
+        },
+    },
+    searchContainer: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "flex-end"
+    },
+    arrowIcon: {
+        overflow: 'visible',
+        position: "absolute",
     },
     search: {
         position: "relative",
         borderRadius: theme.shape.borderRadius,
+        height: 40,
         backgroundColor: fade(theme.palette.common.black, 0.05),
         "&:hover": {
             backgroundColor: fade(theme.palette.common.black, 0.1),
         },
+        [theme.breakpoints.down("sm")]: {
+            width: '0ch',
+            float: 'right',
+            '&:focus': {
+                width: '20ch',
+            },
+        },
         [theme.breakpoints.up("sm")]: {
-            marginLeft: theme.spacing(3),
-            width: "auto"
+            width: '50ch',
+        },
+        [theme.breakpoints.up("md")]: {
+            width: '80ch',
+        },
+        [theme.breakpoints.up("lg")]: {
+            width: '60ch',
         }
     },
     searchIcon: {
-        padding: theme.spacing(0, 2),
+        padding: theme.spacing(0, 1),
         height: "100%",
         position: "absolute",
         pointerEvents: "none",
         display: "flex",
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        color: fade(theme.palette.common.black, 0.3),
+        [theme.breakpoints.down("xs")]: {
+            color: 'black',
+        }
+
     },
     inputRoot: {
         color: "inherit",
+        [theme.breakpoints.down("xs")]: {
+            float: 'right'
+        }
     },
     inputInput: {
-        padding: theme.spacing(1, 1, 1, 0),
+        padding: '12px',
+        fontSize: '1rem',
         // vertical padding + font size from searchIcon
         paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-        transition: theme.transitions.create("width"),
-        width: "100%",
+        transition: theme.transitions.create('width'),
+        width: '100%',
+        [theme.breakpoints.down("sm")]: {
+            width: '0ch',
+            '&:focus': {
+                width: '40ch',
+            },
+        },
+        [theme.breakpoints.up("sm")]: {
+            width: '50ch',
+        },
         [theme.breakpoints.up("md")]: {
-            width: "60ch",
-            height: "3ch"
+            width: '80ch',
+        },
+        [theme.breakpoints.up("lg")]: {
+            width: '60ch',
         }
     },
     iconButtonLabel: {
@@ -70,7 +138,14 @@ const useNavBarStyles =  makeStyles(theme => ({
         }
     },
     iconButtonRoot: {
-        paddingBottom: '10px !important'
+        padding: "2px 10px 2px 10px"
+    },
+    mobileSearchContainer: {
+        display: "flex",
+        alignItems: "center"
+    },
+    mobileSearchButton: {
+        alignSelf: "flex-end"
     }
 }));
 

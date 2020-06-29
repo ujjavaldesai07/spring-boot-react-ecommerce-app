@@ -3,8 +3,8 @@ import Swiper from 'react-id-swiper';
 import log from 'loglevel';
 import {useSelector} from "react-redux";
 
-const VerticalSlider = props => {
-    const homeAPIData = useSelector(state => state.mainScreenReducer? state.mainScreenReducer : null)
+const VerticalSlider = () => {
+    const homeAPIData = useSelector(state => state.homeScreenReducer? state.homeScreenReducer : null)
 
     const params = {
         spaceBetween: 30,
@@ -36,6 +36,10 @@ const VerticalSlider = props => {
             log.debug("[VerticalSlider]: imageList is null")
             return null
         }
+
+        // filter out images which are not for carousels.
+        // eslint-disable-next-line array-callback-return
+        imageList = imageList.filter(image => { if(image.filePath.search("icon") === -1) return image})
         log.trace("[VerticalSlider]: Rendering renderImageList imageList = " + JSON.stringify(imageList))
         return imageList.map(({id, filePath}) => {
             log.trace(`[VerticalSlider]: Rendering renderImageList imageList filePath = ${filePath}`)

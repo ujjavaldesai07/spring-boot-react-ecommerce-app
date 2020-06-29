@@ -5,6 +5,8 @@ import {Link} from "react-router-dom";
 import log from 'loglevel';
 import {MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
 import {useSelector} from "react-redux";
+import Box from "@material-ui/core/Box";
+import Hidden from "@material-ui/core/Hidden";
 
 const queryType = {
     brand: 1,
@@ -17,7 +19,7 @@ const headerStyles = {
 }
 
 const TopCategoriesAndBrands = () => {
-    const homeAPIData = useSelector(state => state.mainScreenReducer? state.mainScreenReducer : null)
+    const homeAPIData = useSelector(state => state.homeScreenReducer ? state.homeScreenReducer : null)
 
     if (!homeAPIData) {
         log.debug("[TopCategoriesAndBrands]: homeAPIData is null")
@@ -57,32 +59,59 @@ const TopCategoriesAndBrands = () => {
 
             log.trace(`[TopCategoriesAndBrands]: filterQuery = ${filterQuery}, filterQueryType = ${filterQueryType}`)
             return (
-                <Grid key={info.title} item xs={2}>
+                <Box key={info.title} css={{maxHeight: 400, maxWidth: 200}}>
                     <Link to={`/products?q=${filterQuery}::page=0,${MAX_PRODUCTS_PER_PAGE}`}>
                         <img src={info.filePath} alt={info.filePath} style={{width: '90%', height: '100%'}}
                              title={info.title}/>
                     </Link>
-                </Grid>
+                </Box>
             )
         });
     };
+
+    const renderDesktopSection = (title, dataList, queryType) => {
+        return (
+            <>
+                <Box display="flex" justifyContent="center" style={{backgroundColor: "pink", marginTop: 30}}>
+                    <Typography variant="h4" noWrap style={{fontWeight: "bold"}}>
+                        {title}
+                    </Typography>
+                </Box>
+                <Box display="flex" justifyContent="center" flexWrap="nowrap" style={{padding: '30px 0 0 0'}}>
+                    {renderImageList(dataList, queryType)}
+                </Box>
+            </>
+        )
+    }
+
+    const renderMobileSection = (title, dataList, queryType) => {
+        return (
+            <>
+                <Box display="flex" justifyContent="center" style={{backgroundColor: "pink"}}>
+                    <Typography variant="h4" style={{fontWeight: "bold"}}>
+                        {title}
+                    </Typography>
+                </Box>
+                <Box display="flex" justifyContent="center" flexWrap="wrap" style={{padding: '50px 0 30px 0'}}>
+                    {renderImageList(dataList, queryType)}
+                </Box>
+            </>
+        )
+    }
 
     log.info("[TopCategoriesAndBrands]: Rendering TopCategoriesAndBrands Component")
 
     return (
         <div>
-            <Typography variant="h5" noWrap style={headerStyles}>
-                #Shop Top Brands
-            </Typography>
-            <Grid container spacing={0} style={{padding: '10px 0 0 30px'}}>
-                {renderImageList(homeAPIData.brands, queryType.brand)}
-            </Grid>
-            <Typography variant="h5" noWrap style={headerStyles}>
-                #Shop Top Categories
-            </Typography>
-            <Grid container spacing={0} style={{padding: '20px 0 70px 30px'}}>
-                {renderImageList(homeAPIData.apparels, queryType.apparel)}
-            </Grid>
+            <Hidden xsDown>
+                {renderDesktopSection("#Shop Top Brands", homeAPIData.brands, queryType.brand)}
+                {renderDesktopSection("#Shop Top Categories", homeAPIData.apparels, queryType.apparel)}
+            </Hidden>
+
+            <Hidden smUp>
+                {renderMobileSection("#Shop Top Brands", homeAPIData.brands, queryType.brand)}
+                {renderMobileSection("#Shop Top Categories", homeAPIData.apparels, queryType.apparel)}
+            </Hidden>
         </div>
     )
 };

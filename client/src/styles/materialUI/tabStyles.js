@@ -19,11 +19,25 @@ const useTabStyles = makeStyles((theme) => ({
         left: '200px',
     },
     tabRoot: {
-        minWidth: 50,
         width: "auto",
+        height: 80,
+        flexGrow: 1,
+        [theme.breakpoints.up('lg')]: {
+            minWidth: 50,
+        },
     },
-    tabFlexContainer: {
-        width: "30% !important",
+    tabsWrapper: {
+        fontWeight: "600",
+        color: "black",
+        [theme.breakpoints.up('md')]: {
+            fontSize: "1rem",
+        }
+    },
+    tabsFlexContainer: {
+        flexGrow: 1,
+        [theme.breakpoints.up('md')]: {
+            width: "35%",
+        }
     }
 }));
 
