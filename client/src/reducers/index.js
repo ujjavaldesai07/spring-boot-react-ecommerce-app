@@ -1,7 +1,7 @@
 import {combineReducers} from "redux";
 import {reducer as formReducer} from "redux-form";
 import authApiReducer from "./api/authApiReducer";
-import mainScreenReducer from "./screens/mainScreenReducer";
+import homeScreenReducer from "./screens/homeScreenReducer";
 import tabHoverEventReducer from "./events/tabHoverEventReducer";
 import filterProductsReducer from "./screens/filter/filterProductsReducer";
 import filterAttributesReducer from "./screens/filter/filterAttributesReducer";
@@ -15,7 +15,7 @@ import {
 export default combineReducers({
     form: formReducer,
     authApiReducer,
-    mainScreenReducer,
+    homeScreenReducer,
     tabHoverEventReducer,
     filterProductsReducer,
     filterAttributesReducer,

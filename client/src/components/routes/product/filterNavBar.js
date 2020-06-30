@@ -16,7 +16,6 @@ import ClearAllButton from "./clearAllButton";
 import filterAttributesReducer from "../../../reducers/screens/filter/filterAttributesReducer";
 import {connect, useSelector} from "react-redux";
 import {loadFilterAttributes, loadProducts} from "../../../actions";
-import history from "../../../history";
 
 const drawerWidth = 240;
 

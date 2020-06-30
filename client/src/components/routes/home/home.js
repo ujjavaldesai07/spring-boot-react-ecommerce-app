@@ -7,7 +7,9 @@ import {connect, useSelector} from "react-redux";
 import {DocumentTitle} from "../../ui/documentTitle";
 import {loadHomePage} from "../../../actions";
 import log from 'loglevel';
-import mainScreenReducer from "../../../reducers/screens/mainScreenReducer";
+import mainScreenReducer from "../../../reducers/screens/homeScreenReducer";
+import HomeMenuIcons from "./homeMenuIcons";
+import Hidden from "@material-ui/core/Hidden";
 
 const Home = props => {
     const {hover} = useSelector(state => state.tabHoverEventReducer)
@@ -18,13 +20,18 @@ const Home = props => {
         props.loadHomePage();
 
         // eslint-disable-next-line
-    },[mainScreenReducer]);
+    }, [mainScreenReducer]);
 
     log.info("[Home]: Rendering Home Component")
     return (
         <Dimmer.Dimmable as={StyledSegment} dimmed={hover}>
             <DocumentTitle title="Online Shopping for Women, Men, Kids Fashion & Lifestyle - Shoppers"/>
+            <Hidden only={['xs', 'sm', 'lg']}>
+            <HomeMenuIcons/>
+            </Hidden>
+            <Hidden only={['xs']}>
             <VerticalSlider/>
+            </Hidden>
             <TopCategoriesAndBrands/>
             <StyledDimmer active={hover}/>
         </Dimmer.Dimmable>

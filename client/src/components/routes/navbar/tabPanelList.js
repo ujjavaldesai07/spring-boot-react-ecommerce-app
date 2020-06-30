@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Paper from '@material-ui/core/Paper';
-import useTabStyles from "../../styles/materialUI/tabStyles";
+import useTabStyles from "../../../styles/materialUI/tabStyles";
 import {useSelector} from 'react-redux';
 import log from "loglevel";
 

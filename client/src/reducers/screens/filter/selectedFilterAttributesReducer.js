@@ -4,7 +4,7 @@ import {
     REMOVE_GENDER_CATEGORY, REMOVE_PRICE_CATEGORY, SELECT_PRODUCT_PAGE, SELECT_SORT_CATEGORY
 } from "../../../actions/types";
 import log from 'loglevel';
-import {INITIAL_PAGINATION_STATE, INITIAL_SORT_STATE, MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
+import {INITIAL_PAGINATION_STATE, INITIAL_SORT_STATE} from "../../../constants/constants";
 
 const removeValueIfExist = (list, id) => {
     if(list.length === 0) {

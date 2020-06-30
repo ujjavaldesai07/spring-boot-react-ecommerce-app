@@ -1,15 +1,15 @@
 import React, {useEffect} from "react";
 
 import LocalMallIcon from '@material-ui/icons/LocalMall';
-import LoyaltyIcon from '@material-ui/icons/Loyalty';
 import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import MoreIcon from '@material-ui/icons/MoreVert';
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import Cookies from 'js-cookie';
-import {setTokenFromCookie, signOut} from '../../actions';
+import {setTokenFromCookie, signOut} from '../../../actions';
 import {connect} from 'react-redux'
 
 import {
@@ -17,25 +17,29 @@ import {
     InputBase, Badge
 } from '@material-ui/core';
 
-import useNavBarStyles from "../../styles/materialUI/navBarStyles";
-import TabList from "../ui/tabList";
+import useNavBarStyles from "../../../styles/materialUI/navBarStyles";
+import TabList from "./tabList";
 import {Link} from "react-router-dom";
 import {useSelector} from "react-redux";
-import {HANDLE_TOKEN_ID} from "../../actions/types";
+import {HANDLE_TOKEN_ID} from "../../../actions/types";
 import log from "loglevel";
+import Hidden from "@material-ui/core/Hidden";
 
 // css styles
 const iconButtonLabel = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    fontSize: '12px',
+    justifyContent: 'space-around',
+    fontSize: '0.8rem',
+    fontWeight: 'bold',
     paddingLeft: '10px'
 };
 
 const NavBar = props => {
     const classes = useNavBarStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [mobileSearchState, setMobileSearchState] = React.useState(false);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
     const {isSignedIn, tokenId} = useSelector(state => state.authApiReducer)
 
@@ -44,10 +48,10 @@ const NavBar = props => {
 
     useEffect(() => {
         log.info(`[NavBar]: Component did update.`)
-        if(isSignedIn === null) {
+        if (isSignedIn === null) {
             log.info(`[NavBar]: isSignedIn is null`)
             let tokenIdFromCookie = Cookies.get(HANDLE_TOKEN_ID)
-            if(tokenIdFromCookie) {
+            if (tokenIdFromCookie) {
                 log.info(`[NavBar]: Token set from Cookie`)
                 props.setTokenFromCookie(tokenIdFromCookie)
             }
@@ -69,7 +73,7 @@ const NavBar = props => {
     };
 
     const handleLoginStatus = () => {
-        if(tokenId && isSignedIn) {
+        if (tokenId && isSignedIn) {
             props.signOut()
         }
         setAnchorEl(null);
@@ -91,8 +95,8 @@ const NavBar = props => {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <Link to={!tokenId? "/login": "/"}>
-                <MenuItem onClick={handleLoginStatus}>{!tokenId? 'Login': 'Logout'}</MenuItem>
+            <Link to={!tokenId ? "/login" : "/"}>
+                <MenuItem onClick={handleLoginStatus}>{!tokenId ? 'Login' : 'Logout'}</MenuItem>
             </Link>
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
         </Menu>
@@ -121,14 +125,6 @@ const NavBar = props => {
                 <p>Login</p>
             </MenuItem>
             <MenuItem>
-                <IconButton aria-label="show 4 new mails" color="inherit">
-                    <Badge badgeContent={4} color="secondary">
-                        <LoyaltyIcon/>
-                    </Badge>
-                </IconButton>
-                <p>Wishlist</p>
-            </MenuItem>
-            <MenuItem>
                 <IconButton aria-label="show 11 new notifications" color="inherit">
                     <Badge badgeContent={11} color="secondary">
                         <LocalMallIcon/>
@@ -139,45 +135,99 @@ const NavBar = props => {
         </Menu>
     );
 
+    const handleMobileSearch = () => {
+        log.info("Mobile Search is clicked....")
+        setMobileSearchState(true)
+    }
+
+    const renderMobileSearchInputField = () => {
+        if (!mobileSearchState) {
+            return null
+        }
+        return (
+            <InputBase
+                placeholder="Search for products, brands and more"
+                classes={{
+                    root: classes.inputRoot,
+                    input: classes.inputInput
+                }}
+                inputProps={{"aria-label": "search"}}/>
+        )
+    }
+
     log.info(`[NavBar]: Rendering NavBar Component`)
     return (
-        <div style={{paddingBottom: '62px'}}>
+        <div style={{paddingBottom: 80}}>
             <AppBar color="default" className={classes.appBarRoot}>
-                <Toolbar>
-                    <IconButton
-                        edge="start"
-                        className={classes.menuButton}
-                        color="inherit"
-                        aria-label="open drawer"
-                    >
-                        <MenuIcon/>
-                    </IconButton>
+                <Toolbar classes={{root: classes.toolBarRoot}}>
+                    <Hidden mdUp>
+                        <IconButton
+                            edge="start"
+                            className={classes.menuButton}
+                            color="inherit"
+                            aria-label="open drawer"
+                        >
+                            <MenuIcon fontSize="large"/>
+                        </IconButton>
+                    </Hidden>
+
                     <Link to="/">
-                        <Typography className={classes.title} variant="h4">
+                        <Typography className={classes.title}>
                             Shoppers
                         </Typography>
                     </Link>
-                    <div className={classes.grow}/>
-                    <TabList/>
-                    <div className={classes.search}>
-                        <div className={classes.searchIcon}>
-                            <SearchIcon/>
+
+                    <div className={classes.growQuarter}/>
+
+                    <Hidden mdDown>
+                        <TabList/>
+                    </Hidden>
+
+                    <div className={classes.grow_1}/>
+
+                    <Hidden xsDown>
+                        <div className={classes.searchContainer}>
+                            <div className={classes.search}>
+                                <div className={classes.searchIcon}>
+                                    <SearchIcon fontSize="large"/>
+                                </div>
+                                <InputBase
+                                    placeholder="Search for products, brands and more"
+                                    classes={{
+                                        root: classes.inputRoot,
+                                        input: classes.inputInput
+                                    }}
+                                    inputProps={{"aria-label": "search"}}/>
+                            </div>
+                            <div className={classes.arrowIcon}>
+                                <IconButton size="medium">
+                                    <ArrowForwardIcon fontSize="large"/>
+                                </IconButton>
+                            </div>
                         </div>
-                        <InputBase
-                            placeholder="Search for products, brands and more"
-                            classes={{
-                                root: classes.inputRoot,
-                                input: classes.inputInput
-                            }}
-                            inputProps={{"aria-label": "search"}}
-                        />
-                    </div>
-                    <div className={classes.grow}/>
+                    </Hidden>
+
+                    <Hidden smUp>
+                        <div className={classes.mobileSearchContainer}>
+                            <div className={classes.mobileSearchButton}>
+                                <IconButton size="medium"
+                                            onClick={handleMobileSearch}
+                                            edge="end">
+                                    <SearchIcon fontSize="large"/>
+                                </IconButton>
+                            </div>
+                            {renderMobileSearchInputField()}
+                        </div>
+                    </Hidden>
+
+                    <div className={classes.grow_1}/>
+
                     <div className={classes.sectionDesktop}>
                         <div style={iconButtonLabel}>
                             <IconButton
                                 aria-label="account of current user"
                                 aria-haspopup="true"
+                                size="medium"
                                 color="inherit"
                                 onClick={handleProfileMenuOpen}
                                 classes={{root: classes.iconButtonRoot}}
@@ -185,16 +235,6 @@ const NavBar = props => {
                                 <AccountCircle/>
                             </IconButton>
                             Profile
-                        </div>
-                        <div style={iconButtonLabel}>
-                            <IconButton aria-label="show 1004 new mails"
-                                        color="inherit"
-                                        classes={{root: classes.iconButtonRoot}}>
-                                <Badge badgeContent={1004} color="secondary">
-                                    <LoyaltyIcon/>
-                                </Badge>
-                            </IconButton>
-                            Wishlist
                         </div>
                         <div style={iconButtonLabel}>
                             <IconButton aria-label="show 17 new notifications"
@@ -207,6 +247,8 @@ const NavBar = props => {
                             Bag
                         </div>
                     </div>
+
+
                     <div className={classes.sectionMobile}>
                         <IconButton
                             aria-label="show more"
@@ -214,8 +256,9 @@ const NavBar = props => {
                             aria-haspopup="true"
                             onClick={handleMobileMenuOpen}
                             color="inherit"
+                            edge="end"
                         >
-                            <MoreIcon/>
+                            <MoreIcon fontSize="large"/>
                         </IconButton>
                     </div>
                 </Toolbar>
