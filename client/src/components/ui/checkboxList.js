@@ -17,8 +17,7 @@ const useStyles = makeStyles((theme) => ({
         minWidth: '0 !important'
     },
     listItemRoot: {
-        paddingTop: '0 !important',
-        paddingBottom: '0 !important'
+        padding: 0,
     }
 }));
 
@@ -36,8 +35,8 @@ export default function CheckboxList(props) {
         log.debug(`[CheckboxList] handleToggle for CheckboxList value = ${id}`)
 
         let value
-        for(let i = 0; i < props.attrList.length; i++) {
-            if(id === props.attrList[i].id) {
+        for (let i = 0; i < props.attrList.length; i++) {
+            if (id === props.attrList[i].id) {
                 value = props.attrList[i].type
                 log.debug(`[CheckboxList] handleToggle for CheckboxList value = ${value}`)
             }
@@ -52,7 +51,7 @@ export default function CheckboxList(props) {
         log.debug(`[CheckboxList] renderCheckBoxList props.selectedAttributes = ${JSON.stringify(props.values)}`)
 
         let selectedIdList = []
-        if(props.selectedAttrList.length > 0) {
+        if (props.selectedAttrList.length > 0) {
             props.selectedAttrList.forEach(({id}) => {
                 selectedIdList.push(id)
             })
@@ -68,7 +67,7 @@ export default function CheckboxList(props) {
                 `, props.values.includes(id) = ${selectedIdList.includes(id)}`)
             return (
                 <ListItem classes={{root: classes.listItemRoot}} key={id} role={undefined}
-                          dense button onClick={handleToggle(id)}>
+                          dense button onClick={handleToggle(id)} disableGutters>
                     <ListItemIcon classes={{root: classes.listItemIconRoot}}>
                         <Checkbox
                             size="small"

@@ -15,6 +15,8 @@ import {
     ADD_GENDER_CATEGORY,
     SELECT_SORT_CATEGORY
 } from "../../../actions/types";
+import {Box} from "@material-ui/core";
+import Hidden from "@material-ui/core/Hidden";
 
 const FilterProductDisplay = props => {
         const filterProducts = useSelector(state => state.filterProductsReducer)
@@ -69,9 +71,9 @@ const FilterProductDisplay = props => {
 
             if (selectedPriceRanges.length > 0) {
                 selectedPriceRanges.forEach(function (element) {
-                    let priceRange = filterAttributes.priceRanges[element - 1].value
+                    let priceRange = filterAttributes.priceRanges[element.id - 1].type
                         .replace(new RegExp('\\$', 'g'), '')
-                    let priceRangeId = filterAttributes.priceRanges[element - 1].id
+                    let priceRangeId = filterAttributes.priceRanges[element.id - 1].id
 
                     if (priceRange[0] === "U") {
                         query.push(`price=lt:${priceRange.split(" ")[1]},id:${priceRangeId}`)
@@ -102,7 +104,7 @@ const FilterProductDisplay = props => {
             }
         }
 
-        const setFilterAttributesFromURL = (actionType, attrString, attrList, oldSelectedAttrList) => {
+        const dispatchFilterAttributes = (actionType, attrString, attrList, oldSelectedAttrList) => {
 
             const getObjectFromList = (id, list) => {
                 for (let i = 0; i < list.length; i++) {
@@ -157,7 +159,7 @@ const FilterProductDisplay = props => {
             }
         }
 
-        const setWrapper = () => {
+        const setFilterAttributesFromURL = () => {
             if (history.location && history.location.pathname.localeCompare(PRODUCT_ROUTE) === 0) {
                 log.info(`[FilterProductDisplay]: url = ${history.location.search}`)
 
@@ -190,7 +192,7 @@ const FilterProductDisplay = props => {
                 ]
 
                 attrInfoList.forEach(({type, attrStr, attrList}) => {
-                    setFilterAttributesFromURL(type, attrStr, attrList)
+                    dispatchFilterAttributes(type, attrStr, attrList)
                 })
 
                 setLoadAttributesFromURL(true)
@@ -200,11 +202,11 @@ const FilterProductDisplay = props => {
         useEffect(() => {
             log.info(`[FilterProductDisplay] Component did mount`)
 
-            if(!loadAttributesFromURL) {
+            if (!loadAttributesFromURL) {
                 log.info(`[FilterProductDisplay] setting selected attributes from URL`)
                 if (filterAttributes) {
                     log.info(`[FilterProductDisplay] filterAttributes is not null`)
-                    setWrapper()
+                    setFilterAttributesFromURL()
                 }
             } else {
                 log.info(`[FilterProductDisplay] build query`)
@@ -223,17 +225,21 @@ const FilterProductDisplay = props => {
             return null
         }
 
-        const renderImageList = imageList => {
+        const renderPageNotFound = () => {
+            return (
+                <Grid container direction="column"
+                      alignItems="center"
+                      justify="center"
+                      style={{padding: "30px 0 100px 0"}}>
+                    <PageNotFound/>
+                </Grid>
+            )
+        }
+
+        const renderImageList = (imageList, boxSize, imageSize, margin) => {
             if (imageList.length === 0) {
                 log.debug(`[FilterProductDisplay] Rendering renderImageList and imageList is null`)
-                return (
-                    <Grid container direction="column"
-                          alignItems="center"
-                          justify="center"
-                          style={{padding: "30px 0 100px 0"}}>
-                        <PageNotFound/>
-                    </Grid>
-                )
+                renderPageNotFound()
             }
 
             log.trace(`[FilterProductDisplay] Rendering renderImageList imageList = ${JSON.stringify(imageList)}`)
@@ -241,42 +247,71 @@ const FilterProductDisplay = props => {
             return imageList.map((info) => {
                 log.trace(`[FilterProductDisplay] Rendering imageList info = ${info}`)
                 return (
-                    <Grid item key={info.id} md={3} style={{padding: "10px 0 30px 0"}}>
-                        <Link to=".">
-                            <img src={info.imageName} alt={info.name}
-                                 style={{width: '90%', height: '70%', border: "1px solid black"}}
-                                 title={info.name}/>
-                        </Link>
-                        <div style={{fontSize: "16px", padding: "5px 0 0 3px", fontWeight: "bold"}}>
+                    <Box display="flex" flexDirection="column" key={info.id}
+                         css={{height: boxSize.height, width: boxSize.width, margin: margin}}>
+                        <Box>
+                            <Link to=".">
+                                <img src={info.imageName} alt={info.name}
+                                     style={{height: imageSize.height, width: imageSize.width}}
+                                     title={info.name}/>
+                            </Link>
+                        </Box>
+                        <Box pt={1} style={{fontSize: "16px", fontWeight: "bold"}}>
                             {info.productBrandCategory.type}
-                        </div>
-                        <div style={{fontSize: "14px", padding: "5px 0 0 3px", color: "grey"}}>
+                        </Box>
+                        <Box pt={1} style={{fontSize: "14px", color: "grey"}}>
                             {info.name}
-                        </div>
-                        <div style={{fontSize: "14px", padding: "5px 0 0 3px", fontWeight: "bold"}}>
+                        </Box>
+                        <Box pt={1} style={{fontSize: "16px", fontWeight: "bold"}}>
                             {`$${info.price}`}
-                        </div>
-                        <div style={{fontSize: "14px", padding: "10px 0 0 3px"}}>
+                        </Box>
+                        <Box pt={1} style={{fontSize: "14px"}}>
                             Free ship at $25
-                        </div>
-                        <Rating
-                            style={{paddingTop: "10px", zIndex: "1"}}
-                            name="customized-empty"
-                            defaultValue={info.ratings}
-                            precision={0.5}
-                            readOnly
-                            emptyIcon={<StarBorderIcon fontSize="inherit"/>}
-                        />
-                    </Grid>
+                        </Box>
+                        <Box pt={1}>
+                            <Rating
+                                style={{zIndex: "1"}}
+                                name="customized-empty"
+                                defaultValue={info.ratings}
+                                precision={0.5}
+                                readOnly
+                                emptyIcon={<StarBorderIcon fontSize="inherit"/>}
+                            />
+                        </Box>
+                    </Box>
                 )
             });
         };
 
         log.info(`[FilterProductDisplay] Rendering FilterProductDisplay Component`)
         return (
-            <Grid container spacing={0} style={{padding: "20px 0 0 20px"}}>
-                {renderImageList(filterProducts)}
-            </Grid>
+            <>
+                {/*Desktop*/}
+                <Hidden only={['xs', 'sm', 'md']}>
+                    <Box display="flex" flexWrap="wrap" m={3}>
+                        {renderImageList(filterProducts, {height: 500, width: 210},
+                            {height: 280, width: 210}, 10)}
+                    </Box>
+                </Hidden>
+
+
+                {/*Ipad*/}
+                <Hidden only={['xs', 'sm', 'lg', 'xl']}>
+                    <Box display="flex" flexWrap="wrap" justifyContent="center" pb={15}>
+                        {renderImageList(filterProducts, {height: 700, width: 450},
+                            {height: 500, width: 450}, 20)}
+                    </Box>
+                </Hidden>
+
+                {/*Mobile*/}
+                <Hidden only={['md', 'lg', 'xl']}>
+                    <Box display="flex" flexWrap="wrap" justifyContent="center">
+                        {renderImageList(filterProducts, {height: 600, width: 300},
+                            {height: 400, width: 300}, 1)}
+                    </Box>
+                </Hidden>
+
+            </>
         )
     }
 ;

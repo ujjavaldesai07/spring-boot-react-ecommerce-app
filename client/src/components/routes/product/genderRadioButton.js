@@ -35,6 +35,7 @@ export default function GenderRadioButton() {
     log.info(`[GenderRadioButton] Rendering FilterRadioButtonSection Component`)
 
     return (
+        <div style={{padding: '8px 0 8px 0'}}>
         <RadioButtonsGroup onChangeHandler={handleRadioButtonChange}
                            attrList={
                                // eslint-disable-next-line array-callback-return
@@ -45,6 +46,6 @@ export default function GenderRadioButton() {
                                })}
                            selectedValue={gender.length > 0? gender[0].value: false}
                            title="Gender"/>
-
+        </div>
     );
 }
