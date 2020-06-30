@@ -17,6 +17,8 @@ import {
 } from "../../../actions/types";
 import {useDispatch} from "react-redux";
 import {INITIAL_PAGINATION_STATE, INITIAL_SORT_STATE} from "../../../constants/constants";
+import Hidden from "@material-ui/core/Hidden";
+import BottomNavBar from "./bottomNavBar";
 
 function Product() {
 
@@ -38,25 +40,36 @@ function Product() {
 
     log.info("[Product] Rendering Product Component.")
     return (
-        <Grid container>
-            <Grid item md={2}>
+        <>
+            <Hidden mdDown>
+                <Grid container>
+                    <Grid item md={2}>
+                        <FilterNavBar/>
+                    </Grid>
+
+                    <Grid item md={10}>
+                        <Box display="flex" py={4}>
+                            <Box width="75%" p={1}>
+                                <FilterChips/>
+                            </Box>
+                            <Box width="auto">
+                                <FilterDropdown/>
+                            </Box>
+                        </Box>
+                        <Divider/>
+                        <FilterProductsDisplay/>
+                        <Divider/>
+                        <FilterPagination/>
+                    </Grid>
+                </Grid>
+            </Hidden>
+
+            <Hidden lgUp>
                 <FilterNavBar/>
-            </Grid>
-            <Grid item md={10}>
-                            <span style={{display: "flex", padding: "20px 0 20px 0"}}>
-            <Box width="75%" style={{padding: "26px 0 0 20px"}}>
-                <FilterChips/>
-            </Box>
-                                <Box width="auto">
-                                     <FilterDropdown/>
-                                </Box>
-            </span>
-                <Divider/>
                 <FilterProductsDisplay/>
-                <Divider/>
-                <FilterPagination/>
-            </Grid>
-        </Grid>
+                {/*<BottomNavBar/>*/}
+            </Hidden>
+        </>
     );
 }
 

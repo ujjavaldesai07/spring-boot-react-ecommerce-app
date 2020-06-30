@@ -1,7 +1,4 @@
 import React from 'react';
-import Grid from "@material-ui/core/Grid";
-import TitleHeader from "../../ui/titleHeader";
-import CollapsableSearch from "../../ui/collapsableSearch";
 import CheckboxList from "../../ui/checkboxList";
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
@@ -10,7 +7,6 @@ import {
 } from "../../../actions/types";
 
 export default function ApparelCheckBox() {
-    const TITLE = "Apparel"
     const dispatch = useDispatch()
     const apparelList = useSelector(state => state.filterAttributesReducer?
         state.filterAttributesReducer.apparels : null)
@@ -19,19 +15,6 @@ export default function ApparelCheckBox() {
     if(!apparelList) {
         log.debug(`[ApparelCheckBox] apparelList is null`)
         return null
-    }
-
-    const handleSearchClick = () => {
-        log.debug(`[ApparelCheckBox] handleSearchClick is called`)
-    }
-
-    const addCollapsableSearch = () => {
-        log.debug(`[ApparelCheckBox] addCollapsableSearch is called`)
-        return (
-            <Grid item xs={4}>
-                <CollapsableSearch handleOnClick={handleSearchClick}/>
-            </Grid>
-        )
     }
 
     const handleCheckBoxChange = (id, value) => {
@@ -49,20 +32,10 @@ export default function ApparelCheckBox() {
     log.info(`[ApparelCheckBox] Rendering ApparelCheckBox Component`)
 
     return (
-        <>
-            <Grid container style={{paddingTop: '10px'}}>
-                <Grid item xs={1}/>
-                <Grid item xs={6} style={{paddingTop: '2px'}}>
-                    <TitleHeader title={TITLE} fontWeight="bold" fontSize="1.2rem"/>
-                </Grid>
-                {addCollapsableSearch()}
-            </Grid>
-
             <CheckboxList attrList={apparelList}
                           fontSize="1rem"
-                          title={TITLE}
+                          title="Apparel"
                           selectedAttrList={selectedApparels}
                           onChangeHandler={handleCheckBoxChange}/>
-        </>
     );
 }
