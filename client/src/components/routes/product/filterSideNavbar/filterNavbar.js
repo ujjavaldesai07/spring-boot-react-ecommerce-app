@@ -3,31 +3,29 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
-import {makeStyles, useTheme} from '@material-ui/core/styles';
 
-import TitleHeader from "../../ui/titleHeader";
+import TitleHeader from "../../../ui/titleHeader";
 import ApparelCheckBox from "./apparelCheckBox";
 import log from "loglevel";
 import GenderRadioButton from "./genderRadioButton";
 import BrandCheckBox from "./brandCheckBox";
 import PriceCheckBox from "./priceCheckBox";
 import ClearAllButton from "./clearAllButton";
-import filterAttributesReducer from "../../../reducers/screens/filter/filterAttributesReducer";
+import {filterAttributesReducer} from "../../../../reducers/screens/filter/filterScreenReducer";
 import {connect, useSelector} from "react-redux";
-import {loadFilterAttributes, loadProducts} from "../../../actions";
+import {loadFilterAttributes, loadProducts} from "../../../../actions";
 import {Box} from "@material-ui/core";
-import {useFilterNavBarStyles} from "../../../styles/materialUI/filterNavBar";
+import {useFilterNavBarStyles} from "../../../../styles/materialUI/filterNavbar";
 
-function FilterNavBar(props) {
+function FilterNavbar(props) {
     const {window} = props
     const classes = useFilterNavBarStyles();
-    const theme = useTheme();
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const filterAttributes = useSelector(state => state.filterAttributesReducer)
 
     // load product attributes from API
     useEffect(() => {
-        log.info("[FilterNavBar] Component did mount and filter attributes API is called.")
+        log.info("[FilterNavbar] Component did mount and filter attributes API is called.")
 
         // if filter attributes exist then we dont want to call the API again
         // unless user tries to reload the page.
@@ -77,7 +75,7 @@ function FilterNavBar(props) {
 
     const container = window !== undefined ? () => window().document.body : undefined;
 
-    log.info("[FilterNavBar] Rendering FilterNavBar Component.")
+    log.info("[FilterNavbar] Rendering FilterNavbar Component.")
 
     return (
         <div className={classes.root}>
@@ -98,4 +96,4 @@ function FilterNavBar(props) {
     );
 }
 
-export default connect(null, {loadFilterAttributes, loadProducts})(FilterNavBar);
+export default connect(null, {loadFilterAttributes, loadProducts})(FilterNavbar);

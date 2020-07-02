@@ -7,19 +7,21 @@ import Rating from '@material-ui/lab/Rating';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import log from "loglevel";
 import {PageNotFound} from "../../ui/pageNotFound";
-import {MAX_PRODUCTS_PER_PAGE, PRODUCT_ROUTE} from "../../../constants/constants";
+import {DETAILS_ROUTE, MAX_PRODUCTS_PER_PAGE, PRODUCTS_ROUTE} from "../../../constants/constants";
 import history from "../../../history";
 import {
     ADD_APPAREL_CATEGORY,
     ADD_BRAND_CATEGORY,
-    ADD_GENDER_CATEGORY,
+    ADD_GENDER_CATEGORY, SELECT_PRODUCT_DETAIL,
     SELECT_SORT_CATEGORY
 } from "../../../actions/types";
 import {Box} from "@material-ui/core";
 import Hidden from "@material-ui/core/Hidden";
+import Spinner from "../../ui/spinner";
 
 const FilterProductDisplay = props => {
-        const filterProducts = useSelector(state => state.filterProductsReducer)
+        const filterProducts = useSelector(state => state.filterProductsReducer ?
+            state.filterProductsReducer.products : null)
         const filterAttributes = useSelector(state => state.filterAttributesReducer)
         const selectedGenders = useSelector(state => state.selectGenderReducer)
         const selectedApparels = useSelector(state => state.selectApparelReducer)
@@ -160,7 +162,7 @@ const FilterProductDisplay = props => {
         }
 
         const setFilterAttributesFromURL = () => {
-            if (history.location && history.location.pathname.localeCompare(PRODUCT_ROUTE) === 0) {
+            if (history.location && history.location.pathname.localeCompare(PRODUCTS_ROUTE) === 0) {
                 log.info(`[FilterProductDisplay]: url = ${history.location.search}`)
 
                 const attrInfoList = [
@@ -219,27 +221,31 @@ const FilterProductDisplay = props => {
         }, [selectedApparels, selectedGenders, selectedBrands, selectedPriceRanges,
             selectedSort, selectedPage, filterAttributes]);
 
+        const renderPageNotFound = () => {
+            return (
+                <Box display="flex" pb={15} justifyContent="center" css={{width: '100%'}}>
+                    <PageNotFound/>
+                </Box>
+            )
+        }
 
         if (!filterProducts) {
             log.info(`[FilterProductDisplay] filterProducts is null`)
-            return null
+            return renderPageNotFound()
         }
 
-        const renderPageNotFound = () => {
-            return (
-                <Grid container direction="column"
-                      alignItems="center"
-                      justify="center"
-                      style={{padding: "30px 0 100px 0"}}>
-                    <PageNotFound/>
-                </Grid>
-            )
+        const handleImageClick = selectedProduct => () => {
+            log.debug(`[FilterProductDisplay] dispatching the selected product = ${JSON.stringify(selectedProduct)}`)
+            dispatch({
+                type: SELECT_PRODUCT_DETAIL,
+                payload: selectedProduct
+            })
         }
 
         const renderImageList = (imageList, boxSize, imageSize, margin) => {
             if (imageList.length === 0) {
                 log.debug(`[FilterProductDisplay] Rendering renderImageList and imageList is null`)
-                renderPageNotFound()
+                return renderPageNotFound()
             }
 
             log.trace(`[FilterProductDisplay] Rendering renderImageList imageList = ${JSON.stringify(imageList)}`)
@@ -250,14 +256,19 @@ const FilterProductDisplay = props => {
                     <Box display="flex" flexDirection="column" key={info.id}
                          css={{height: boxSize.height, width: boxSize.width, margin: margin}}>
                         <Box>
-                            <Link to=".">
+                            <Link to={`${DETAILS_ROUTE}${history.location.search}::product_id=${info.id}`}
+                                  onClick={handleImageClick(info)}>
                                 <img src={info.imageName} alt={info.name}
                                      style={{height: imageSize.height, width: imageSize.width}}
                                      title={info.name}/>
                             </Link>
                         </Box>
                         <Box pt={1} style={{fontSize: "16px", fontWeight: "bold"}}>
-                            {info.productBrandCategory.type}
+                            <Link to={`${PRODUCTS_ROUTE}?q=brand=${info.productBrandCategory.id}`}>
+                                <div style={{color: 'black'}}>
+                                    {info.productBrandCategory.type}
+                                </div>
+                            </Link>
                         </Box>
                         <Box pt={1} style={{fontSize: "14px", color: "grey"}}>
                             {info.name}

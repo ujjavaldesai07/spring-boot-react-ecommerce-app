@@ -38,8 +38,8 @@ const VerticalSlider = () => {
         }
 
         // filter out images which are not for carousels.
-        // eslint-disable-next-line array-callback-return
-        imageList = imageList.filter(image => { if(image.filePath.search("icon") === -1) return image})
+        imageList = imageList.filter(image => image.filePath.search("icon") === -1)
+
         log.trace("[VerticalSlider]: Rendering renderImageList imageList = " + JSON.stringify(imageList))
         return imageList.map(({id, filePath}) => {
             log.trace(`[VerticalSlider]: Rendering renderImageList imageList filePath = ${filePath}`)

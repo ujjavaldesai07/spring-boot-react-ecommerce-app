@@ -4,9 +4,9 @@ import {connect, useDispatch, useSelector} from "react-redux";
 import {
     REMOVE_APPAREL_CATEGORY, REMOVE_BRAND_CATEGORY,
     REMOVE_GENDER_CATEGORY, REMOVE_PRICE_CATEGORY
-} from "../../../actions/types";
+} from "../../../../actions/types";
 import Button from "@material-ui/core/Button";
-import {loadProducts} from "../../../actions";
+import {loadProducts} from "../../../../actions";
 
 function ClearAllButton() {
     const dispatch = useDispatch()

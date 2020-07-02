@@ -1,11 +1,13 @@
 package com.ujjaval.ecommerce.commondataservice.controller;
 
 import com.sun.net.httpserver.Authenticator;
+import com.ujjaval.ecommerce.commondataservice.dto.ProductInfoDTO;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
 import com.ujjaval.ecommerce.commondataservice.model.FilterAttributesResponse;
 import com.ujjaval.ecommerce.commondataservice.model.MainScreenResponse;
 import com.ujjaval.ecommerce.commondataservice.service.interfaces.CommonDataService;
 import com.ujjaval.ecommerce.commondataservice.service.interfaces.LoadFakeDataService;
+import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
@@ -21,7 +23,6 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class CommonDataController {
@@ -36,14 +37,15 @@ public class CommonDataController {
     public ResponseEntity<?> loadTestData() {
 
         if (!loadFakeDataService.loadTestData()) {
-            return new ResponseEntity<Error>(HttpStatus.CONFLICT);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("An error has " +
+                    "occurred while loading the data in database");
         }
 
-        return new ResponseEntity<Authenticator.Success>(HttpStatus.OK);
+        return  ResponseEntity.ok("Success");
     }
 
     @GetMapping("/products")
-    public ResponseEntity<?> getFilterProductsComponent(@RequestParam("q") String queryParams) throws UnknownHostException {
+    public ResponseEntity<?> getSelectedProducts(@RequestParam("q") String queryParams) throws UnknownHostException {
         HashMap<String, String> conditionMap = new HashMap<>();
 
         String[] separatedConditions = queryParams.split("::");
@@ -63,12 +65,32 @@ public class CommonDataController {
             }
         }
 
-        List<ProductInfo> productInfoList = commonDataService.getFilterProductsComponentList(conditionMap);
+        Pair<Long, List<ProductInfo>> result = commonDataService.getSelectedProducts(conditionMap);
 
-        if (productInfoList == null) {
-            return new ResponseEntity<Error>(HttpStatus.CONFLICT);
+        if (result == null) {
+            return new ResponseEntity<>(
+                    "No search results are found",
+                    HttpStatus.NO_CONTENT);
         }
-        return ResponseEntity.ok(productInfoList);
+
+        ProductInfoDTO productInfoDTO = new ProductInfoDTO(result.getValue0(), result.getValue1());
+
+        return ResponseEntity.ok(productInfoDTO);
+    }
+
+    @GetMapping("/product")
+    public ResponseEntity<?> getSelectedProduct(@RequestParam("q") String queryParams) throws UnknownHostException {
+        String[] separatedQuery = queryParams.split("=");
+
+        if(separatedQuery.length == 2 && separatedQuery[0].equals("product_id")) {
+            ProductInfo product = commonDataService.getSelectedProducts(Integer.parseInt(separatedQuery[1]));
+
+            if (product == null) {
+                return new ResponseEntity<Error>(HttpStatus.CONFLICT);
+            }
+            return ResponseEntity.ok(product);
+        }
+        return new ResponseEntity<Error>(HttpStatus.CONFLICT);
     }
 
     @GetMapping(value = "/web-images/**")
@@ -84,7 +106,7 @@ public class CommonDataController {
 
     @GetMapping("/home")
     public ResponseEntity<?> getMainScreenData() throws UnknownHostException {
-        MainScreenResponse mainScreenInfoList = commonDataService.getMainScreenDataList();
+        MainScreenResponse mainScreenInfoList = commonDataService.getHomeScreenData();
         if (mainScreenInfoList == null) {
             return new ResponseEntity<Error>(HttpStatus.CONFLICT);
         }
@@ -93,7 +115,7 @@ public class CommonDataController {
 
     @GetMapping("/filter")
     public ResponseEntity<?> getFilterAttributesComponent() throws UnknownHostException {
-        FilterAttributesResponse filterScreenInfoList = commonDataService.getFilterAttributesComponentList();
+        FilterAttributesResponse filterScreenInfoList = commonDataService.getFilterAttributesData();
         if (filterScreenInfoList == null) {
             return new ResponseEntity<Error>(HttpStatus.CONFLICT);
         }

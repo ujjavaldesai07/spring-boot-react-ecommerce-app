@@ -3,8 +3,8 @@ package com.ujjaval.ecommerce.commondataservice.service.interfaces;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
 import com.ujjaval.ecommerce.commondataservice.model.FilterAttributesResponse;
 import com.ujjaval.ecommerce.commondataservice.model.MainScreenResponse;
+import org.javatuples.Pair;
 
-import java.awt.print.Pageable;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
@@ -15,11 +15,13 @@ public interface CommonDataService {
 
     public void save();
 
-    public MainScreenResponse getMainScreenDataList() throws UnknownHostException;
+    public MainScreenResponse getHomeScreenData() throws UnknownHostException;
 
-    public FilterAttributesResponse getFilterAttributesComponentList();
+    public FilterAttributesResponse getFilterAttributesData();
 
-    public List<ProductInfo> getFilterProductsComponentList(HashMap<String,
+    public Pair<Long, List<ProductInfo>> getSelectedProducts(HashMap<String,
             String> conditionMap) throws UnknownHostException;
+
+    public ProductInfo getSelectedProducts(int id) throws UnknownHostException;
 }
 

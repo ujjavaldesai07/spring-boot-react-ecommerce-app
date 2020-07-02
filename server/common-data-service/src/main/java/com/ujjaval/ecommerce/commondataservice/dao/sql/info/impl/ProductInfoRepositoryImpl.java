@@ -4,6 +4,7 @@ import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.javatuples.Pair;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -20,10 +21,6 @@ public class ProductInfoRepositoryImpl {
 
         enum MathOperator {
             bt, lt, gt
-        }
-
-        enum SortOperator {
-            lh, hl, ratings, newest
         }
     }
 
@@ -60,7 +57,7 @@ public class ProductInfoRepositoryImpl {
         }
     }
 
-    public List<ProductInfo> getProductInfoByCategories(HashMap<String, String> conditionMap) {
+    public Pair<Long, List<ProductInfo>> getProductInfoByCategories(HashMap<String, String> conditionMap) {
         if (conditionMap == null) {
             return null;
         }
@@ -158,18 +155,31 @@ public class ProductInfoRepositoryImpl {
             return null;
         }
 
-        TypedQuery<ProductInfo> query = entityManager.createQuery(
-                "select p from ProductInfo p where "
-                + String.join(" AND ", conditions) + sortBy, ProductInfo.class);
+        TypedQuery<Long> totalCountQuery = (TypedQuery<Long>) entityManager.createQuery(
+                "select count(*) from ProductInfo p where "
+                        + String.join(" AND ", conditions));
 
-        mapParams.forEach(query::setParameter);
+        mapParams.forEach(totalCountQuery::setParameter);
 
-        if (pageInfo != null && pageInfo.length == 2) {
-            return query.setFirstResult(Integer.parseInt(pageInfo[0]))
-                    .setMaxResults(Integer.parseInt(pageInfo[1]))
-                    .getResultList();
+        List<Long> totalCountQueryResultList = totalCountQuery.getResultList();
+
+        if (totalCountQueryResultList != null && totalCountQueryResultList.get(0) > 0) {
+            Long totalCount = totalCountQueryResultList.get(0);
+
+            TypedQuery<ProductInfo> query = entityManager.createQuery(
+                    "select p from ProductInfo p where "
+                            + String.join(" AND ", conditions) + sortBy, ProductInfo.class);
+
+            mapParams.forEach(query::setParameter);
+
+            if (pageInfo != null && pageInfo.length == 2) {
+                return new Pair<>(totalCount, query.setFirstResult(Integer.parseInt(pageInfo[0]))
+                        .setMaxResults(Integer.parseInt(pageInfo[1]))
+                        .getResultList());
+            }
+
+            return new Pair<>(totalCount, query.getResultList());
         }
-
-        return query.getResultList();
+        return null;
     }
 }

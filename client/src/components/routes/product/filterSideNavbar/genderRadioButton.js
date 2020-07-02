@@ -1,8 +1,8 @@
 import React from 'react';
 import log from 'loglevel';
-import RadioButtonsGroup from "../../ui/radioButtonGroup";
+import RadioButtonsGroup from "../../../ui/radioButtonGroup";
 import {useDispatch, useSelector} from "react-redux";
-import {ADD_GENDER_CATEGORY} from "../../../actions/types";
+import {ADD_GENDER_CATEGORY} from "../../../../actions/types";
 
 export default function GenderRadioButton() {
     const dispatch = useDispatch()
@@ -37,13 +37,7 @@ export default function GenderRadioButton() {
     return (
         <div style={{padding: '8px 0 8px 0'}}>
         <RadioButtonsGroup onChangeHandler={handleRadioButtonChange}
-                           attrList={
-                               // eslint-disable-next-line array-callback-return
-                               genderList.filter(obj => {
-                                   if (obj.id < 5) {
-                                       return obj
-                                   }
-                               })}
+                           attrList={genderList.filter(obj => obj.id < 5)}
                            selectedValue={gender.length > 0? gender[0].value: false}
                            title="Gender"/>
         </div>

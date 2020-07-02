@@ -1,10 +1,10 @@
 import React from 'react';
-import CheckboxList from "../../ui/checkboxList";
+import CheckboxList from "../../../ui/checkboxList";
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
 import {
     ADD_APPAREL_CATEGORY
-} from "../../../actions/types";
+} from "../../../../actions/types";
 
 export default function ApparelCheckBox() {
     const dispatch = useDispatch()

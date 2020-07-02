@@ -1,8 +1,8 @@
 import React from 'react';
-import CheckboxList from "../../ui/checkboxList";
+import CheckboxList from "../../../ui/checkboxList";
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
-import {ADD_PRICE_CATEGORY} from "../../../actions/types";
+import {ADD_PRICE_CATEGORY} from "../../../../actions/types";
 
 export default function PriceCheckBox() {
     const TITLE = "Price"

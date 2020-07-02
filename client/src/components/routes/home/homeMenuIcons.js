@@ -23,8 +23,7 @@ const HomeMenuIcons = () => {
         }
 
         // filter out images which are related to home icons.
-        // eslint-disable-next-line array-callback-return
-        imageList = imageList.filter(image => { if(image.filePath.search("icon") !== -1) return image})
+        imageList = imageList.filter(image => image.filePath.search("icon") !== -1)
 
         return imageList.map(info => {
 

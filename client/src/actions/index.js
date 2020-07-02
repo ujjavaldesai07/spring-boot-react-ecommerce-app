@@ -7,7 +7,7 @@ import {
     HANDLE_TOKEN_ID,
     HANDLE_SIGN_IN_ERROR,
     LOAD_FILTER_PRODUCTS,
-    LOAD_FILTER_ATTRIBUTES,
+    LOAD_FILTER_ATTRIBUTES, SELECT_PRODUCT_DETAIL,
 } from './types';
 import authApi from "../api/authServiceApi";
 import history from "../history";
@@ -104,6 +104,23 @@ export const loadProducts = filterQuery => async dispatch => {
             window.history.pushState('', '', uri)
             log.trace(`[ACTION]: Products = ${JSON.stringify(response.data)}`)
             dispatch({type: LOAD_FILTER_PRODUCTS, payload: JSON.parse(JSON.stringify(response.data))});
+        } else {
+            log.info(`[ACTION]: unable to fetch response for Products API`)
+        }
+
+    }
+};
+
+export const getSelectedProduct = filterQuery => async dispatch => {
+    log.info(`[ACTION]: getSelectedProduct Calling Products API filterQuery = ${filterQuery}`)
+
+    if (filterQuery) {
+        // remove spaces from the url
+        let uri = `/product?q=product_id=${filterQuery.replace(/\s/g, '')}`
+        const response = await commonServiceApi.get(uri);
+        if (response != null) {
+            log.trace(`[ACTION]: Products = ${JSON.stringify(response.data)}`)
+            dispatch({type: SELECT_PRODUCT_DETAIL, payload: JSON.parse(JSON.stringify(response.data))});
         } else {
             log.info(`[ACTION]: unable to fetch response for Products API`)
         }

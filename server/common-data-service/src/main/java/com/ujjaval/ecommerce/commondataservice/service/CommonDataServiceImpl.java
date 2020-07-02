@@ -14,6 +14,7 @@ import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
 import com.ujjaval.ecommerce.commondataservice.model.FilterAttributesResponse;
 import com.ujjaval.ecommerce.commondataservice.model.MainScreenResponse;
 import com.ujjaval.ecommerce.commondataservice.service.interfaces.CommonDataService;
+import org.javatuples.Pair;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +79,7 @@ public class CommonDataServiceImpl implements CommonDataService {
     public ProductInfo findAddressById(Integer id) {
         Optional<ProductInfo> result = productInfoRepository.findById(id);
 
-        ProductInfo productInfo = null;
+        ProductInfo productInfo;
 
         if (result.isPresent()) {
             productInfo = result.get();
@@ -128,47 +129,63 @@ public class CommonDataServiceImpl implements CommonDataService {
         return String.format("http://%s/web-images/%s", currentHostUrl, path);
     }
 
-    public MainScreenResponse getMainScreenDataList() throws UnknownHostException {
+    public MainScreenResponse getHomeScreenData() throws UnknownHostException {
 
         List<BrandImages> brandList = brandImagesRepository.getAllData();
-        Type listType = new TypeToken<List<BrandImagesDTO>>() {}.getType();
+        Type listType = new TypeToken<List<BrandImagesDTO>>() {
+        }.getType();
         List<BrandImagesDTO> brandDTOList = modelMapper.map(brandList, listType);
-        for(BrandImagesDTO info: brandDTOList) {
+        for (BrandImagesDTO info : brandDTOList) {
             info.setFilePath(appendHostUrl(info.getFilePath()));
         }
 
         List<ApparelImages> apparelList = apparelImagesRepository.getAllData();
-        listType = new TypeToken<List<ApparelImagesDTO>>() {}.getType();
+        listType = new TypeToken<List<ApparelImagesDTO>>() {
+        }.getType();
         List<ApparelImagesDTO> apparelDTOList = modelMapper.map(apparelList, listType);
-        for(ApparelImagesDTO info: apparelDTOList) {
+        for (ApparelImagesDTO info : apparelDTOList) {
             info.setFilePath(appendHostUrl(info.getFilePath()));
         }
 
         List<CarouselImages> carouselList = carouselImagesRepository.getAllData();
-        for(CarouselImages info: carouselList) {
+        for (CarouselImages info : carouselList) {
             info.setFilePath(appendHostUrl(info.getFilePath()));
         }
 
         return new MainScreenResponse(brandDTOList, apparelDTOList, carouselList);
     }
 
-    public FilterAttributesResponse getFilterAttributesComponentList() {
+    public FilterAttributesResponse getFilterAttributesData() {
         return new FilterAttributesResponse(
                 productBrandCategoryRepository.getAllData(),
                 genderCategoryRepository.getAllData(),
                 apparelCategoryRepository.getAllData(),
                 sortByCategoryRepository.getAllData(),
                 priceRangeCategoryRepository.getAllData()
-                );
+        );
     }
 
-    public List<ProductInfo> getFilterProductsComponentList(HashMap<String, String> conditionMap)
+    public Pair<Long, List<ProductInfo>> getSelectedProducts(HashMap<String, String> conditionMap)
             throws UnknownHostException {
-        List<ProductInfo> productList =  productInfoRepository.getProductInfoByCategories(conditionMap);
+        Pair<Long, List<ProductInfo>> result = productInfoRepository.getProductInfoByCategories(conditionMap);
 
-        for(ProductInfo info: productList) {
-            info.setImageName(appendHostUrl(info.getImageName()));
+        if (result != null) {
+            for (ProductInfo info : result.getValue1()) {
+                info.setImageName(appendHostUrl(info.getImageName()));
+            }
         }
-        return productList;
+        return result;
+    }
+
+    public ProductInfo getSelectedProducts(int id)
+            throws UnknownHostException {
+        Optional<ProductInfo> result = productInfoRepository.findById(id);
+        ProductInfo product = null;
+        if (result.isPresent()) {
+            product = result.get();
+            product.setImageName(appendHostUrl(product.getImageName()));
+        }
+
+        return product;
     }
 }

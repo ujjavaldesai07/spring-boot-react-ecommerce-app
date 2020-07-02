@@ -11,4 +11,6 @@ export const INITIAL_SORT_STATE = {
     value: null
 }
 
-export const PRODUCT_ROUTE = '/products'
+export const HOME_ROUTE = '/'
+export const PRODUCTS_ROUTE = '/products'
+export const DETAILS_ROUTE = '/products/details'

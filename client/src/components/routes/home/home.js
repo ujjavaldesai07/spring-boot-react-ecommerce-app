@@ -10,6 +10,8 @@ import log from 'loglevel';
 import mainScreenReducer from "../../../reducers/screens/homeScreenReducer";
 import HomeMenuIcons from "./homeMenuIcons";
 import Hidden from "@material-ui/core/Hidden";
+import history from "../../../history";
+import {PageNotFound} from "../../ui/pageNotFound";
 
 const Home = props => {
     const {hover} = useSelector(state => state.tabHoverEventReducer)
@@ -21,6 +23,10 @@ const Home = props => {
 
         // eslint-disable-next-line
     }, [mainScreenReducer]);
+
+    if(history.location.pathname.localeCompare('/') !== 0) {
+        return <PageNotFound/>
+    }
 
     log.info("[Home]: Rendering Home Component")
     return (

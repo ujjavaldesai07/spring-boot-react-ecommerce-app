@@ -1,11 +1,11 @@
 import React from 'react';
 import Grid from "@material-ui/core/Grid";
-import TitleHeader from "../../ui/titleHeader";
-import CollapsableSearch from "../../ui/collapsableSearch";
-import CheckboxList from "../../ui/checkboxList";
+import TitleHeader from "../../../ui/titleHeader";
+import CollapsableSearch from "../../../ui/collapsableSearch";
+import CheckboxList from "../../../ui/checkboxList";
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
-import {ADD_BRAND_CATEGORY} from "../../../actions/types";
+import {ADD_BRAND_CATEGORY} from "../../../../actions/types";
 
 export default function BrandCheckBox() {
     const dispatch = useDispatch()
