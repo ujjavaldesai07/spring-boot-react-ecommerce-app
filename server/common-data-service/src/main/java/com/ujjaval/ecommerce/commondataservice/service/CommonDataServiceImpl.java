@@ -19,10 +19,8 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -165,7 +163,7 @@ public class CommonDataServiceImpl implements CommonDataService {
         );
     }
 
-    public Pair<Long, List<ProductInfo>> getSelectedProducts(HashMap<String, String> conditionMap)
+    public Pair<Long, List<ProductInfo>> getProducts(HashMap<String, String> conditionMap)
             throws UnknownHostException {
         Pair<Long, List<ProductInfo>> result = productInfoRepository.getProductInfoByCategories(conditionMap);
 
@@ -175,17 +173,5 @@ public class CommonDataServiceImpl implements CommonDataService {
             }
         }
         return result;
-    }
-
-    public ProductInfo getSelectedProducts(int id)
-            throws UnknownHostException {
-        Optional<ProductInfo> result = productInfoRepository.findById(id);
-        ProductInfo product = null;
-        if (result.isPresent()) {
-            product = result.get();
-            product.setImageName(appendHostUrl(product.getImageName()));
-        }
-
-        return product;
     }
 }

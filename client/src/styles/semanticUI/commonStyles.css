@@ -1,0 +1,21 @@
+
+/* Quantity Dropdown Styling */
+.ui.menu > div {
+    width: auto !important;
+    min-width: auto !important;
+}
+
+#quantity-dropdown > .text {
+    font-weight: bold !important;
+}
+
+#quantity-dropdown > .icon {
+    margin-left: 5px !important;
+}
+
+#quantity-dropdown > .menu > div {
+    padding: 5px 15px 5px 17px !important;
+}
+
+/*****************************/
+

@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,62 +43,48 @@ public class CommonDataController {
                     "occurred while loading the data in database");
         }
 
-        return  ResponseEntity.ok("Success");
+        return ResponseEntity.ok("Success");
     }
 
     @GetMapping("/products")
-    public ResponseEntity<?> getSelectedProducts(@RequestParam("q") String queryParams) throws UnknownHostException {
-        HashMap<String, String> conditionMap = new HashMap<>();
+    public ResponseEntity<?> getProducts(@RequestParam("q") String queryParams) throws UnknownHostException {
 
+        // append :: at the end so that we can split even if there is just one condition
+        // for eg ?q=brand=1::
+        queryParams = queryParams.concat("::");
         String[] separatedConditions = queryParams.split("::");
 
-        if (separatedConditions.length == 0 && !queryParams.isEmpty()) {
-            String[] categories = queryParams.split("=");
-            if (categories.length > 1) {
-                conditionMap.put(categories[0], categories[1]);
-            }
-
-        } else {
+        if (separatedConditions.length > 0) {
+            HashMap<String, String> conditionMap = new HashMap<>();
             for (String condition : separatedConditions) {
+                System.out.println("condition = " + condition);
                 String[] categories = condition.split("=");
                 if (categories.length > 1) {
+                    System.out.println("categories[0] = " + categories[0]);
+                    System.out.println("categories[0] = " + categories[1]);
                     conditionMap.put(categories[0], categories[1]);
                 }
             }
-        }
 
-        Pair<Long, List<ProductInfo>> result = commonDataService.getSelectedProducts(conditionMap);
+            Pair<Long, List<ProductInfo>> result = commonDataService.getProducts(conditionMap);
 
-        if (result == null) {
-            return new ResponseEntity<>(
-                    "No search results are found",
-                    HttpStatus.NO_CONTENT);
-        }
-
-        ProductInfoDTO productInfoDTO = new ProductInfoDTO(result.getValue0(), result.getValue1());
-
-        return ResponseEntity.ok(productInfoDTO);
-    }
-
-    @GetMapping("/product")
-    public ResponseEntity<?> getSelectedProduct(@RequestParam("q") String queryParams) throws UnknownHostException {
-        String[] separatedQuery = queryParams.split("=");
-
-        if(separatedQuery.length == 2 && separatedQuery[0].equals("product_id")) {
-            ProductInfo product = commonDataService.getSelectedProducts(Integer.parseInt(separatedQuery[1]));
-
-            if (product == null) {
-                return new ResponseEntity<Error>(HttpStatus.CONFLICT);
+            if (result == null) {
+                return new ResponseEntity<>(
+                        "No search results are found",
+                        HttpStatus.NO_CONTENT);
             }
-            return ResponseEntity.ok(product);
+
+            ProductInfoDTO productInfoDTO = new ProductInfoDTO(result.getValue0(), result.getValue1());
+
+            return ResponseEntity.ok(productInfoDTO);
         }
-        return new ResponseEntity<Error>(HttpStatus.CONFLICT);
+        return ResponseEntity.badRequest().body("Query has not followed the required format.");
     }
 
     @GetMapping(value = "/web-images/**")
     public ResponseEntity<InputStreamResource> getWebImage(HttpServletRequest request) throws IOException {
         String mediaType = "image/webp";
-        String[] uriSplit =  request.getRequestURI().split("/", 3);
+        String[] uriSplit = request.getRequestURI().split("/", 3);
         var imgFile = new ClassPathResource(String.format("static/images/%s", uriSplit[2]));
         return ResponseEntity
                 .ok()

@@ -4,14 +4,14 @@ import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 
-import TitleHeader from "../../../ui/titleHeader";
+import {NavbarHeader} from "../../../ui/headers";
 import ApparelCheckBox from "./apparelCheckBox";
 import log from "loglevel";
 import GenderRadioButton from "./genderRadioButton";
 import BrandCheckBox from "./brandCheckBox";
 import PriceCheckBox from "./priceCheckBox";
 import ClearAllButton from "./clearAllButton";
-import {filterAttributesReducer} from "../../../../reducers/screens/filter/filterScreenReducer";
+import {filterAttributesReducer} from "../../../../reducers/screens/commonScreenReducer";
 import {connect, useSelector} from "react-redux";
 import {loadFilterAttributes, loadProducts} from "../../../../actions";
 import {Box} from "@material-ui/core";
@@ -43,12 +43,20 @@ function FilterNavbar(props) {
     };
 
     const renderDrawerComponents = (title, component) => {
+        const renderTitle = () => {
+            if(!title) {
+                return null
+            }
+            return (
+                <Box pt={2}>
+                    <NavbarHeader title={title}/>
+                </Box>
+            )
+        }
         return (
             <>
-                <Box display="flex" flexDirection="column" p={2}>
-                    <Box>
-                        <TitleHeader title={title} variant="subtitle1" fontWeight="bold" fontSize="1.2rem"/>
-                    </Box>
+                <Box display="flex" flexDirection="column" px={1} pl={3}>
+                    {renderTitle()}
                     <Box>
                         {component}
                     </Box>
@@ -67,8 +75,8 @@ function FilterNavbar(props) {
             <Divider/>
 
             {renderDrawerComponents("Gender", <GenderRadioButton/>)}
-            {renderDrawerComponents("Apparel", <ApparelCheckBox/>)}
-            {renderDrawerComponents("Brand", <BrandCheckBox/>)}
+            {renderDrawerComponents(null, <ApparelCheckBox/>)}
+            {renderDrawerComponents(null, <BrandCheckBox/>)}
             {renderDrawerComponents("Price", <PriceCheckBox/>)}
         </>
     );

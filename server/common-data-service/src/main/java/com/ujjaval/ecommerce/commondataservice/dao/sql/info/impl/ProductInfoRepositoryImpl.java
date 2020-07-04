@@ -9,15 +9,12 @@ import org.javatuples.Pair;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ProductInfoRepositoryImpl {
 
     enum QueryType {
-        gender, apparel, brand, price, category, sortby, page;
+        gender, apparel, brand, price, category, sortby, page, productid;
 
         enum MathOperator {
             bt, lt, gt
@@ -143,6 +140,20 @@ public class ProductInfoRepositoryImpl {
                     pageInfo = entry.getValue().split(",");
                     System.out.println("pageInfo[0] = " + pageInfo[0] + ", pageInfo[1] = " + pageInfo[1]);
                     break;
+
+                case productid:
+                    String[] product_ids_str = entry.getValue().split(",");
+                    System.out.println("product_ids_str = " + product_ids_str[0]);
+                    List<Integer> productIds = new ArrayList<>();
+                    for (String id : product_ids_str) {
+                        productIds.add(Integer.valueOf(id));
+                    }
+
+                    TypedQuery<ProductInfo> query = entityManager.createQuery(
+                            "SELECT p FROM ProductInfo p WHERE p.id IN (?1)" , ProductInfo.class);
+                    query.setParameter(1, productIds);
+
+                    return new Pair<>((long) productIds.size(), query.getResultList());
 
                 default:
                     System.out.println("UnsupportedType");

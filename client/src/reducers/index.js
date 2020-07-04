@@ -1,19 +1,26 @@
 import {combineReducers} from "redux";
 import {reducer as formReducer} from "redux-form";
 import authApiReducer from "./api/authApiReducer";
-import homeScreenReducer from "./screens/homeScreenReducer";
+
+import {
+    homePageDataReducer, addToCartReducer,
+    selectProductDetailReducer, checkoutProductReducer,
+    filterProductsReducer, filterAttributesReducer,
+} from "./screens/commonScreenReducer";
+
 import {tabHoverEventReducer} from "./events/eventReducer";
-import {filterProductsReducer, filterAttributesReducer} from "./screens/filter/filterScreenReducer";
+
 import {
     selectGenderReducer, selectApparelReducer,
     selectBrandReducer, selectPriceReducer,
-    selectSortReducer, selectPageReducer, selectProductReducer
+    selectSortReducer, selectPageReducer,
 } from "./screens/filter/selectedFilterAttributesReducer"
 
 export default combineReducers({
     form: formReducer,
     authApiReducer,
-    homeScreenReducer,
+    homePageDataReducer,
+    addToCartReducer,
     tabHoverEventReducer,
     filterProductsReducer,
     filterAttributesReducer,
@@ -23,5 +30,6 @@ export default combineReducers({
     selectPriceReducer,
     selectSortReducer,
     selectPageReducer,
-    selectProductReducer
+    selectProductDetailReducer,
+    checkoutProductReducer
 });

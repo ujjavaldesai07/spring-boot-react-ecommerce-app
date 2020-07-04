@@ -4,8 +4,17 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import log from "loglevel";
+import {makeStyles} from "@material-ui/core/styles";
+
+const useStyles = makeStyles(() => ({
+    label: {
+        fontWeight: "bold",
+        fontSize: "0.9rem"
+    }
+}));
 
 export default function RadioButtonsGroup(props) {
+    const classes = useStyles()
 
     const handleChange = (event) => {
         log.debug(`[RadioButtonsGroup]: handleChange event.target.value = ${event.target.value}`)
@@ -13,6 +22,7 @@ export default function RadioButtonsGroup(props) {
     };
 
     const renderRadioButtonList = rbList => {
+
         if (!rbList) {
             log.info(`[RadioButtonsGroup]: rbList is null`)
             return null
@@ -24,7 +34,8 @@ export default function RadioButtonsGroup(props) {
             return <FormControlLabel key={id}
                                      value={type}
                                      control={<Radio size="small"/>}
-                                     label={type}/>
+                                     label={type}
+                                    classes={{label: classes.label}}/>
         })
     }
 

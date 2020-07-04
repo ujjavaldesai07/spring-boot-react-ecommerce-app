@@ -6,7 +6,7 @@ import {MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
 import {useSelector} from "react-redux";
 
 const HomeMenuIcons = () => {
-    const homeAPIData = useSelector(state => state.homeScreenReducer? state.homeScreenReducer : null)
+    const homeAPIData = useSelector(state => state.homePageDataReducer? state.homePageDataReducer : null)
 
     if (!homeAPIData) {
         log.info("[HomeMenuIcons]: homeAPIData is null")

@@ -53,6 +53,8 @@ function Product() {
         };
     })
 
+    console.log(`history.location.pathname = ${JSON.stringify(history.location)}`)
+
     if (history.location.pathname.localeCompare('/products') !== 0
         || !history.location.search.startsWith('?q=')) {
         return <PageNotFound/>
@@ -69,14 +71,16 @@ function Product() {
 
                     <Grid item md={10}>
                         <Box display="flex" p={2}>
+                            <Box width="70%">
                             <BreadcrumbsSection linkList={breadcrumbLinks}/>
-                        </Box>
-                        <Box display="flex" py={4}>
-                            <Box width="75%" p={1}>
-                                <FilterChips/>
                             </Box>
                             <Box width="auto">
                                 <FilterDropdown/>
+                            </Box>
+                        </Box>
+                        <Box display="flex">
+                            <Box width="75%" p={1}>
+                                <FilterChips/>
                             </Box>
                         </Box>
                         <Divider/>

@@ -14,27 +14,17 @@ import {connect} from 'react-redux'
 
 import {
     AppBar, Toolbar, IconButton, Typography,
-    InputBase, Badge
+    InputBase, Badge, Box
 } from '@material-ui/core';
 
 import useNavBarStyles from "../../../styles/materialUI/navBarStyles";
 import TabList from "./tabList";
 import {Link} from "react-router-dom";
 import {useSelector} from "react-redux";
-import {HANDLE_TOKEN_ID} from "../../../actions/types";
+import {HANDLE_TOKEN_ID, SHOPPERS_PRODUCT_ID} from "../../../actions/types";
 import log from "loglevel";
 import Hidden from "@material-ui/core/Hidden";
-
-// css styles
-const iconButtonLabel = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    fontSize: '0.8rem',
-    fontWeight: 'bold',
-    paddingLeft: '10px'
-};
+import BagButton from "./bagButton";
 
 const NavBar = props => {
     const classes = useNavBarStyles();
@@ -222,31 +212,28 @@ const NavBar = props => {
 
                     <div className={classes.grow_1}/>
 
-                    <div className={classes.sectionDesktop}>
-                        <div style={iconButtonLabel}>
-                            <IconButton
-                                aria-label="account of current user"
-                                aria-haspopup="true"
-                                size="medium"
-                                color="inherit"
-                                onClick={handleProfileMenuOpen}
-                                classes={{root: classes.iconButtonRoot}}
-                            >
-                                <AccountCircle/>
-                            </IconButton>
-                            Profile
-                        </div>
-                        <div style={iconButtonLabel}>
-                            <IconButton aria-label="show 17 new notifications"
-                                        color="inherit"
-                                        classes={{root: classes.iconButtonRoot}}>
-                                <Badge badgeContent={17} color="secondary">
-                                    <LocalMallIcon/>
-                                </Badge>
-                            </IconButton>
-                            Bag
-                        </div>
-                    </div>
+                    <Hidden smDown>
+                        <Box display="flex" justifyContent="center" alignItems="center" css={{width: 90}}>
+                            <Box width="50%" onClick={handleProfileMenuOpen} css={{cursor: 'pointer'}}>
+                                <Box pl={1}>
+                                    <AccountCircle/>
+                                </Box>
+                                <Box style={{fontSize: "0.8rem", fontWeight: 'bold'}}>
+                                    Profile
+                                </Box>
+                            </Box>
+                            <Box width="50%" p={1}>
+                                <Link to="/checkout">
+                                    <Box pb={0.5}>
+                                        <BagButton/>
+                                    </Box>
+                                    <Box style={{color: "black", fontSize: "0.8rem", fontWeight: 'bold'}}>
+                                        Bag
+                                    </Box>
+                                </Link>
+                            </Box>
+                        </Box>
+                    </Hidden>
 
 
                     <div className={classes.sectionMobile}>

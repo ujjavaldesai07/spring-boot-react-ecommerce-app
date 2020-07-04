@@ -231,7 +231,11 @@ const FilterProductDisplay = props => {
 
         if (!filterProducts) {
             log.info(`[FilterProductDisplay] filterProducts is null`)
-            return renderPageNotFound()
+            return (
+                <Box display="flex" pb={15} justifyContent="center" css={{width: '100%'}}>
+                    <Spinner/>
+                </Box>
+            )
         }
 
         const handleImageClick = selectedProduct => () => {
@@ -243,11 +247,6 @@ const FilterProductDisplay = props => {
         }
 
         const renderImageList = (imageList, boxSize, imageSize, margin) => {
-            if (imageList.length === 0) {
-                log.debug(`[FilterProductDisplay] Rendering renderImageList and imageList is null`)
-                return renderPageNotFound()
-            }
-
             log.trace(`[FilterProductDisplay] Rendering renderImageList imageList = ${JSON.stringify(imageList)}`)
 
             return imageList.map((info) => {
@@ -300,7 +299,7 @@ const FilterProductDisplay = props => {
                 {/*Desktop*/}
                 <Hidden only={['xs', 'sm', 'md']}>
                     <Box display="flex" flexWrap="wrap" m={3}>
-                        {renderImageList(filterProducts, {height: 500, width: 210},
+                        {renderImageList(filterProducts, {height: 450, width: 210},
                             {height: 280, width: 210}, 10)}
                     </Box>
                 </Hidden>

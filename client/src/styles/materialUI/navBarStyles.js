@@ -128,13 +128,15 @@ const useNavBarStyles = makeStyles(theme => ({
     sectionDesktop: {
         display: "none",
         [theme.breakpoints.up("md")]: {
-            display: "flex"
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center"
         }
     },
     sectionMobile: {
         display: "flex",
         [theme.breakpoints.up("md")]: {
-            display: "none"
+            display: "none",
         }
     },
     iconButtonRoot: {

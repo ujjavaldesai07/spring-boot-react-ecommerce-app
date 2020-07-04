@@ -11,17 +11,15 @@ import java.util.List;
 
 public interface CommonDataService {
 
-    public ProductInfo findAddressById(Integer id);
+    ProductInfo findAddressById(Integer id);
 
-    public void save();
+    void save();
 
-    public MainScreenResponse getHomeScreenData() throws UnknownHostException;
+    MainScreenResponse getHomeScreenData() throws UnknownHostException;
 
-    public FilterAttributesResponse getFilterAttributesData();
+    FilterAttributesResponse getFilterAttributesData();
 
-    public Pair<Long, List<ProductInfo>> getSelectedProducts(HashMap<String,
+    Pair<Long, List<ProductInfo>> getProducts(HashMap<String,
             String> conditionMap) throws UnknownHostException;
-
-    public ProductInfo getSelectedProducts(int id) throws UnknownHostException;
 }
 

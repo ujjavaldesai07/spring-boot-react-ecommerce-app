@@ -2,20 +2,9 @@ import React, {useEffect} from 'react';
 import Grid from "@material-ui/core/Grid";
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
-import {
-    REMOVE_APPAREL_CATEGORY,
-    REMOVE_BRAND_CATEGORY,
-    REMOVE_GENDER_CATEGORY, REMOVE_PRICE_CATEGORY,
-    SELECT_PRODUCT_PAGE, SELECT_SORT_CATEGORY
-} from "../../../actions/types";
+import {SELECT_PRODUCT_PAGE} from "../../../actions/types";
 import Pagination from "@material-ui/lab/Pagination";
-import {INITIAL_PAGINATION_STATE, INITIAL_SORT_STATE, MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
-import {filterProductsReducer} from "../../../reducers/screens/filter/filterScreenReducer";
-import {
-    selectApparelReducer,
-    selectBrandReducer,
-    selectGenderReducer, selectPriceReducer
-} from "../../../reducers/screens/filter/selectedFilterAttributesReducer";
+import {INITIAL_PAGINATION_STATE, MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
 
 export default function FilterPagination() {
     const dispatch = useDispatch()

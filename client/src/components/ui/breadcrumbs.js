@@ -7,11 +7,13 @@ import log from 'loglevel';
 export default function BreadcrumbsSection(props) {
     const renderLinks = () => {
         return props.linkList.splice(0, props.linkList.length-1).map(({name, link}) => {
-            return (
-                <Link color="inherit" to={link} key={name}>
-                    {name}
-                </Link>
-            )
+            if(link.length > 0) {
+                return (
+                    <Link color="inherit" to={link} key={name}>
+                        {name}
+                    </Link>
+                )
+            }
         })
     }
 

@@ -1,6 +1,11 @@
 import React from 'react'
 import {Menu} from 'semantic-ui-react'
-import {StyledDropdown} from "../../styles/semanticUI/customStyles";
+import {
+    StyledLargeDropdown,
+    StyledSmallDropdown,
+    StyledSmallMenu
+} from "../../styles/semanticUI/customStyles";
+import "../../styles/semanticUI/commonStyles.css"
 import log from "loglevel";
 
 const DropdownSection = props => {
@@ -24,19 +29,40 @@ const DropdownSection = props => {
         props.onChangeHandler(value, optionList[value - 1].text)
     }
 
-    log.debug(`[DropdownSection]: Rendering DropdownSection Component props.selectedValue.value = ${props.selectedValue.value}`)
+    const renderLargeDropdown = () => {
+        return (
+            <Menu compact>
+                <StyledLargeDropdown options={optionList}
+                                     simple item
+                                     id={`${props.title}-dropdown`}
+                                     text={`${props.appendText} ${props.selectedValue.value ? props.selectedValue.value
+                                         : optionList ? optionList[0].text : null}`}
+                                     onChange={handleDropdownChange}
+                                     value={props.selectedValue.id}/>
+
+            </Menu>
+        )
+    }
+
+    const renderSmallDropdown = () => {
+        return (
+            <StyledSmallMenu compact>
+                <StyledSmallDropdown options={optionList}
+                                     simple item
+                                     id={`${props.title}-dropdown`}
+                                     text={`${props.appendText} ${props.selectedValue.value ? props.selectedValue.value
+                                         : optionList ? optionList[0].text : null}`}
+                                     onChange={handleDropdownChange}
+                                     value={props.selectedValue.id}/>
+            </StyledSmallMenu>
+        )
+    }
+
+    log.debug(`[DropdownSection]: Rendering DropdownSection Component`)
     return (
-        <Menu compact>
-            <StyledDropdown options={optionList}
-                            simple item
-                            id="customDropdown"
-                            text={`Sort by: ${props.selectedValue.value? props.selectedValue.value
-                                : optionList ? optionList[0].text : null}`}
-                            onChange={handleDropdownChange}
-                            value={props.selectedValue.id}/>
-
-        </Menu>
-
+        <>
+            {props.size && props.size.localeCompare("sm") === 0? renderSmallDropdown(): renderLargeDropdown()}
+        </>
     )
 }
 

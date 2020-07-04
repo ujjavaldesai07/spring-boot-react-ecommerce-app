@@ -11,7 +11,7 @@ export const PageNotFound = () => {
              alignItems="center"
              css={{height: "50vh"}}>
             <Box alignSelf="center" pb={8}>
-                <img src={pageNotFoundImage}/>
+                <img src={pageNotFoundImage} alt="pageNotFoundImage"/>
             </Box>
             <Box alignSelf="center" css={{fontSize: '2rem', fontWeight: 400}}>
                 We couldn't find any matches!

@@ -1,5 +1,4 @@
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
 import {Typography} from "@material-ui/core";
 import {Link} from "react-router-dom";
 import log from 'loglevel';
@@ -13,13 +12,8 @@ const queryType = {
     apparel: 2
 }
 
-const headerStyles = {
-    padding: '30px 0 0 30px',
-    textDecoration: 'underline',
-}
-
 const TopCategoriesAndBrands = () => {
-    const homeAPIData = useSelector(state => state.homeScreenReducer ? state.homeScreenReducer : null)
+    const homeAPIData = useSelector(state => state.homePageDataReducer ? state.homePageDataReducer : null)
 
     if (!homeAPIData) {
         log.debug("[TopCategoriesAndBrands]: homeAPIData is null")

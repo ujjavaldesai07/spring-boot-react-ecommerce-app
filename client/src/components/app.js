@@ -9,20 +9,24 @@ import Login from "./routes/login";
 import SignUp from "./routes/signUp";
 import Product from "./routes/product/product";
 import Detail from "./routes/detail/detail";
+import Checkout from "./routes/checkout";
+import {PageNotFound} from "./ui/pageNotFound";
 
 
 const App = () => {
     log.info(`[App]: Rendering App Component window`)
     return (
-            <Router history={history}>
-                <Route path="/" component={NavBar}/>
-                <Route path="/" component={TabPanelList}/>
-                <Route path="/" exact component={Home}/>
-                <Route path="/login" exact component={Login}/>
-                <Route path="/signup" exact component={SignUp}/>
-                <Route path="/:products" exact component={Product}/>
-                <Route path="/products/:details" exact component={Detail}/>
-            </Router>
+        <Router history={history}>
+            <Route path="/" component={NavBar}/>
+            <Route path="/" component={TabPanelList}/>
+            <Route path="/" exact component={Home}/>
+            <Route path="/login" exact component={Login}/>
+            <Route path="/signup" exact component={SignUp}/>
+            <Route path="/checkout" exact component={Checkout}/>
+            <Route path="/products/details/:checkout" exact component={Checkout}/>
+            <Route path="/products/:details" exact component={Detail}/>
+            <Route path="/products" exact component={Product}/>
+        </Router>
     )
 }
 

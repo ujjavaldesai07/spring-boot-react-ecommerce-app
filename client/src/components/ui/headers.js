@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme, props) => ({
     },
 }));
 
-export default function TitleHeader(props) {
+export const TitleHeader = (props) => {
     const classes = useStyles();
     const fontWeight = props.fontWeight? props.fontWeight: 'none'
     const fontSize = props.fontSize? props.fontSize: 'none'
@@ -26,4 +26,10 @@ export default function TitleHeader(props) {
             </Typography>
         </div>
     );
+}
+
+export const NavbarHeader = (props) => {
+    return (
+        <p style={{fontSize: '1rem', fontWeight: 600}}>{props.title.toUpperCase()}</p>
+    )
 }

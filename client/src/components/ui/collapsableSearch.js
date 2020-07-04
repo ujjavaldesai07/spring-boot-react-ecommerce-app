@@ -1,26 +1,19 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import InputBase from '@material-ui/core/InputBase';
 import {makeStyles} from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
 import CloseIcon from '@material-ui/icons/Close';
 import IconButton from "@material-ui/core/IconButton";
+import {Box} from "@material-ui/core";
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        flexGrow: 1,
-    },
-    search: {
-        position: 'relative',
-        float: 'right'
-    },
-    searchIcon: {
+const useStyles = makeStyles(() => ({
+    button: {
+        overflow: 'visible',
         position: 'absolute',
-        display: 'flex',
-        alignItems: 'center',
-        float: "left !important",
-        zIndex: 1000,
-        right: '1px',
-        backgroundColor: "lightgrey"
+        right: '1pc',
+        alignSelf: 'center',
+        backgroundColor: '#f5f5f6',
+        zIndex: '1001'
     },
     inputRoot: {
         color: 'inherit',
@@ -29,12 +22,11 @@ const useStyles = makeStyles((theme) => ({
     inputInput: {
         paddingLeft: '10px',
         borderRadius: '20px',
-        backgroundColor: "lightgrey",
+        backgroundColor: "#f5f5f6",
         color: "black",
-        display: 'block',
         '&:focus': {
             color: "black",
-            backgroundColor: "lightgrey",
+            backgroundColor: "#f5f5f6",
             webkitTransition: 'width 0.4s ease-in-out',
             transition: 'width 0.4s ease-in-out',
             zIndex: '1000',
@@ -45,32 +37,50 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function CollapsableSearch(props) {
+    const textInputRef = useRef();
     const classes = useStyles();
     const [searchIcon, setSearchIcon] = useState(true);
 
-    const handleClick = () => {
-        props.handleOnClick()
+    const handleSearchBarChange = event => {
+        props.handleOnSearchChange(event.target.value)
+    }
+
+    const handleSearchButton = () => {
+        props.handleCancelButton()
         setSearchIcon(!searchIcon)
     }
 
-    return (
-        <div className={classes.root}>
-            <div className={classes.search}>
-                <InputBase style={searchIcon? {width: '30px'}:{width: '27ch'} }
-                    placeholder={searchIcon? '': "Search…"}
-                    classes={{
-                        root: classes.inputRoot,
-                        input: classes.inputInput,
-                    }}
-                    inputProps={{'aria-label': 'search'}}
-                />
-                <IconButton disableRipple size="small" classes={{root: classes.searchIcon}} color="primary" onClick={handleClick}>
-                    {searchIcon ?
-                        <SearchIcon/> :
-                        <CloseIcon/>}
-                </IconButton>
+    const renderInputField = () => {
+        if (searchIcon) {
+            return null
+        }
+        return (
+                <InputBase style={{width: '27ch'}}
+                           placeholder={props.placeholder}
+                           type="text"
+                           autoFocus
+                           classes={{
+                               root: classes.inputRoot,
+                               input: classes.inputInput,
+                           }}
+                           inputRef={textInputRef}
+                           onChange={handleSearchBarChange}
+                           inputProps={{'aria-label': 'search'}}/>
+        )
+    }
 
-            </div>
-        </div>
+    return (
+        <Box display="flex" justifyContent="flex-end" flexDirection="row">
+            <Box display="flex" style={{height: '5ch'}} pr={1}>
+                {renderInputField()}
+                <IconButton size="small"
+                            color="primary"
+                            classes={{root: classes.button}}
+                            onClick={handleSearchButton}
+                >
+                    {searchIcon ? <SearchIcon/> : <CloseIcon/>}
+                </IconButton>
+            </Box>
+        </Box>
     );
 }

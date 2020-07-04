@@ -21,10 +21,9 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const DISPLAY_MAX_ITEMS = 6
-
 export default function CheckboxList(props) {
     const classes = useStyles();
+    const maxItems = props.maxItems? props.maxItems: 1000
 
     if (!props.attrList) {
         log.debug(`[CheckboxList] props.attrList is null`)
@@ -58,7 +57,7 @@ export default function CheckboxList(props) {
         }
 
         return props.attrList.map(({id, type}) => {
-            if (count === DISPLAY_MAX_ITEMS) {
+            if (count === maxItems) {
                 return null
             }
             count = count + 1

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import {Button, Dimmer, Segment, Grid, Dropdown} from 'semantic-ui-react';
+import {Button, Dimmer, Segment, Grid, Dropdown, Menu} from 'semantic-ui-react';
 
 export const StyledSegment = styled(Segment)({
     border: 'none !important',
@@ -20,6 +20,20 @@ export const StyledLoginScreenGrid = styled(Grid)({
     paddingTop: '100px !important'
 });
 
-export const StyledDropdown = styled(Dropdown)({
+export const StyledLargeDropdown = styled(Dropdown)({
     width: "225px"
+});
+
+export const StyledSmallMenu = styled(Menu)({
+    minHeight: "inherit !important",
+    minWidth: "inherit !important",
+    width: "inherit !important",
+});
+
+export const StyledSmallDropdown = styled(Dropdown)({
+    width: "60px",
+    height: "inherit !important",
+    maxHeight: "17px !important",
+    fontSize: "0.8rem",
+    padding: "2px !important"
 });

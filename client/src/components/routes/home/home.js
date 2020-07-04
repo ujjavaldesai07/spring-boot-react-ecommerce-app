@@ -7,7 +7,7 @@ import {connect, useSelector} from "react-redux";
 import {DocumentTitle} from "../../ui/documentTitle";
 import {loadHomePage} from "../../../actions";
 import log from 'loglevel';
-import mainScreenReducer from "../../../reducers/screens/homeScreenReducer";
+import {homePageDataReducer} from "../../../reducers/screens/commonScreenReducer";
 import HomeMenuIcons from "./homeMenuIcons";
 import Hidden from "@material-ui/core/Hidden";
 import history from "../../../history";
@@ -22,7 +22,7 @@ const Home = props => {
         props.loadHomePage();
 
         // eslint-disable-next-line
-    }, [mainScreenReducer]);
+    }, [homePageDataReducer]);
 
     if(history.location.pathname.localeCompare('/') !== 0) {
         return <PageNotFound/>

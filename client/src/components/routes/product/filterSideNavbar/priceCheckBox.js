@@ -34,7 +34,7 @@ export default function PriceCheckBox() {
     return (
         <>
             <CheckboxList attrList={priceRangeList}
-                          fontSize="1rem"
+                          fontSize="0.9rem"
                           title={TITLE}
                           selectedAttrList={selectedPriceRanges}
                           onChangeHandler={handleCheckBoxChange}/>

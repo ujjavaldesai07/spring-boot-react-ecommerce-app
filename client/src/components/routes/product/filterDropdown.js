@@ -30,6 +30,9 @@ export default function FilterDropdown() {
         <DropdownSection
             attrList={sortList}
             selectedValue={selectedSortValue}
+            appendText="Sort by:"
+            title="sortby"
+            size="lg"
             onChangeHandler={onChangeHandler}/>
     );
 }

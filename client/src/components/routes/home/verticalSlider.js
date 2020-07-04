@@ -4,7 +4,7 @@ import log from 'loglevel';
 import {useSelector} from "react-redux";
 
 const VerticalSlider = () => {
-    const homeAPIData = useSelector(state => state.homeScreenReducer? state.homeScreenReducer : null)
+    const homeAPIData = useSelector(state => state.homePageDataReducer? state.homePageDataReducer : null)
 
     const params = {
         spaceBetween: 30,
