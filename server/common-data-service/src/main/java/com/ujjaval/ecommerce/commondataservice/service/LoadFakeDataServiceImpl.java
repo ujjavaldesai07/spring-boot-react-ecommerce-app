@@ -96,7 +96,7 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
         return new Date(beginTime + (long) (Math.random() * diff));
     }
 
-    public boolean loadWebsiteData() {
+    public boolean loadHomeScreenData() {
         System.out.println("Loading website data in to database...");
 
         try {
@@ -219,8 +219,33 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
         return true;
     }
 
+    private Optional<PriceRangeCategory> findPriceRangeCategory(int price) {
+
+        if(price <= 50) {
+            return priceRangeCategoryRepository.findById(1);
+        } else if(price <= 100) {
+            return priceRangeCategoryRepository.findById(2);
+        } else if(price <= 200) {
+            return priceRangeCategoryRepository.findById(3);
+        } else if(price <= 300) {
+            return priceRangeCategoryRepository.findById(4);
+        } else if(price <= 400) {
+            return priceRangeCategoryRepository.findById(5);
+        } else {
+            return priceRangeCategoryRepository.findById(6);
+        }
+    }
+
     public boolean loadTestData() {
         System.out.println("Loading test data in to database...");
+
+        if (!loadFixedPatternData(String.format("%s/%s", DATA_DIRECTORY, SORT_BY_DATA), FileNameType.SORT_BY)) {
+            return false;
+        }
+
+        if (!loadFixedPatternData(String.format("%s/%s", DATA_DIRECTORY, PRICE_RANGE_DATA), FileNameType.PRICE_RANGE)) {
+            return false;
+        }
 
         try {
             InputStream inputStream = getClass()
@@ -298,8 +323,12 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                     productBrandCategoryRepository.save(productBrandCategory);
                 }
 
+                Optional<PriceRangeCategory> priceRangeCategory = findPriceRangeCategory(Integer.parseInt(price));
+                System.out.println("Starting Now..... ");
+                System.out.println("Price == " + priceRangeCategory.get().getType());
+
                 ProductInfo productInfo = new ProductInfo(1, productName, generateRandomDate(), productBrandCategory,
-                        genderCategory, apparelCategory, Integer.parseInt(price),
+                        genderCategory, apparelCategory, priceRangeCategory.get(), Integer.parseInt(price),
                         generateRandomInt(1, 10), generateRandomInt(2, 5),
                         generateRandomFloat(0, 5, 1), true, filePath);
 
@@ -313,15 +342,7 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
             e.printStackTrace();
         }
 
-        if (!loadWebsiteData()) {
-            return false;
-        }
-
-        if (!loadFixedPatternData(String.format("%s/%s", DATA_DIRECTORY, SORT_BY_DATA), FileNameType.SORT_BY)) {
-            return false;
-        }
-
-        if (!loadFixedPatternData(String.format("%s/%s", DATA_DIRECTORY, PRICE_RANGE_DATA), FileNameType.PRICE_RANGE)) {
+        if (!loadHomeScreenData()) {
             return false;
         }
 

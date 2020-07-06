@@ -17,7 +17,7 @@ export default function RadioButtonsGroup(props) {
     const classes = useStyles()
 
     const handleChange = (event) => {
-        log.debug(`[RadioButtonsGroup]: handleChange event.target.value = ${event.target.value}`)
+        log.info(`[RadioButtonsGroup]: handleChange event.target.value = ${event.target.value}`)
         props.onChangeHandler(event.target.value)
     };
 
@@ -30,11 +30,11 @@ export default function RadioButtonsGroup(props) {
 
         log.debug(`[RadioButtonsGroup]: rbList = ${JSON.stringify(rbList)}`)
 
-        return rbList.map(({id, type}) => {
+        return rbList.map(({id, value}) => {
             return <FormControlLabel key={id}
-                                     value={type}
+                                     value={value}
                                      control={<Radio size="small"/>}
-                                     label={type}
+                                     label={value}
                                     classes={{label: classes.label}}/>
         })
     }

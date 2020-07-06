@@ -116,7 +116,7 @@ export const loadSelectedProduct = (filterQuery, type) => async dispatch => {
 
     if (filterQuery) {
         // remove spaces from the url
-        let uri = `/products?q=productid=${filterQuery.replace(/\s/g, '')}`
+        let uri = `/products?product_id=${filterQuery.replace(/\s/g, '')}`
         const response = await commonServiceApi.get(uri);
         if (response != null) {
             log.debug(`[ACTION]: Products = ${JSON.stringify(response.data)}`)
@@ -128,13 +128,18 @@ export const loadSelectedProduct = (filterQuery, type) => async dispatch => {
     }
 };
 
-export const loadFilterAttributes = () => async dispatch => {
-    log.info(`[ACTION]: loadFilterAttributes Calling Filter API`)
-    const response = await commonServiceApi.get('/filter');
-    if (response != null) {
-        log.trace(`[ACTION]: Filter = ${JSON.stringify(response.data)}`)
-        dispatch({type: LOAD_FILTER_ATTRIBUTES, payload: JSON.parse(JSON.stringify(response.data))});
-    } else {
-        log.info(`[ACTION]: unable to fetch response for Filter API`)
+export const loadFilterAttributes = filterQuery => async dispatch => {
+    log.info(`[ACTION]: loadFilterAttributes Calling Filter API filterQuery = ${filterQuery}`)
+
+    if (filterQuery) {
+        let uri = `/filter${filterQuery.replace(/\s/g, '')}`
+        const response = await commonServiceApi.get(uri);
+        if (response != null) {
+            log.trace(`[ACTION]: Filter = ${JSON.stringify(response.data)}`)
+            dispatch({type: LOAD_FILTER_ATTRIBUTES, payload: JSON.parse(JSON.stringify(response.data))});
+            return JSON.parse(JSON.stringify(response.data))
+        } else {
+            log.info(`[ACTION]: unable to fetch response for Filter API`)
+        }
     }
 };

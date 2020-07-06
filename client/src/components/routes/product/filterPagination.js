@@ -11,10 +11,7 @@ export default function FilterPagination() {
     const selectedPage = useSelector(state => state.selectPageReducer)
     const totalProducts = useSelector(state => state.filterProductsReducer?
         state.filterProductsReducer.totalCount: null)
-    const selectedGenders = useSelector(state => state.selectGenderReducer)
-    const selectedApparels = useSelector(state => state.selectApparelReducer)
-    const selectedBrands = useSelector(state => state.selectBrandReducer)
-    const selectedPriceRanges = useSelector(state => state.selectPriceReducer)
+    const selectedFilterAttributes = useSelector(state => state.selectedFilterAttributesReducer)
 
     useEffect(() => {
         log.info("[FilterPagination] Component will mount...")
@@ -22,7 +19,9 @@ export default function FilterPagination() {
             type: SELECT_PRODUCT_PAGE,
             payload: INITIAL_PAGINATION_STATE
         })
-    },[selectedGenders, selectedApparels, selectedBrands, selectedPriceRanges])
+
+        // eslint-disable-next-line
+    },[selectedFilterAttributes])
 
     const handleChangePage = (event, page) => {
         log.info(`[FilterPagination] dispatching SELECT_PRODUCT_PAGE for page = ${page}`)
@@ -35,7 +34,7 @@ export default function FilterPagination() {
         })
     }
 
-    log.info(`[FilterPagination] Rendering ApparelCheckBox Component`)
+    log.info(`[FilterPagination] Rendering FilterPagination Component selectedPage = ${JSON.stringify(selectedPage)}`)
 
     return (
         <Grid container direction="column"
@@ -44,7 +43,7 @@ export default function FilterPagination() {
               style={{padding: "30px 0 100px 0"}}>
             <Pagination onChange={handleChangePage}
                         page={selectedPage.pageNumber}
-                        count={Math.floor(totalProducts/MAX_PRODUCTS_PER_PAGE)}
+                        count={totalProducts <= MAX_PRODUCTS_PER_PAGE? 1: Math.floor(totalProducts/MAX_PRODUCTS_PER_PAGE)}
                         color="secondary"/>
         </Grid>
     );

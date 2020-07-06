@@ -7,14 +7,9 @@ import Rating from '@material-ui/lab/Rating';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import log from "loglevel";
 import {PageNotFound} from "../../ui/pageNotFound";
-import {DETAILS_ROUTE, MAX_PRODUCTS_PER_PAGE, PRODUCTS_ROUTE} from "../../../constants/constants";
+import {DETAILS_ROUTE, PRODUCTS_ROUTE} from "../../../constants/constants";
 import history from "../../../history";
-import {
-    ADD_APPAREL_CATEGORY,
-    ADD_BRAND_CATEGORY,
-    ADD_GENDER_CATEGORY, SELECT_PRODUCT_DETAIL,
-    SELECT_SORT_CATEGORY
-} from "../../../actions/types";
+import {SELECT_PRODUCT_DETAIL} from "../../../actions/types";
 import {Box} from "@material-ui/core";
 import Hidden from "@material-ui/core/Hidden";
 import Spinner from "../../ui/spinner";
@@ -22,204 +17,8 @@ import Spinner from "../../ui/spinner";
 const FilterProductDisplay = props => {
         const filterProducts = useSelector(state => state.filterProductsReducer ?
             state.filterProductsReducer.products : null)
-        const filterAttributes = useSelector(state => state.filterAttributesReducer)
-        const selectedGenders = useSelector(state => state.selectGenderReducer)
-        const selectedApparels = useSelector(state => state.selectApparelReducer)
-        const selectedBrands = useSelector(state => state.selectBrandReducer)
-        const selectedPriceRanges = useSelector(state => state.selectPriceReducer)
-        const selectedSort = useSelector(state => state.selectSortReducer)
-        const selectedPage = useSelector(state => state.selectPageReducer)
-        const [loadAttributesFromURL, setLoadAttributesFromURL] = useState(false)
+        const filterQuery = useSelector(state => state.filterQueryReducer)
         const dispatch = useDispatch()
-
-        const appendQueryIds = attrList => {
-            let selectedList = []
-
-            if (attrList.length > 0) {
-                attrList.forEach(({id}) => {
-                    selectedList.push(id)
-                })
-                return selectedList.join()
-            }
-            return null
-        }
-
-        const prepareQueryAndDispatch = () => {
-
-            let query = []
-            let executeDefaultQuery = true
-
-            if (selectedGenders.length > 0) {
-                executeDefaultQuery = false
-                query.push(`gender=${selectedGenders[0].id}`)
-            }
-
-            let idList = appendQueryIds(selectedApparels)
-            if (idList) {
-                executeDefaultQuery = false
-                query.push(`apparel=${appendQueryIds(selectedApparels)}`)
-            }
-
-            idList = appendQueryIds(selectedBrands)
-            if (idList) {
-                executeDefaultQuery = false
-                query.push(`brand=${appendQueryIds(selectedBrands)}`)
-            }
-
-            idList = appendQueryIds(selectedPriceRanges)
-            if (idList) {
-                query.push(`price=${appendQueryIds(selectedPriceRanges)}`)
-            }
-
-            if (selectedPriceRanges.length > 0) {
-                selectedPriceRanges.forEach(function (element) {
-                    let priceRange = filterAttributes.priceRanges[element.id - 1].type
-                        .replace(new RegExp('\\$', 'g'), '')
-                    let priceRangeId = filterAttributes.priceRanges[element.id - 1].id
-
-                    if (priceRange[0] === "U") {
-                        query.push(`price=lt:${priceRange.split(" ")[1]},id:${priceRangeId}`)
-                    } else if (priceRange[0] === "A") {
-                        query.push(`price=gt:${priceRange.split(" ")[1]},id:${priceRangeId}`)
-                    } else {
-                        query.push(`price=bt:${priceRange.split("-")[0]},
-                    ${priceRange.split("-")[1]},id:${priceRangeId}`)
-                    }
-                })
-            }
-
-            if (selectedSort) {
-                query.push(`sortby=${selectedSort.id}`)
-            }
-
-            if (selectedPage) {
-                query.push(`page=${(selectedPage.pageNumber - 1) * MAX_PRODUCTS_PER_PAGE},${MAX_PRODUCTS_PER_PAGE}`)
-            }
-
-            if (executeDefaultQuery) {
-                query.push("category=all")
-            }
-
-            if (query.length > 0) {
-                log.info(`[FilterProductDisplay] query is prepared and ready to dispatch`)
-                props.loadProducts(query.join("::"))
-            }
-        }
-
-        const dispatchFilterAttributes = (actionType, attrString, attrList, oldSelectedAttrList) => {
-
-            const getObjectFromList = (id, list) => {
-                for (let i = 0; i < list.length; i++) {
-                    if (list[i].id === parseInt(id))
-                        return list[i]
-                }
-                return null
-            }
-
-            let params = history.location.search
-            let attrParams = params.split(`${attrString}=`)
-
-            if (attrParams.length === 1) {
-                return
-            }
-
-            let values
-            let newSelectedAttrList = []
-
-            // 0th index consist of "?q=" which we are not interest
-            // actual data starts from pIndex=1
-            for (let pIndex = 1; pIndex < attrParams.length; ++pIndex) {
-                try {
-                    values = attrParams[pIndex].split("::")[0].split(",")
-                } catch (e) {
-                    log.error("Corrupted URL. Unable to decode url field")
-                }
-
-                if (values.length > 0) {
-                    values.forEach(id => {
-                        // check if Id is already present or not in the existing
-                        // selected list in order to avoid duplicating the entries
-                        let attrObject = getObjectFromList(id, attrList)
-                        if (attrObject) {
-                            newSelectedAttrList.push({
-                                id: attrObject.id,
-                                value: attrObject.type
-                            })
-                        }
-                    })
-                }
-            }
-
-            if (newSelectedAttrList.length > 0) {
-                log.info(`[ACTION] setFilterAttributesFromURL Dispatching = ${actionType}`)
-                dispatch({
-                    type: actionType,
-                    payload: {
-                        attrList: newSelectedAttrList
-                    }
-                })
-            }
-        }
-
-        const setFilterAttributesFromURL = () => {
-            if (history.location && history.location.pathname.localeCompare(PRODUCTS_ROUTE) === 0) {
-                log.info(`[FilterProductDisplay]: url = ${history.location.search}`)
-
-                const attrInfoList = [
-                    {
-                        type: ADD_GENDER_CATEGORY,
-                        attrStr: "gender",
-                        attrList: filterAttributes.genders,
-                        selectedAttrList: selectedGenders
-                    },
-                    {
-                        type: ADD_APPAREL_CATEGORY,
-                        attrStr: "apparel",
-                        attrList: filterAttributes.apparels,
-                        selectedAttrList: selectedApparels
-                    },
-                    {
-                        type: ADD_BRAND_CATEGORY,
-                        attrStr: "brand",
-                        attrList: filterAttributes.brands,
-                        selectedAttrList: selectedBrands
-                    },
-                    {
-                        type: SELECT_SORT_CATEGORY,
-                        attrStr: "sortby",
-                        attrList: filterAttributes.sorts,
-                        selectedAttrList: selectedSort
-                    },
-
-                ]
-
-                attrInfoList.forEach(({type, attrStr, attrList}) => {
-                    dispatchFilterAttributes(type, attrStr, attrList)
-                })
-
-                setLoadAttributesFromURL(true)
-            }
-        }
-
-        useEffect(() => {
-            log.info(`[FilterProductDisplay] Component did mount`)
-
-            if (!loadAttributesFromURL) {
-                log.info(`[FilterProductDisplay] setting selected attributes from URL`)
-                if (filterAttributes) {
-                    log.info(`[FilterProductDisplay] filterAttributes is not null`)
-                    setFilterAttributesFromURL()
-                }
-            } else {
-                log.info(`[FilterProductDisplay] build query`)
-                prepareQueryAndDispatch()
-            }
-
-            window.scrollTo(0, 0)
-
-            // eslint-disable-next-line
-        }, [selectedApparels, selectedGenders, selectedBrands, selectedPriceRanges,
-            selectedSort, selectedPage, filterAttributes]);
 
         const renderPageNotFound = () => {
             return (
@@ -228,6 +27,22 @@ const FilterProductDisplay = props => {
                 </Box>
             )
         }
+        useEffect(() => {
+            log.info(`[FilterProductDisplay] Component did mount`)
+
+            try {
+                if(filterQuery) {
+                    props.loadProducts(filterQuery)
+                }
+            } catch (e) {
+                log.error(`[FilterProductDisplay] Bad URL found in history.location.search`)
+            }
+
+            window.scrollTo(0, 0)
+
+            // eslint-disable-next-line
+        }, [filterQuery]);
+
 
         if (!filterProducts) {
             log.info(`[FilterProductDisplay] filterProducts is null`)

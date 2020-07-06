@@ -2,29 +2,31 @@ import React from 'react';
 import log from 'loglevel';
 import RadioButtonsGroup from "../../../ui/radioButtonGroup";
 import {useDispatch, useSelector} from "react-redux";
-import {ADD_GENDER_CATEGORY} from "../../../../actions/types";
+import {ADD_SELECTED_CATEGORY} from "../../../../actions/types";
 
 export default function GenderRadioButton() {
     const dispatch = useDispatch()
-    const genderList = useSelector(state => state.filterAttributesReducer?
+    const genderList = useSelector(state => state.filterAttributesReducer ?
         state.filterAttributesReducer.genders : null)
-    const gender = useSelector(state => state.selectGenderReducer)
+    const gender = useSelector(state => state.selectedFilterAttributesReducer.genders)
 
-    if(!genderList) {
+    if (!genderList) {
         log.debug(`[GenderRadioButton] genderList is null`)
         return null
     }
 
     const handleRadioButtonChange = value => {
-        log.debug(`[GenderRadioButton] handleRadioButtonChange value = ${value}`)
+        log.info(`[GenderRadioButton] handleRadioButtonChange value = ${value}`)
         for (let i = 0; i < genderList.length; i++) {
-            if (value.charAt(0).localeCompare(genderList[i].type.charAt(0)) === 0) {
-                log.debug(`[GenderRadioButton] handleRadioButtonChange id = ${genderList[i].id}`)
+            if (value.charAt(0).localeCompare(genderList[i].value.charAt(0)) === 0) {
+                log.info(`[GenderRadioButton] handleRadioButtonChange id = ${genderList[i].id}`)
                 dispatch({
-                    type: ADD_GENDER_CATEGORY,
+                    type: ADD_SELECTED_CATEGORY,
                     payload: {
-                        id: genderList[i].id,
-                        value: value
+                        genders: {
+                            id: genderList[i].id,
+                            value: value
+                        }
                     }
                 })
                 return
@@ -32,14 +34,14 @@ export default function GenderRadioButton() {
         }
     }
 
-    log.info(`[GenderRadioButton] Rendering FilterRadioButtonSection Component`)
+    log.info(`[GenderRadioButton] Rendering FilterRadioButtonSection Component = ${JSON.stringify(gender[0])}`)
 
     return (
         <div style={{padding: '8px 0 8px 0'}}>
-        <RadioButtonsGroup onChangeHandler={handleRadioButtonChange}
-                           attrList={genderList.filter(obj => obj.id < 5)}
-                           selectedValue={gender.length > 0? gender[0].value: false}
-                           title="Gender"/>
+            <RadioButtonsGroup onChangeHandler={handleRadioButtonChange}
+                               attrList={genderList.filter(obj => obj.id < 5)}
+                               selectedValue={gender.length > 0 ? gender[0].value : false}
+                               title="Gender"/>
         </div>
     );
 }

@@ -3,6 +3,7 @@ package com.ujjaval.ecommerce.commondataservice.entity.sql.info;
 import com.fasterxml.jackson.annotation.*;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.ApparelCategory;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.GenderCategory;
+import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.PriceRangeCategory;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.ProductBrandCategory;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,7 @@ import java.util.List;
 public class ProductInfo {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private int sellerId;
@@ -46,6 +47,11 @@ public class ProductInfo {
     @JsonIgnore
     private ApparelCategory apparelCategory;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "price_id")
+    @JsonIgnore
+    private PriceRangeCategory priceRangeCategory;
+
     private double price;
 
     private int availableQuantity;
@@ -64,6 +70,7 @@ public class ProductInfo {
 
     public ProductInfo(int sellerId, String name, Date publicationDate, ProductBrandCategory productBrandCategory,
                        GenderCategory genderCategory, ApparelCategory apparelCategory,
+                       PriceRangeCategory priceRangeCategory,
                        double price, int availableQuantity, int deliveryTime, float ratings,
                        boolean verificationStatus, String imageName) {
         this.sellerId = sellerId;
@@ -72,6 +79,7 @@ public class ProductInfo {
         this.productBrandCategory = productBrandCategory;
         this.genderCategory = genderCategory;
         this.apparelCategory = apparelCategory;
+        this.priceRangeCategory = priceRangeCategory;
         this.price = price;
         this.availableQuantity = availableQuantity;
         this.deliveryTime = deliveryTime;

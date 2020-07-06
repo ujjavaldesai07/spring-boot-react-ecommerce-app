@@ -2,6 +2,7 @@ package com.ujjaval.ecommerce.commondataservice.controller;
 
 import com.sun.net.httpserver.Authenticator;
 import com.ujjaval.ecommerce.commondataservice.dto.ProductInfoDTO;
+import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.ProductBrandCategory;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
 import com.ujjaval.ecommerce.commondataservice.model.FilterAttributesResponse;
 import com.ujjaval.ecommerce.commondataservice.model.MainScreenResponse;
@@ -46,9 +47,7 @@ public class CommonDataController {
         return ResponseEntity.ok("Success");
     }
 
-    @GetMapping("/products")
-    public ResponseEntity<?> getProducts(@RequestParam("q") String queryParams) throws UnknownHostException {
-
+    public HashMap<String, String> getConditionMapFromQuery(String queryParams) {
         // append :: at the end so that we can split even if there is just one condition
         // for eg ?q=brand=1::
         queryParams = queryParams.concat("::");
@@ -65,8 +64,18 @@ public class CommonDataController {
                     conditionMap.put(categories[0], categories[1]);
                 }
             }
+            return conditionMap;
+        }
+        return null;
+    }
 
-            Pair<Long, List<ProductInfo>> result = commonDataService.getProducts(conditionMap);
+    @GetMapping(value = "/products", params = "q")
+    public ResponseEntity<?> getProductsByCategories(@RequestParam("q") String queryParams) throws UnknownHostException {
+
+        HashMap<String, String> conditionMap = getConditionMapFromQuery(queryParams);
+        if (!conditionMap.isEmpty()) {
+
+            Pair<Long, List<ProductInfo>> result = commonDataService.getProductsByCategories(conditionMap);
 
             if (result == null) {
                 return new ResponseEntity<>(
@@ -77,6 +86,24 @@ public class CommonDataController {
             ProductInfoDTO productInfoDTO = new ProductInfoDTO(result.getValue0(), result.getValue1());
 
             return ResponseEntity.ok(productInfoDTO);
+        }
+        return ResponseEntity.badRequest().body("Query has not followed the required format.");
+    }
+
+    @GetMapping(value = "/products", params = "product_id")
+    public ResponseEntity<?> getProductsById(@RequestParam("product_id") String queryParams) throws UnknownHostException {
+            String[] productIds = queryParams.split(",");
+
+            if(productIds.length > 0) {
+            List<ProductInfo> result = commonDataService.getProductsById(productIds);
+
+            if (result == null) {
+                return new ResponseEntity<>(
+                        "No search results are found",
+                        HttpStatus.NO_CONTENT);
+            }
+
+            return ResponseEntity.ok(result);
         }
         return ResponseEntity.badRequest().body("Query has not followed the required format.");
     }
@@ -101,13 +128,23 @@ public class CommonDataController {
         return ResponseEntity.ok(mainScreenInfoList);
     }
 
-    @GetMapping("/filter")
-    public ResponseEntity<?> getFilterAttributesComponent() throws UnknownHostException {
-        FilterAttributesResponse filterScreenInfoList = commonDataService.getFilterAttributesData();
-        if (filterScreenInfoList == null) {
-            return new ResponseEntity<Error>(HttpStatus.CONFLICT);
+    @GetMapping(value = "/filter", params = "q")
+    public ResponseEntity<?> getFilterAttributesByProducts(@RequestParam("q") String queryParams) throws UnknownHostException {
+
+        HashMap<String, String> conditionMap = getConditionMapFromQuery(queryParams);
+        if (!conditionMap.isEmpty()) {
+
+            FilterAttributesResponse result = commonDataService.getFilterAttributesByProducts(conditionMap);
+
+            if (result == null) {
+                return new ResponseEntity<>(
+                        "No search results are found",
+                        HttpStatus.NO_CONTENT);
+            }
+
+            return ResponseEntity.ok(result);
         }
-        return ResponseEntity.ok(filterScreenInfoList);
+        return ResponseEntity.badRequest().body("Query has not followed the required format.");
     }
 
     @GetMapping("/save")

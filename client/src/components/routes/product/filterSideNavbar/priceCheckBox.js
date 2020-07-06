@@ -2,16 +2,16 @@ import React from 'react';
 import CheckboxList from "../../../ui/checkboxList";
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
-import {ADD_PRICE_CATEGORY} from "../../../../actions/types";
+import {ADD_SELECTED_CATEGORY} from "../../../../actions/types";
 
 export default function PriceCheckBox() {
     const TITLE = "Price"
     const dispatch = useDispatch()
-    const priceRangeList = useSelector(state => state.filterAttributesReducer?
-        state.filterAttributesReducer.priceRanges : null)
-    const selectedPriceRanges = useSelector(state => state.selectPriceReducer)
+    const priceRangeList = useSelector(state => state.filterAttributesReducer ?
+        state.filterAttributesReducer.prices : null)
+    const selectedPriceRanges = useSelector(state => state.selectedFilterAttributesReducer.prices)
 
-    if(!priceRangeList) {
+    if (!priceRangeList) {
         log.debug(`[PriceCheckBox] priceRangeList is null`)
         return null
     }
@@ -20,9 +20,9 @@ export default function PriceCheckBox() {
         log.info(`[PriceCheckBox] handleCheckBoxChange(id) = ${id}`)
 
         dispatch({
-            type: ADD_PRICE_CATEGORY,
+            type: ADD_SELECTED_CATEGORY,
             payload: {
-                id, value
+                prices: {id, value}
             }
         })
     }

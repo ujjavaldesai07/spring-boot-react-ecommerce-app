@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 
 import Grid from '@material-ui/core/Grid';
-import FilterNavBar from "./filterSideNavbar/filterNavbar";
+import FilterNavBar from "./filterSideNavbar/filterNavBar";
 import FilterProductsDisplay from "./filterProductDisplay";
 import log from 'loglevel';
 import Box from "@material-ui/core/Box";
@@ -10,10 +10,10 @@ import {Divider} from "@material-ui/core";
 import FilterDropdown from "./filterDropdown";
 import FilterPagination from "./filterPagination";
 import {
-    REMOVE_APPAREL_CATEGORY,
-    REMOVE_BRAND_CATEGORY,
-    REMOVE_GENDER_CATEGORY,
-    REMOVE_PRICE_CATEGORY, SELECT_PRODUCT_PAGE, SELECT_SORT_CATEGORY
+    DELETE_FILTER_QUERY, REMOVE_FILTER_ATTRIBUTES,
+    REMOVE_SELECTED_CATEGORY,
+    SELECT_PRODUCT_PAGE,
+    SELECT_SORT_CATEGORY
 } from "../../../actions/types";
 import {useDispatch} from "react-redux";
 import {HOME_ROUTE, INITIAL_PAGINATION_STATE, INITIAL_SORT_STATE} from "../../../constants/constants";
@@ -44,10 +44,9 @@ function Product() {
         // componentWillUnmount
         return () => {
             log.info("[Product] Component will unmount...")
-            dispatch({type: REMOVE_GENDER_CATEGORY})
-            dispatch({type: REMOVE_APPAREL_CATEGORY})
-            dispatch({type: REMOVE_BRAND_CATEGORY})
-            dispatch({type: REMOVE_PRICE_CATEGORY})
+            dispatch({type: REMOVE_SELECTED_CATEGORY})
+            dispatch({type: REMOVE_FILTER_ATTRIBUTES})
+            dispatch({type: DELETE_FILTER_QUERY})
             dispatch({type: SELECT_PRODUCT_PAGE, payload: INITIAL_PAGINATION_STATE})
             dispatch({type: SELECT_SORT_CATEGORY, payload: INITIAL_SORT_STATE})
         };
@@ -71,7 +70,7 @@ function Product() {
 
                     <Grid item md={10}>
                         <Box display="flex" p={2}>
-                            <Box width="70%">
+                            <Box width="80%">
                             <BreadcrumbsSection linkList={breadcrumbLinks}/>
                             </Box>
                             <Box width="auto">

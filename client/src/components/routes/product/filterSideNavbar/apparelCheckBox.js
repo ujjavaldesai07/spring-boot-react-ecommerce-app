@@ -2,9 +2,7 @@ import React, {useState} from 'react';
 import CheckboxList from "../../../ui/checkboxList";
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
-import {
-    ADD_APPAREL_CATEGORY
-} from "../../../../actions/types";
+import { ADD_SELECTED_CATEGORY} from "../../../../actions/types";
 import {NavbarHeader} from "../../../ui/headers";
 import {Box} from "@material-ui/core";
 import CollapsableSearch from "../../../ui/collapsableSearch";
@@ -20,7 +18,7 @@ export default function ApparelCheckBox() {
     const dispatch = useDispatch()
     const apparelList = useSelector(state => state.filterAttributesReducer ?
         state.filterAttributesReducer.apparels : null)
-    const selectedApparels = useSelector(state => state.selectApparelReducer)
+    const selectedApparels = useSelector(state => state.selectedFilterAttributesReducer.apparels)
     const [searchApparelList, setSearchApparelList] = useState(null)
     const [moreButtonState, setMoreButtonState] = useState(false)
 
@@ -35,7 +33,7 @@ export default function ApparelCheckBox() {
 
     const handleSearchBarChange = value => {
         log.info(`[ApparelCheckBox] handleSearchClick value = ${value}`)
-        let filterApparelList = apparelList.filter(info => info.type.toUpperCase().search(value.toUpperCase()) !== -1)
+        let filterApparelList = apparelList.filter(info => info.value.toUpperCase().search(value.toUpperCase()) !== -1)
         setSearchApparelList(filterApparelList)
     }
 
@@ -46,9 +44,11 @@ export default function ApparelCheckBox() {
     const handleCheckBoxChange = (id, value) => {
         log.info(`[ApparelCheckBox] handleCheckBoxChange(id) = ${id}, value = ${value}`)
         dispatch({
-            type: ADD_APPAREL_CATEGORY,
+            type: ADD_SELECTED_CATEGORY,
             payload: {
-                id, value
+                apparels: {
+                    id, value
+                }
             }
         })
     }
@@ -96,13 +96,22 @@ export default function ApparelCheckBox() {
                               maxItems={6}
                               selectedAttrList={selectedApparels}
                               onChangeHandler={handleCheckBoxChange}/>
+                {renderMoreButton()}
+            </>
+        )
+    }
+
+    const renderMoreButton = () => {
+        if (getActiveApparelList().length > 6) {
+            return (
                 <Box pl={1.5} pb={1}>
                     <Button color="secondary" onClick={handleMoreButton}>
                         {`+ ${getActiveApparelList().length - 6} more`}
                     </Button>
                 </Box>
-            </>
-        )
+            )
+        }
+        return null
     }
 
     log.debug(`[ApparelCheckBox] selectedApparels = ${JSON.stringify(selectedApparels)}`)

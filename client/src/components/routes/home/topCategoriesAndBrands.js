@@ -39,11 +39,11 @@ const TopCategoriesAndBrands = () => {
             // prepare query parameters
             switch (filterQueryType) {
                 case queryType.brand:
-                    filterQuery = info.brandInfo ? `brand=${info.brandInfo.id}` : null
+                    filterQuery = info.brandInfo ? `brands=${info.brandInfo.id}` : null
                     break
                 case queryType.apparel:
                     if (info.apparelInfo && info.genderInfo) {
-                        filterQuery = `apparel=${info.apparelInfo.id}::gender=${info.genderInfo.id}`
+                        filterQuery = `apparels=${info.apparelInfo.id}::genders=${info.genderInfo.id}`
                     }
                     break
                 default:

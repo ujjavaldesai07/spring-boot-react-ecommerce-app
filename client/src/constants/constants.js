@@ -11,6 +11,15 @@ export const INITIAL_SORT_STATE = {
     value: null
 }
 
+export const INITIAL_FILTER_ATTRIBUTE_STATE = {
+    genders: [],
+    apparels: [],
+    brands: [],
+    prices: []
+}
+
+export const FILTER_ATTRIBUTES = ["genders", "apparels", "brands", "prices"]
+
 export const HOME_ROUTE = '/'
 export const PRODUCTS_ROUTE = '/products'
 export const DETAILS_ROUTE = '/products/details'

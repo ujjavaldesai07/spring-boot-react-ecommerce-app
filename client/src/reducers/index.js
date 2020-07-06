@@ -6,13 +6,13 @@ import {
     homePageDataReducer, addToCartReducer,
     selectProductDetailReducer, checkoutProductReducer,
     filterProductsReducer, filterAttributesReducer,
+    filterQueryReducer
 } from "./screens/commonScreenReducer";
 
 import {tabHoverEventReducer} from "./events/eventReducer";
 
 import {
-    selectGenderReducer, selectApparelReducer,
-    selectBrandReducer, selectPriceReducer,
+    selectedFilterAttributesReducer,
     selectSortReducer, selectPageReducer,
 } from "./screens/filter/selectedFilterAttributesReducer"
 
@@ -24,12 +24,10 @@ export default combineReducers({
     tabHoverEventReducer,
     filterProductsReducer,
     filterAttributesReducer,
-    selectGenderReducer,
-    selectApparelReducer,
-    selectBrandReducer,
-    selectPriceReducer,
     selectSortReducer,
     selectPageReducer,
     selectProductDetailReducer,
-    checkoutProductReducer
+    checkoutProductReducer,
+    filterQueryReducer,
+    selectedFilterAttributesReducer
 });

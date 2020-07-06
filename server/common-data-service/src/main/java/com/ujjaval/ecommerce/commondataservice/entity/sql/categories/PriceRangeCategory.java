@@ -1,14 +1,14 @@
 package com.ujjaval.ecommerce.commondataservice.entity.sql.categories;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,6 +21,10 @@ public class PriceRangeCategory {
     private int id;
 
     private String type;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "priceRangeCategory")
+    @JsonIgnore
+    private List<ProductInfo> productInfos;
 
     public PriceRangeCategory(String type) {
         this.type = type;

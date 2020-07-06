@@ -17,7 +17,7 @@ import {ADD_TO_CART, SELECT_PRODUCT_DETAIL, SHOPPERS_PRODUCT_ID} from "../../../
 
 function Detail(props) {
     let selectedProduct = useSelector(state => state.selectProductDetailReducer?
-        state.selectProductDetailReducer.products: null)
+        state.selectProductDetailReducer: null)
     const dispatch = useDispatch()
 
     if (history.location.pathname.localeCompare('/products/details') !== 0 ||
@@ -60,9 +60,7 @@ function Detail(props) {
         }
     }
 
-    if (selectedProduct && selectedProduct.length > 0) {
-        selectedProduct = selectedProduct[0]
-    } else  {
+    if (!selectedProduct) {
         return <PageNotFound/>
     }
 

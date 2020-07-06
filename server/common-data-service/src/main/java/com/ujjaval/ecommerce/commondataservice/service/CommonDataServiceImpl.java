@@ -153,22 +153,29 @@ public class CommonDataServiceImpl implements CommonDataService {
         return new MainScreenResponse(brandDTOList, apparelDTOList, carouselList);
     }
 
-    public FilterAttributesResponse getFilterAttributesData() {
-        return new FilterAttributesResponse(
-                productBrandCategoryRepository.getAllData(),
-                genderCategoryRepository.getAllData(),
-                apparelCategoryRepository.getAllData(),
-                sortByCategoryRepository.getAllData(),
-                priceRangeCategoryRepository.getAllData()
-        );
+    public FilterAttributesResponse getFilterAttributesByProducts(HashMap<String, String> conditionMap) {
+        FilterAttributesResponse filterAttributesResponse = productInfoRepository.getFilterAttributesByProducts(conditionMap);
+        filterAttributesResponse.setSorts(sortByCategoryRepository.getAllData());
+        return filterAttributesResponse;
     }
 
-    public Pair<Long, List<ProductInfo>> getProducts(HashMap<String, String> conditionMap)
+    public Pair<Long, List<ProductInfo>> getProductsByCategories(HashMap<String, String> conditionMap)
             throws UnknownHostException {
-        Pair<Long, List<ProductInfo>> result = productInfoRepository.getProductInfoByCategories(conditionMap);
+        Pair<Long, List<ProductInfo>> result = productInfoRepository.getProductsByCategories(conditionMap);
 
         if (result != null) {
             for (ProductInfo info : result.getValue1()) {
+                info.setImageName(appendHostUrl(info.getImageName()));
+            }
+        }
+        return result;
+    }
+
+    public List<ProductInfo> getProductsById(String[] productIds) throws UnknownHostException {
+        List<ProductInfo> result = productInfoRepository.getProductsById(productIds);
+
+        if (result != null) {
+            for (ProductInfo info : result) {
                 info.setImageName(appendHostUrl(info.getImageName()));
             }
         }

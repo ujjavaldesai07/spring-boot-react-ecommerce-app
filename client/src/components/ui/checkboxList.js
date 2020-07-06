@@ -36,7 +36,7 @@ export default function CheckboxList(props) {
         let value
         for (let i = 0; i < props.attrList.length; i++) {
             if (id === props.attrList[i].id) {
-                value = props.attrList[i].type
+                value = props.attrList[i].value
                 log.debug(`[CheckboxList] handleToggle for CheckboxList value = ${value}`)
             }
         }
@@ -56,13 +56,13 @@ export default function CheckboxList(props) {
             })
         }
 
-        return props.attrList.map(({id, type}) => {
+        return props.attrList.map(({id, value}) => {
             if (count === maxItems) {
                 return null
             }
             count = count + 1
 
-            log.debug(`[CheckboxList] renderCheckBoxList id = ${id}, type = ${type}` +
+            log.debug(`[CheckboxList] renderCheckBoxList id = ${id}, type = ${value}` +
                 `, props.values.includes(id) = ${selectedIdList.includes(id)}`)
             return (
                 <ListItem classes={{root: classes.listItemRoot}} key={id} role={undefined}
@@ -77,7 +77,7 @@ export default function CheckboxList(props) {
                             inputProps={{'aria-labelledby': id}}
                         />
                     </ListItemIcon>
-                    <ListItemText id={id} primary={type} style={{fontSize: props.fontSize}}
+                    <ListItemText id={id} primary={value} style={{fontSize: props.fontSize}}
                                   disableTypography/>
                 </ListItem>
             );

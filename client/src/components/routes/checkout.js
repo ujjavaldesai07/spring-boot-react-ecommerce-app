@@ -110,7 +110,7 @@ function Checkout(props) {
     const renderCheckoutProducts = () => {
         log.debug(`[Checkout] checkoutProducts = ${JSON.stringify(checkoutProducts)}`)
 
-        return checkoutProducts.products.map((product) => {
+        return checkoutProducts.map((product) => {
             return (
                 <Box key={product.id} display="flex" flexDirection="column" flex="2" css={{border: '1px solid #eaeaec'}}
                      mt={1}>
@@ -126,7 +126,7 @@ function Checkout(props) {
                                     {product.productBrandCategory.type}
                                 </Box>
                                 <Box>
-                                    Qty: 1 X $ 249  =  $ 249
+                                    Qty: 1 x $ 249  =  $ 249
                                 </Box>
                             </Box>
                             <Box css={{fontSize: "1rem", fontWeight: 300}}>

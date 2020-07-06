@@ -4,7 +4,7 @@ import CollapsableSearch from "../../../ui/collapsableSearch";
 import CheckboxList from "../../../ui/checkboxList";
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
-import {ADD_BRAND_CATEGORY} from "../../../../actions/types";
+import {ADD_SELECTED_CATEGORY} from "../../../../actions/types";
 import {Box} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 
@@ -13,7 +13,7 @@ export default function BrandCheckBox() {
     const dispatch = useDispatch()
     const brandList = useSelector(state => state.filterAttributesReducer ?
         state.filterAttributesReducer.brands : null)
-    const selectedBrands = useSelector(state => state.selectBrandReducer)
+    const selectedBrands = useSelector(state => state.selectedFilterAttributesReducer.brands)
     const [searchBrandList, setSearchBrandList] = useState(null)
 
     if (!brandList) {
@@ -23,7 +23,7 @@ export default function BrandCheckBox() {
 
     const handleSearchBarChange = value => {
         log.info(`[BrandCheckBox] handleSearchClick value = ${value}`)
-        let filterBrandList = brandList.filter(info => info.type.toUpperCase().search(value.toUpperCase()) !== -1)
+        let filterBrandList = brandList.filter(info => info.value.toUpperCase().search(value.toUpperCase()) !== -1)
         setSearchBrandList(filterBrandList)
     }
 
@@ -35,11 +35,24 @@ export default function BrandCheckBox() {
         log.info(`[BrandCheckBox] handleCheckBoxChange(id) = ${id}`)
 
         dispatch({
-            type: ADD_BRAND_CATEGORY,
+            type: ADD_SELECTED_CATEGORY,
             payload: {
-                id, value
+                brands: {id, value}
             }
         })
+    }
+
+    const renderMoreButton = () => {
+        if (brandList.length > 6) {
+            return (
+                <Box pl={1.5} pb={1}>
+                    <Button color="secondary" onClick={handleMoreButton}>
+                        {`+ ${brandList.length - 6} more`}
+                    </Button>
+                </Box>
+            )
+        }
+        return null
     }
 
     const handleMoreButton = () => {
@@ -52,29 +65,25 @@ export default function BrandCheckBox() {
 
     return (
         <>
-        <Box display="flex" alignItems="center" pt={2}>
-            <Box width="50%">
-                <NavbarHeader title={TITLE}/>
+            <Box display="flex" alignItems="center" pt={2}>
+                <Box width="50%">
+                    <NavbarHeader title={TITLE}/>
+                </Box>
+                <Box width="50%">
+                    <CollapsableSearch
+                        handleOnSearchChange={handleSearchBarChange}
+                        handleCancelButton={handleSearchBarCancel}
+                        placeholder="Search for Brands"
+                    />
+                </Box>
             </Box>
-            <Box width="50%">
-                <CollapsableSearch
-                    handleOnSearchChange={handleSearchBarChange}
-                    handleCancelButton={handleSearchBarCancel}
-                    placeholder="Search for Brands"
-                />
-            </Box>
-        </Box>
-        <CheckboxList attrList={searchBrandList? searchBrandList: brandList}
-                      fontSize="0.9rem"
-                      title="Brand"
-                      maxItems={6}
-                      selectedAttrList={selectedBrands}
-                      onChangeHandler={handleCheckBoxChange}/>
-            <Box pl={1.5} pb={1}>
-                <Button color="secondary" onClick={handleMoreButton}>
-                    {`+ ${brandList.length - 6} more`}
-                </Button>
-            </Box>
+            <CheckboxList attrList={searchBrandList ? searchBrandList : brandList}
+                          fontSize="0.9rem"
+                          title="Brand"
+                          maxItems={6}
+                          selectedAttrList={selectedBrands}
+                          onChangeHandler={handleCheckBoxChange}/>
+            {renderMoreButton()}
         </>
     );
 }
