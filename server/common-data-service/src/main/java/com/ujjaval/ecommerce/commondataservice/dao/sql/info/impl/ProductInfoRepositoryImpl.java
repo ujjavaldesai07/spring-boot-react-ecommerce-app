@@ -1,15 +1,16 @@
 package com.ujjaval.ecommerce.commondataservice.dao.sql.info.impl;
 
-import com.ujjaval.ecommerce.commondataservice.dto.FilterAttributeDTO;
-import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.ProductBrandCategory;
+import com.ujjaval.ecommerce.commondataservice.dto.BrandsAndApparelsDTO;
+import com.ujjaval.ecommerce.commondataservice.dto.FilterAttributesDTO;
+import com.ujjaval.ecommerce.commondataservice.dto.FilterAttributesWithTotalItemsDTO;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
 import com.ujjaval.ecommerce.commondataservice.model.FilterAttributesResponse;
+import com.ujjaval.ecommerce.commondataservice.model.HomeTabsDataResponse;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.transform.ResultTransformer;
 import org.javatuples.Pair;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -121,7 +122,7 @@ public class ProductInfoRepositoryImpl {
                                 conditions.add(" (p.price between 300 AND 400)");
                                 break;
                             case 6:
-                                conditions.add(" (p.price >= 500)");
+                                conditions.add(" (p.price >= 400)");
                                 break;
                         }
                     }
@@ -221,12 +222,13 @@ public class ProductInfoRepositoryImpl {
         return query.getResultList();
     }
 
-    private List<FilterAttributeDTO> getFilterAttributeResultTransformer(String queryStr,
-                                                                         HashMap<Integer, Object> mapParams,
-                                                                         List<String> conditions) {
+
+    private List<FilterAttributesWithTotalItemsDTO> getFilterAttributesWithTotalItemsResultTransformer(String queryStr,
+                                                                                                       HashMap<Integer, Object> mapParams) {
 
         Query query = entityManager.createQuery(queryStr);
-        mapParams.forEach(query::setParameter);
+            mapParams.forEach(query::setParameter);
+
         return query.unwrap(org.hibernate.query.Query.class)
                 .setResultTransformer(
                         new ResultTransformer() {
@@ -234,7 +236,7 @@ public class ProductInfoRepositoryImpl {
                             public Object transformTuple(
                                     Object[] tuple,
                                     String[] aliases) {
-                                return new FilterAttributeDTO((Integer) tuple[0], (String) tuple[1], (Long) tuple[2]);
+                                return new FilterAttributesWithTotalItemsDTO((Integer) tuple[0], (String) tuple[1], (Long) tuple[2]);
                             }
 
                             @Override
@@ -246,35 +248,60 @@ public class ProductInfoRepositoryImpl {
                 .getResultList();
     }
 
+    private List<FilterAttributesDTO> getFilterAttributesResultTransformer(String queryStr,
+                                                                           HashMap<Integer, Object> mapParams) {
+
+        Query query = entityManager.createQuery(queryStr);
+        mapParams.forEach(query::setParameter);
+
+        return query.unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(
+                        new ResultTransformer() {
+                            @Override
+                            public Object transformTuple(
+                                    Object[] tuple,
+                                    String[] aliases) {
+                                return new FilterAttributesDTO((Integer) tuple[0], (String) tuple[1]);
+                            }
+
+                            @Override
+                            public List transformList(List tuples) {
+                                return tuples;
+                            }
+                        }
+                ).setMaxResults(27)
+                .getResultList();
+    }
+
     public FilterAttributesResponse getFilterAttributesByProducts(HashMap<String, String> conditionMap) {
         ParamsToQueryContext paramsToQueryContext = getParamsToQueryMap(conditionMap);
 
         HashMap<Integer, Object> mapParams = paramsToQueryContext.getMapParams();
         List<String> conditions = paramsToQueryContext.getConditions();
 
-        List<FilterAttributeDTO> brandList = getFilterAttributeResultTransformer(
+        List<FilterAttributesWithTotalItemsDTO> brandList = getFilterAttributesWithTotalItemsResultTransformer(
                 "SELECT p.productBrandCategory.id, p.productBrandCategory.type, count(*) as totalItems " +
                         "from ProductInfo p where " + String.join(" AND ", conditions) +
                         "group by p.productBrandCategory.id, p.productBrandCategory.type order by totalItems desc",
-                mapParams, conditions);
+                mapParams);
 
-        List<FilterAttributeDTO> genderList = getFilterAttributeResultTransformer(
+        List<FilterAttributesWithTotalItemsDTO> genderList = getFilterAttributesWithTotalItemsResultTransformer(
                 "SELECT p.genderCategory.id, p.genderCategory.type, count(*) as totalItems " +
                         "from ProductInfo p where " + String.join(" AND ", conditions) +
                         "group by p.genderCategory.id, p.genderCategory.type order by totalItems desc",
-                mapParams, conditions);
+                mapParams);
 
-        List<FilterAttributeDTO> apparelList = getFilterAttributeResultTransformer(
+        List<FilterAttributesWithTotalItemsDTO> apparelList = getFilterAttributesWithTotalItemsResultTransformer(
                 "SELECT p.apparelCategory.id, p.apparelCategory.type, count(*) as totalItems " +
                         "from ProductInfo p where " + String.join(" AND ", conditions) +
                         "group by p.apparelCategory.id, p.apparelCategory.type order by totalItems desc",
-                mapParams, conditions);
+                mapParams);
 
-        List<FilterAttributeDTO> priceList = getFilterAttributeResultTransformer(
+        List<FilterAttributesWithTotalItemsDTO> priceList = getFilterAttributesWithTotalItemsResultTransformer(
                 "SELECT p.priceRangeCategory.id, p.priceRangeCategory.type, count(*) as totalItems " +
                         "from ProductInfo p where " + String.join(" AND ", conditions) +
                         "group by p.priceRangeCategory.id, p.priceRangeCategory.type order by p.priceRangeCategory.id",
-                mapParams, conditions);
+                mapParams);
 
         FilterAttributesResponse filterAttributesResponse = new FilterAttributesResponse();
         filterAttributesResponse.setBrands(brandList);
@@ -283,6 +310,37 @@ public class ProductInfoRepositoryImpl {
         filterAttributesResponse.setPrices(priceList);
 
         return filterAttributesResponse;
+    }
+
+    private BrandsAndApparelsDTO getBrandsAndApparelsList(int gender_id) {
+        BrandsAndApparelsDTO brandsAndApparelsDTO = new BrandsAndApparelsDTO();
+        HashMap<Integer, Object> mapParams = new HashMap<>(Map.of(1, gender_id));
+
+        brandsAndApparelsDTO.setBrands(getFilterAttributesResultTransformer(
+                "SELECT DISTINCT p.productBrandCategory.id, p.productBrandCategory.type " +
+                        "from ProductInfo p where p.genderCategory.id=?1" +
+                        " group by p.productBrandCategory.id, p.productBrandCategory.type" +
+                        " order by count(*) desc", mapParams));
+
+        brandsAndApparelsDTO.setApparels(getFilterAttributesResultTransformer(
+                "SELECT DISTINCT p.apparelCategory.id, p.apparelCategory.type " +
+                        "from ProductInfo p where p.genderCategory.id=?1 " +
+                        "group by p.apparelCategory.id, p.apparelCategory.type " +
+                        "order by count(*) desc", mapParams));
+
+        return brandsAndApparelsDTO;
+    }
+
+    public HomeTabsDataResponse getBrandsAndApparelsByGender() {
+        HomeTabsDataResponse homeTabsDataResponse = new HomeTabsDataResponse();
+
+        homeTabsDataResponse.setWomen(getBrandsAndApparelsList(1));
+        homeTabsDataResponse.setMen(getBrandsAndApparelsList(2));
+        homeTabsDataResponse.setGirls(getBrandsAndApparelsList(3));
+        homeTabsDataResponse.setBoys(getBrandsAndApparelsList(4));
+        homeTabsDataResponse.setHomeAndLiving(getBrandsAndApparelsList(5));
+        homeTabsDataResponse.setEssentials(getBrandsAndApparelsList(6));
+        return homeTabsDataResponse;
     }
 
 }

@@ -19,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 @Entity
-@Table(indexes = {@Index(columnList = "maincategory_id, subcategory_id, brand_id, price")})
+@Table(indexes = {@Index(columnList = "gender_id, apparel_id, brand_id, price")})
 public class ProductInfo {
 
     @Id
@@ -38,12 +38,12 @@ public class ProductInfo {
     private ProductBrandCategory productBrandCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "maincategory_id")
+    @JoinColumn(name = "gender_id")
     @JsonIgnore
     private GenderCategory genderCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subcategory_id")
+    @JoinColumn(name = "apparel_id")
     @JsonIgnore
     private ApparelCategory apparelCategory;
 

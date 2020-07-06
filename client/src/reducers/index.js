@@ -6,7 +6,7 @@ import {
     homePageDataReducer, addToCartReducer,
     selectProductDetailReducer, checkoutProductReducer,
     filterProductsReducer, filterAttributesReducer,
-    filterQueryReducer
+    filterQueryReducer, tabsDataReducer
 } from "./screens/commonScreenReducer";
 
 import {tabHoverEventReducer} from "./events/eventReducer";
@@ -29,5 +29,6 @@ export default combineReducers({
     selectProductDetailReducer,
     checkoutProductReducer,
     filterQueryReducer,
-    selectedFilterAttributesReducer
+    selectedFilterAttributesReducer,
+    tabsDataReducer
 });

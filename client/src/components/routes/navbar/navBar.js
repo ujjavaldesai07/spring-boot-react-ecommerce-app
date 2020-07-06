@@ -10,7 +10,7 @@ import MoreIcon from '@material-ui/icons/MoreVert';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import Cookies from 'js-cookie';
 import {setTokenFromCookie, signOut} from '../../../actions';
-import {connect} from 'react-redux'
+import {connect, useDispatch} from 'react-redux'
 
 import {
     AppBar, Toolbar, IconButton, Typography,
@@ -21,7 +21,7 @@ import useNavBarStyles from "../../../styles/materialUI/navBarStyles";
 import TabList from "./tabList";
 import {Link} from "react-router-dom";
 import {useSelector} from "react-redux";
-import {HANDLE_TOKEN_ID, SHOPPERS_PRODUCT_ID} from "../../../actions/types";
+import {HANDLE_TAB_HOVER_EVENT, HANDLE_TOKEN_ID} from "../../../actions/types";
 import log from "loglevel";
 import Hidden from "@material-ui/core/Hidden";
 import BagButton from "./bagButton";
@@ -35,6 +35,7 @@ const NavBar = props => {
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+    const dispatch = useDispatch()
 
     useEffect(() => {
         log.info(`[NavBar]: Component did update.`)
@@ -145,6 +146,16 @@ const NavBar = props => {
         )
     }
 
+    const mouseEnterHandler = () => {
+        log.info(`[NavBar]: dispatching HANDLE_TAB_HOVER_EVENT with index and hover as false`)
+        dispatch({
+            type: HANDLE_TAB_HOVER_EVENT, payload: {
+                index: false,
+                hover: false
+            }
+        })
+    }
+
     log.info(`[NavBar]: Rendering NavBar Component`)
     return (
         <div style={{paddingBottom: 80}}>
@@ -162,7 +173,7 @@ const NavBar = props => {
                     </Hidden>
 
                     <Link to="/">
-                        <Typography className={classes.title}>
+                        <Typography className={classes.title} onMouseEnter={mouseEnterHandler}>
                             Shoppers
                         </Typography>
                     </Link>
@@ -176,7 +187,7 @@ const NavBar = props => {
                     <div className={classes.grow_1}/>
 
                     <Hidden xsDown>
-                        <div className={classes.searchContainer}>
+                        <div className={classes.searchContainer} onMouseEnter={mouseEnterHandler}>
                             <div className={classes.search}>
                                 <div className={classes.searchIcon}>
                                     <SearchIcon fontSize="large"/>

@@ -1,6 +1,8 @@
 
 export const MAX_PRODUCTS_PER_PAGE = 15;
 
+export const MAX_PRODUCTS_PER_TAB = 15;
+
 export const INITIAL_PAGINATION_STATE = {
     pageNumber: 1,
     maxProducts: MAX_PRODUCTS_PER_PAGE

@@ -5,6 +5,7 @@ import com.ujjaval.ecommerce.commondataservice.dto.ProductInfoDTO;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.ProductBrandCategory;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
 import com.ujjaval.ecommerce.commondataservice.model.FilterAttributesResponse;
+import com.ujjaval.ecommerce.commondataservice.model.HomeTabsDataResponse;
 import com.ujjaval.ecommerce.commondataservice.model.MainScreenResponse;
 import com.ujjaval.ecommerce.commondataservice.service.interfaces.CommonDataService;
 import com.ujjaval.ecommerce.commondataservice.service.interfaces.LoadFakeDataService;
@@ -126,6 +127,15 @@ public class CommonDataController {
             return new ResponseEntity<Error>(HttpStatus.CONFLICT);
         }
         return ResponseEntity.ok(mainScreenInfoList);
+    }
+
+    @GetMapping("/tabs")
+    public ResponseEntity<?> getHomeTabsDataResponse() {
+        HomeTabsDataResponse homeTabsDataResponse = commonDataService.getBrandsAndApparelsByGender();
+        if (homeTabsDataResponse == null) {
+            return new ResponseEntity<Error>(HttpStatus.CONFLICT);
+        }
+        return ResponseEntity.ok(homeTabsDataResponse);
     }
 
     @GetMapping(value = "/filter", params = "q")

@@ -3,6 +3,7 @@ package com.ujjaval.ecommerce.commondataservice.service.interfaces;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.ProductBrandCategory;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
 import com.ujjaval.ecommerce.commondataservice.model.FilterAttributesResponse;
+import com.ujjaval.ecommerce.commondataservice.model.HomeTabsDataResponse;
 import com.ujjaval.ecommerce.commondataservice.model.MainScreenResponse;
 import org.javatuples.Pair;
 
@@ -24,5 +25,7 @@ public interface CommonDataService {
             String> conditionMap) throws UnknownHostException;
 
     List<ProductInfo> getProductsById(String[] productIds) throws UnknownHostException;
+
+    HomeTabsDataResponse getBrandsAndApparelsByGender();
 }
 

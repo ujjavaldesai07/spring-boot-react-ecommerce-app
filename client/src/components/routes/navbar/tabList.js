@@ -29,22 +29,16 @@ export default function TabList() {
     const handleMouseEnter = (event) => {
         log.debug(`[TabList]: dispatching HANDLE_TAB_HOVER_EVENT with
          index = ${parseInt(event.target.id.split('-')[2])} and hover = true`)
-
+        let index = parseInt(event.target.id.split('-')[2])
+        if(isNaN(index)) {
+            return
+        }
         dispatch({
             type: HANDLE_TAB_HOVER_EVENT,
             payload: {
-                index: parseInt(event.target.id.split('-')[2]),
-                hover: true
-            }
-        });
-    }
-
-    const handleMouseLeave = () => {
-        log.debug(`[TabList]: dispatching HANDLE_TAB_HOVER_EVENT with index and hover as false`)
-        dispatch({
-            type: HANDLE_TAB_HOVER_EVENT, payload: {
-                index: false,
-                hover: false
+                index: index,
+                hover: true,
+                tabColor: tabsConfig[index].color
             }
         });
     }
@@ -54,11 +48,10 @@ export default function TabList() {
         return tabsConfig.map(({index, label, style}) => {
             log.trace(`[TabList]: renderTabs index = ${index}, label = ${label}, style = ${style}`)
             return (
-                    <Tab key={index} label={label} onMouseEnter={handleMouseEnter}
-                         onMouseLeave={handleMouseLeave}
-                         className={style}
-                         classes={{wrapper: classes.tabsWrapper}}
-                         {...a11yProps(index)}/>
+                <Tab key={index} label={label} onMouseEnter={handleMouseEnter}
+                     className={style}
+                     classes={{wrapper: classes.tabsWrapper}}
+                     {...a11yProps(index)}/>
             )
         })
     }

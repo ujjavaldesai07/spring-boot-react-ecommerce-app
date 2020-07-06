@@ -7,16 +7,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class FilterAttributeDTO {
+public class FilterAttributesDTO {
 
     Integer id;
     String value;
-    Long totalItems;
 
-    public FilterAttributeDTO(Integer id, String value, Long totalItems) {
+    public FilterAttributesDTO(Integer id, String value) {
         this.id = id;
         this.value = value;
-        this.totalItems = totalItems;
     }
 }
 

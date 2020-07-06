@@ -3,7 +3,7 @@ import history from "../history";
 import {Router, Route} from 'react-router-dom';
 import log from "loglevel"
 import NavBar from "./routes/navbar/navBar";
-import TabPanelList from "./routes/navbar/tabPanelList";
+import {TabPanelList} from "./routes/navbar/tabPanelList";
 import Home from "./routes/home/home";
 import Login from "./routes/login";
 import SignUp from "./routes/signUp";

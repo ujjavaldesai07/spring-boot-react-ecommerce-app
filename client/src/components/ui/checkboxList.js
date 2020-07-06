@@ -6,6 +6,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import log from "loglevel";
+import {Box} from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -23,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CheckboxList(props) {
     const classes = useStyles();
-    const maxItems = props.maxItems? props.maxItems: 1000
+    const maxItems = props.maxItems ? props.maxItems : 1000
 
     if (!props.attrList) {
         log.debug(`[CheckboxList] props.attrList is null`)
@@ -56,11 +57,13 @@ export default function CheckboxList(props) {
             })
         }
 
-        return props.attrList.map(({id, value}) => {
+        return props.attrList.map(({id, value, totalItems}) => {
             if (count === maxItems) {
                 return null
             }
             count = count + 1
+
+            // value = `${value} (${totalItems})`
 
             log.debug(`[CheckboxList] renderCheckBoxList id = ${id}, type = ${value}` +
                 `, props.values.includes(id) = ${selectedIdList.includes(id)}`)
@@ -77,8 +80,15 @@ export default function CheckboxList(props) {
                             inputProps={{'aria-labelledby': id}}
                         />
                     </ListItemIcon>
-                    <ListItemText id={id} primary={value} style={{fontSize: props.fontSize}}
-                                  disableTypography/>
+                    <Box display="flex" flexDirection="row">
+                        <Box>
+                            <ListItemText id={id} primary={value} style={{fontSize: props.fontSize}}
+                                          disableTypography/>
+                        </Box>
+                        <Box alignSelf="center" pl={0.5} pt={0.10} css={{color: "#94969f", fontSize: "0.8rem"}}>
+                            {`(${totalItems})`}
+                        </Box>
+                    </Box>
                 </ListItem>
             );
         })

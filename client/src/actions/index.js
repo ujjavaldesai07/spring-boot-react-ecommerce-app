@@ -7,7 +7,7 @@ import {
     HANDLE_TOKEN_ID,
     HANDLE_SIGN_IN_ERROR,
     LOAD_FILTER_PRODUCTS,
-    LOAD_FILTER_ATTRIBUTES,
+    LOAD_FILTER_ATTRIBUTES, LOAD_TABS_DATA,
 } from './types';
 import authApi from "../api/authServiceApi";
 import history from "../history";
@@ -90,6 +90,16 @@ export const loadHomePage = () => async dispatch => {
     if (response != null) {
         log.debug(`[ACTION]: loadMainScreen API = ${JSON.parse(JSON.stringify(response.data))}.`)
         dispatch({type: HANDLE_MAIN_SCREEN, payload: JSON.parse(JSON.stringify(response.data))});
+    }
+};
+
+export const loadTabsData = () => async dispatch => {
+    log.info(`[ACTION]: loadTabsData Calling tabs data API.`)
+    const response = await commonServiceApi.get('/tabs');
+
+    if (response != null) {
+        log.debug(`[ACTION]: tabs data API = ${JSON.parse(JSON.stringify(response.data))}.`)
+        dispatch({type: LOAD_TABS_DATA, payload: JSON.parse(JSON.stringify(response.data))});
     }
 };
 

@@ -2,7 +2,7 @@ import {
     ADD_TO_CART, DELETE_FILTER_QUERY,
     HANDLE_MAIN_SCREEN, LOAD_CHECKOUT_PRODUCTS,
     LOAD_FILTER_ATTRIBUTES,
-    LOAD_FILTER_PRODUCTS, REMOVE_FILTER_ATTRIBUTES, SAVE_FILTER_QUERY,
+    LOAD_FILTER_PRODUCTS, LOAD_TABS_DATA, REMOVE_FILTER_ATTRIBUTES, SAVE_FILTER_QUERY,
     SELECT_PRODUCT_DETAIL
 } from "../../actions/types";
 import log from "loglevel";
@@ -21,6 +21,15 @@ export const homePageDataReducer =  (state = null, action) => {
 export const addToCartReducer =  (state = null, action) => {
     switch (action.type) {
         case ADD_TO_CART:
+            return action.payload;
+        default:
+            return state;
+    }
+};
+
+export const tabsDataReducer =  (state = null, action) => {
+    switch (action.type) {
+        case LOAD_TABS_DATA:
             return action.payload;
         default:
             return state;

@@ -12,6 +12,7 @@ import com.ujjaval.ecommerce.commondataservice.entity.sql.images.CarouselImages;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.images.ApparelImages;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
 import com.ujjaval.ecommerce.commondataservice.model.FilterAttributesResponse;
+import com.ujjaval.ecommerce.commondataservice.model.HomeTabsDataResponse;
 import com.ujjaval.ecommerce.commondataservice.model.MainScreenResponse;
 import com.ujjaval.ecommerce.commondataservice.service.interfaces.CommonDataService;
 import org.javatuples.Pair;
@@ -180,5 +181,9 @@ public class CommonDataServiceImpl implements CommonDataService {
             }
         }
         return result;
+    }
+
+    public HomeTabsDataResponse getBrandsAndApparelsByGender() {
+        return productInfoRepository.getBrandsAndApparelsByGender();
     }
 }

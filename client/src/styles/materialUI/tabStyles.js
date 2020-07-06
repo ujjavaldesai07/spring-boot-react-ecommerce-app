@@ -6,17 +6,22 @@ const useTabStyles = makeStyles((theme) => ({
     },
     paperRoot: {
         display: 'flex',
-        flexWrap: 'wrap',
         '& > *': {
             margin: theme.spacing(0),
-            width: theme.spacing(80),
-            height: theme.spacing(140),
+            width: theme.spacing(72),
+            height: theme.spacing(50),
         },
+        opacity: 5,
         position: "fixed",
         zIndex: 1001,
-        height: '200px',
-        paddingTop: '20px',
-        left: '200px',
+        height: '400px',
+        left: '170px',
+    },
+    listItemTextRoot: {
+        '&:hover': {
+            fontWeight: 500
+        },
+        color: "black",
     },
     tabRoot: {
         width: "auto",
