@@ -1,8 +1,8 @@
 import React from 'react';
 import {Box} from "@material-ui/core";
-import pageNotFoundImage from '../../images/search404.png'
+import searchMatchesNotFoundImage from '../../../images/searchMatchesNotFound404.png'
 
-export const PageNotFound = () => {
+export const SearchMatchesNotFound = () => {
 
     return (
         <Box display="flex"
@@ -11,7 +11,7 @@ export const PageNotFound = () => {
              alignItems="center"
              css={{height: "50vh"}}>
             <Box alignSelf="center" pb={8}>
-                <img src={pageNotFoundImage} alt="pageNotFoundImage"/>
+                <img src={searchMatchesNotFoundImage} alt="searchMatchesNotFoundImage"/>
             </Box>
             <Box alignSelf="center" css={{fontSize: '2rem', fontWeight: 400}}>
                 We couldn't find any matches!

@@ -7,11 +7,11 @@ import {connect, useSelector} from "react-redux";
 import {DocumentTitle} from "../../ui/documentTitle";
 import {loadHomePage} from "../../../actions";
 import log from 'loglevel';
-import {homePageDataReducer} from "../../../reducers/screens/commonScreenReducer";
+import {homePageDataReducer, tabsDataReducer} from "../../../reducers/screens/commonScreenReducer";
 import HomeMenuIcons from "./homeMenuIcons";
 import Hidden from "@material-ui/core/Hidden";
 import history from "../../../history";
-import {PageNotFound} from "../../ui/pageNotFound";
+import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
 
 const Home = props => {
     const {hover} = useSelector(state => state.tabHoverEventReducer)
@@ -25,7 +25,7 @@ const Home = props => {
     }, [homePageDataReducer]);
 
     if(history.location.pathname.localeCompare('/') !== 0) {
-        return <PageNotFound/>
+        return <SearchMatchesNotFound/>
     }
 
     log.info("[Home]: Rendering Home Component")

@@ -9,7 +9,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import Cookies from 'js-cookie';
-import {setTokenFromCookie, signOut} from '../../../actions';
+import {loadTabsData, setTokenFromCookie, signOut} from '../../../actions';
 import {connect, useDispatch} from 'react-redux'
 
 import {
@@ -21,10 +21,11 @@ import useNavBarStyles from "../../../styles/materialUI/navBarStyles";
 import TabList from "./tabList";
 import {Link} from "react-router-dom";
 import {useSelector} from "react-redux";
-import {HANDLE_TAB_HOVER_EVENT, HANDLE_TOKEN_ID} from "../../../actions/types";
+import {ADD_TO_CART, HANDLE_TAB_HOVER_EVENT, HANDLE_TOKEN_ID, SHOPPERS_PRODUCT_ID} from "../../../actions/types";
 import log from "loglevel";
 import Hidden from "@material-ui/core/Hidden";
 import BagButton from "./bagButton";
+import {tabsDataReducer} from "../../../reducers/screens/commonScreenReducer";
 
 const NavBar = props => {
     const classes = useNavBarStyles();
@@ -37,6 +38,26 @@ const NavBar = props => {
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const dispatch = useDispatch()
 
+    const setAddToCartValuesFromCookie = () => {
+        let savedProductsFromCookie = Cookies.get(SHOPPERS_PRODUCT_ID)
+        let totalQuantity = 0
+        if(savedProductsFromCookie) {
+            savedProductsFromCookie = JSON.parse(savedProductsFromCookie)
+
+            for(const [, qty] of Object.entries(savedProductsFromCookie.productQty)) {
+                totalQuantity += parseInt(qty)
+            }
+            savedProductsFromCookie.totalQuantity = totalQuantity
+
+            // log.info(`[BagButton] savedProductsFromCookie = ${savedProductsFromCookie}`)
+
+            dispatch({
+                type: ADD_TO_CART,
+                payload: savedProductsFromCookie
+            })
+        }
+    }
+
     useEffect(() => {
         log.info(`[NavBar]: Component did update.`)
         if (isSignedIn === null) {
@@ -47,8 +68,11 @@ const NavBar = props => {
                 props.setTokenFromCookie(tokenIdFromCookie)
             }
         }
+        props.loadTabsData()
+        setAddToCartValuesFromCookie()
+
         // eslint-disable-next-line
-    }, [isSignedIn]);
+    }, [isSignedIn, tabsDataReducer]);
 
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -158,7 +182,7 @@ const NavBar = props => {
 
     log.info(`[NavBar]: Rendering NavBar Component`)
     return (
-        <div style={{paddingBottom: 80}}>
+        <div style={{paddingBottom: 80}} onMouseEnter={mouseEnterHandler}>
             <AppBar color="default" className={classes.appBarRoot}>
                 <Toolbar classes={{root: classes.toolBarRoot}}>
                     <Hidden mdUp>
@@ -173,7 +197,7 @@ const NavBar = props => {
                     </Hidden>
 
                     <Link to="/">
-                        <Typography className={classes.title} onMouseEnter={mouseEnterHandler}>
+                        <Typography className={classes.title}>
                             Shoppers
                         </Typography>
                     </Link>
@@ -187,7 +211,7 @@ const NavBar = props => {
                     <div className={classes.grow_1}/>
 
                     <Hidden xsDown>
-                        <div className={classes.searchContainer} onMouseEnter={mouseEnterHandler}>
+                        <div className={classes.searchContainer}>
                             <div className={classes.search}>
                                 <div className={classes.searchIcon}>
                                     <SearchIcon fontSize="large"/>
@@ -267,4 +291,4 @@ const NavBar = props => {
     );
 };
 
-export default connect(null, {setTokenFromCookie, signOut})(NavBar);
+export default connect(null, {setTokenFromCookie, signOut, loadTabsData})(NavBar);

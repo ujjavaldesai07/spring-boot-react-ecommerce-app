@@ -1,11 +1,11 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button} from "@material-ui/core";
 import log from 'loglevel';
 import BreadcrumbsSection from "../../ui/breadcrumbs";
 import {HOME_ROUTE} from "../../../constants/constants";
 import history from "../../../history";
 import Box from "@material-ui/core/Box";
-import {PageNotFound} from "../../ui/pageNotFound";
+import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
 import {useDispatch, useSelector} from "react-redux";
 import {connect} from 'react-redux';
 import {loadSelectedProduct} from '../../../actions'
@@ -14,16 +14,46 @@ import PaymentIcon from '@material-ui/icons/Payment';
 import {Link} from "react-router-dom";
 import Cookies from 'js-cookie';
 import {ADD_TO_CART, SELECT_PRODUCT_DETAIL, SHOPPERS_PRODUCT_ID} from "../../../actions/types";
+import RemoveIcon from '@material-ui/icons/Remove';
+import AddIcon from '@material-ui/icons/Add';
+import {makeStyles} from "@material-ui/core/styles";
+import Spinner from "../../ui/spinner";
+import {InternalServerError} from "../../ui/error/internalServerError";
+
+
+export const useButtonStyles = makeStyles((theme) => ({
+    buttonStartIcon: {
+        margin: 0,
+    },
+}));
 
 function Detail(props) {
-    let selectedProduct = useSelector(state => state.selectProductDetailReducer?
-        state.selectProductDetailReducer: null)
+    const classes = useButtonStyles()
+    const selectProductDetail = useSelector(state => state.selectProductDetailReducer)
+
+    const selectedProduct = selectProductDetail.hasOwnProperty("products")?
+        selectProductDetail.products[history.location.search.split("product_id=")[1]] : null
+
     const dispatch = useDispatch()
+    const addToCart = useSelector(state => state.addToCartReducer)
+    const [productQuantity, setProductQuantity] = useState(1)
+
+    useEffect(() => {
+        log.info(`[Detail] Component did mount selectedProduct = ${JSON.stringify(selectedProduct)}`)
+
+        if (selectedProduct && addToCart.hasOwnProperty("productQty") &&
+            addToCart["productQty"].hasOwnProperty(selectedProduct.id)) {
+            log.info(`[Detail] addToCart = ${JSON.stringify(addToCart)}`)
+            log.info(`[Detail] setProductQuantity = ${addToCart.productQty[selectedProduct.id]}`)
+            setProductQuantity(addToCart.productQty[selectedProduct.id])
+        }
+    }, [selectedProduct])
+
 
     if (history.location.pathname.localeCompare('/products/details') !== 0 ||
         history.location.search.search('product_id=') === -1
         || !history.location.search.startsWith('?q=')) {
-        return <PageNotFound/>
+        return <SearchMatchesNotFound/>
     }
 
     const getStringBeforeLastDelimiter = (str, delimiter) => {
@@ -50,6 +80,11 @@ function Detail(props) {
 
     if (!selectedProduct) {
         try {
+            log.info(`selectProductDetail = ${JSON.stringify(selectProductDetail)}`)
+            if(selectProductDetail.hasOwnProperty("responseFailure")) {
+                log.info(`Returning ===========> PageNotFound`)
+                return <InternalServerError/>
+            }
             const extractedProductId = history.location.search.split("product_id=")
             log.info(`extractedProductId = ${JSON.stringify(extractedProductId)}, length = ${extractedProductId.length}`)
             if (extractedProductId.length === 2) {
@@ -57,54 +92,57 @@ function Detail(props) {
             }
         } catch (e) {
             log.error('[Detail] selectedProduct is null')
+            return <SearchMatchesNotFound/>
         }
     }
 
-    if (!selectedProduct) {
-        return <PageNotFound/>
+    if (selectProductDetail.isLoading) {
+        return <Spinner/>
+    } else {
+        if(!selectedProduct) {
+            return <SearchMatchesNotFound/>
+        }
     }
 
-    const dispatchAddToCart = (totalQuantity, productList) => {
+    const dispatchAddToCart = newAddToCart => {
+        Cookies.set(SHOPPERS_PRODUCT_ID, newAddToCart, {expires: 7});
+        log.info(`[Detail] dispatchAddToCart productQty = ${JSON.stringify(newAddToCart)}`)
         dispatch({
             type: ADD_TO_CART,
-            payload: {
-                totalQuantity,
-                productList
-            }
+            payload: newAddToCart
         })
     }
 
     const handleAddToBagButton = product_id => () => {
         log.info(`[Detail] Product is added to cart`)
-        let savedProductsFromCookie = Cookies.get(SHOPPERS_PRODUCT_ID)
-        let totalQuantity = 0
+        let newAddToCart = addToCart
 
-        if(!savedProductsFromCookie) {
-            dispatchAddToCart(1, [{id: product_id, quantity: 1}])
-            Cookies.set(SHOPPERS_PRODUCT_ID, [{id: product_id, quantity: 1}], {expires: 7});
-            return
-        }
-
-        savedProductsFromCookie = JSON.parse(savedProductsFromCookie)
-        let arrLen = savedProductsFromCookie.length
-        let alreadyExist = false
-
-        for(let i = 0; i < arrLen; i++) {
-            if(savedProductsFromCookie[i].id === product_id) {
-                ++savedProductsFromCookie[i].quantity
-                alreadyExist = true
+        if(newAddToCart.hasOwnProperty("productQty") === false) {
+            newAddToCart = {
+                totalQuantity: productQuantity,
+                productQty: {
+                    [product_id]: productQuantity
+                }
             }
-            totalQuantity += savedProductsFromCookie[i].quantity
-        }
+        } else {
+            let totalQuantity = 0
+            newAddToCart.productQty[product_id] = productQuantity
+            newAddToCart.totalQuantity = 0
 
-        if(!alreadyExist) {
-            savedProductsFromCookie.push({id: product_id, quantity: 1})
-            log.info(`savedProductsFromCookie = ${JSON.stringify(savedProductsFromCookie)}`)
-            ++totalQuantity
+            for(const [, qty] of Object.entries(newAddToCart.productQty)) {
+                totalQuantity += qty
+            }
+            newAddToCart.totalQuantity += totalQuantity
         }
+        dispatchAddToCart(newAddToCart)
+    }
 
-        dispatchAddToCart(totalQuantity, savedProductsFromCookie)
-        Cookies.set(SHOPPERS_PRODUCT_ID, savedProductsFromCookie, {expires: 7});
+    if (props.window) {
+        props.window.scrollTo(0, 0)
+    }
+
+    if (selectedProduct) {
+        log.info(`selectedProduct = ${JSON.stringify(selectedProduct)}`)
     }
 
     log.info(`[Detail] Rendering Detail Component. selectedProduct = ${JSON.stringify(selectedProduct)}`)
@@ -122,24 +160,54 @@ function Detail(props) {
                 </Box>
                 <Box display="flex" flexDirection="column" flex="1">
                     <Box pb={3}>
-                        <div style={{
-                            fontSize: "2rem",
-                            fontWeight: 500
-                        }}>{selectedProduct.productBrandCategory.type}</div>
+                        <div style={{fontSize: "2rem", fontWeight: 500}}>
+                            {selectedProduct.productBrandCategory.type}
+                        </div>
                     </Box>
                     <Box pb={5}>
-                        <div style={{fontSize: "1.7rem", fontWeight: 300}}>{selectedProduct.name}</div>
+                        <div style={{fontSize: "1.7rem", fontWeight: 300}}>
+                            {selectedProduct.name}
+                        </div>
                     </Box>
                     <Box pb={3}>
                         <Box style={{fontSize: "1.8rem", fontWeight: 600}}>{`$ ${selectedProduct.price}`}</Box>
                         <Box pt={2} color="green" style={{fontSize: "1rem", fontWeight: 700}}>inclusive of all
                             taxes</Box>
                     </Box>
-                    <Box>
-                        DESCRIPTION
+
+                    <Box display="flex" style={{height: '8%'}} py={4} alignItems="center">
+                        <Box width="5%" style={{fontSize: '1.2rem', fontWeight: "lighter"}}>
+                            Qty:
+                        </Box>
+
+                        <Box width="4%" style={{fontSize: '1.2rem', fontWeight: "bold"}}>
+                            {productQuantity}
+                        </Box>
+
+                        <Box>
+                            <Button variant="outlined" color="primary" size="large"
+                                    style={{height: 40}}
+                                    classes={{startIcon: classes.buttonStartIcon}}
+                                    startIcon={<RemoveIcon fontSize="large"/>}
+                                    disabled={productQuantity === 1}
+                                    onClick={() => setProductQuantity(productQuantity - 1)}
+                            >
+                            </Button>
+                        </Box>
+
+                        <Box>
+                            <Button variant="outlined" color="primary" size="large"
+                                    style={{height: 40}}
+                                    classes={{startIcon: classes.buttonStartIcon}}
+                                    startIcon={<AddIcon fontSize="large"/>}
+                                    onClick={() => setProductQuantity(productQuantity + 1)}
+                            >
+                            </Button>
+                        </Box>
                     </Box>
+
                     <Box display="flex" flexDirection="row">
-                        <Box mt={3} mr={4} width="30%" height="60%" justifyContent="center">
+                        <Box mt={3} mr={4} width="25%" height="70%" justifyContent="center">
                             <Button variant="contained" size="large" color="secondary"
                                     style={{width: "100%", height: "100%"}}
                                     startIcon={<AddShoppingCartIcon/>}
@@ -148,13 +216,13 @@ function Detail(props) {
                                 ADD TO BAG
                             </Button>
                         </Box>
-                        <Box mt={3} width="30%" height="60%" justifyContent="center">
+                        <Box mt={3} width="25%" height="70%" justifyContent="center">
                             <Link to={`${history.location.pathname}/checkout${history.location.search}`}>
-                            <Button variant="outlined" size="large" color="default"
-                                    style={{width: "100%", height: "100%"}}
-                                    startIcon={<PaymentIcon/>}>
-                                CHECKOUT
-                            </Button>
+                                <Button variant="outlined" size="large" color="default"
+                                        style={{width: "100%", height: "100%"}}
+                                        startIcon={<PaymentIcon/>}>
+                                    CHECKOUT
+                                </Button>
                             </Link>
                         </Box>
                     </Box>

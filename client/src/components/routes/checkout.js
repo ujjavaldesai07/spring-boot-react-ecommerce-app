@@ -1,19 +1,22 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import log from 'loglevel';
 import BreadcrumbsSection from "../ui/breadcrumbs";
-import {HOME_ROUTE} from "../../constants/constants";
+import {HOME_ROUTE, MAX_PRODUCTS_PER_PAGE} from "../../constants/constants";
 import history from "../../history";
 import Box from "@material-ui/core/Box";
-import {PageNotFound} from "../ui/pageNotFound";
-import {useSelector} from "react-redux";
+import {SearchMatchesNotFound} from "../ui/error/searchMatchesNotFound";
+import {useDispatch, useSelector} from "react-redux";
 import Cookies from "js-cookie";
-import {LOAD_CHECKOUT_PRODUCTS, SHOPPERS_PRODUCT_ID} from "../../actions/types";
+import {ADD_TO_CART, LOAD_CHECKOUT_PRODUCTS, SHOPPERS_PRODUCT_ID} from "../../actions/types";
 import DropdownSection from "../ui/dropDown";
 import {Button, Divider} from "@material-ui/core";
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import {connect} from "react-redux";
-import {loadSelectedProduct} from '../../actions'
-import {addToCartReducer} from "../../reducers/screens/commonScreenReducer";
+import {loadSelectedProduct} from '../../actions';
+import _ from 'lodash';
+import Spinner from "../ui/spinner";
+import {EmptyCheckoutCart} from "../ui/error/emptyCheckoutCart";
+import {Link} from "react-router-dom";
 
 const paymentStyles = {
     header: {
@@ -26,56 +29,53 @@ const paymentStyles = {
 }
 
 function Checkout(props) {
-    const addToCartQuantity = useSelector(state => state.addToCartReducer)
+    const addToCart = useSelector(state => state.addToCartReducer)
     const checkoutProducts = useSelector(state => state.checkoutProductReducer)
+    const dispatch = useDispatch()
+    let cartTotal = 0
 
-    const extractIdsFromObject = objectList => {
+    const extractIdsFromObject = object => {
+        log.info("[Checkout] extractIdsFromObject object = " + JSON.stringify(object))
         let idList = []
-        objectList.forEach(({id}) => {
-            idList.push(id)
-        })
+        for (const [id] of Object.entries(object)) {
+            idList.push(parseInt(id))
+        }
         return idList
     }
 
+
     useEffect(() => {
-        log.info("[Checkout] Component will mount...")
+        log.info("[Checkout] Component will mount... addToCart = " + JSON.stringify(addToCart))
 
         let idList = []
 
-        if (addToCartQuantity) {
-            log.debug(`[Checkout] load checkout products` +
-                ` from addToCartQuantity = ${JSON.stringify(addToCartQuantity)}`)
-            idList = extractIdsFromObject(addToCartQuantity.productList)
+        if (addToCart.hasOwnProperty("productQty")) {
+            log.info(`[Checkout] load checkout products` +
+                ` from addToCartQuantity = ${JSON.stringify(addToCart)}`)
 
-        } else {
-            try {
-                let savedProductsFromCookie = Cookies.get(SHOPPERS_PRODUCT_ID)
-                if (savedProductsFromCookie) {
-                    savedProductsFromCookie = JSON.parse(savedProductsFromCookie)
+            idList = extractIdsFromObject(addToCart["productQty"])
 
-                    log.debug(`[Checkout] load checkout products from` +
-                        `savedProductsFromCookie = ${JSON.stringify(savedProductsFromCookie)}`)
 
-                    idList = extractIdsFromObject(savedProductsFromCookie)
-                }
-            } catch (e) {
-                log.error(`[Checkout] Unable to JSON parse savedProductsFromCookie`)
+            if (idList.length > 0) {
+                props.loadSelectedProduct(idList.toString(), LOAD_CHECKOUT_PRODUCTS)
+            } else {
+                dispatch({
+                    type: LOAD_CHECKOUT_PRODUCTS,
+                    payload: {}
+                })
             }
+
         }
 
         log.info(`[Checkout] load checkout products idList = ${JSON.stringify(idList)}`)
 
-        if (idList.length > 0) {
-            props.loadSelectedProduct(idList.toString(), LOAD_CHECKOUT_PRODUCTS)
-        }
-
         // eslint-disable-next-line
-    }, [addToCartReducer])
+    }, [addToCart])
 
     if (history.location.pathname.localeCompare('/checkout') !== 0 &&
         history.location.pathname.localeCompare('/products/details/checkout') !== 0) {
         log.info(`[Checkout] corrupted url.`)
-        return <PageNotFound/>
+        return <SearchMatchesNotFound/>
     }
 
     const getStringBeforeLastDelimiter = (str, delimiter) => {
@@ -103,15 +103,85 @@ function Checkout(props) {
         },
     ]
 
-    if (!checkoutProducts) {
-        return null
+    const getQuantityList = id => {
+        let qtyList = []
+        for (let i = 1; i <= 10; ++i) {
+            qtyList.push({
+                id: i,
+                type: i
+            })
+        }
+        return qtyList
+    }
+
+    const getCartTotal = () => {
+        if (checkoutProducts && addToCart.hasOwnProperty("productQty")) {
+            for (const [id, qty] of Object.entries(addToCart.productQty)) {
+                if (checkoutProducts.hasOwnProperty(id)) {
+                    cartTotal += qty * checkoutProducts[id].price
+                }
+            }
+        }
+        return cartTotal
+    }
+
+    const onQtyDropdownChangeHandler = (value, text, id) => {
+        log.info(`[Checkout] onChangeHandler id = ${id}, value = ${value}`)
+        let newAddToCart = addToCart
+        newAddToCart.productQty[id] = value
+
+        Cookies.set(SHOPPERS_PRODUCT_ID, newAddToCart, {expires: 7});
+        dispatch({
+            type: ADD_TO_CART,
+            payload: newAddToCart
+        })
+    }
+
+    const removeBtnClickHandler = id => () => {
+        log.info(`[Checkout] removeBtnChangeHandler id = ${id}`)
+        let newAddToCart = addToCart
+        newAddToCart.totalQuantity -= newAddToCart.productQty[id]
+        newAddToCart.productQty = _.omit(newAddToCart.productQty, id)
+        Cookies.set(SHOPPERS_PRODUCT_ID, newAddToCart, {expires: 7});
+        dispatch({
+            type: ADD_TO_CART,
+            payload: newAddToCart
+        })
+    }
+
+    const wannaShopBtnClick = () => {
+        history.push(`/products?q=category=all::page=0,${MAX_PRODUCTS_PER_PAGE}`);
+    }
+
+    if (checkoutProducts.isLoading) {
+        return <Spinner/>
+    } else {
+        if (Object.keys(checkoutProducts).length === 0) {
+            return (
+                <Box display="flex" flexDirection="column">
+                    <Box>
+                        <EmptyCheckoutCart/>
+                    </Box>
+                    <Box display="flex" py={2} justifyContent="center">
+                        <Button variant="contained" size="large" color="secondary"
+                                onClick={wannaShopBtnClick}
+                                style={{width: '20%'}}>
+                            Wanna Shop? Click Here
+                        </Button>
+                    </Box>
+                </Box>
+            )
+        }
     }
 
     const renderCheckoutProducts = () => {
-        log.debug(`[Checkout] checkoutProducts = ${JSON.stringify(checkoutProducts)}`)
+        log.info(`[Checkout] checkoutProducts = ${JSON.stringify(checkoutProducts)}`)
 
-        return checkoutProducts.map((product) => {
-            return (
+        let checkoutProductsList = []
+
+        for (const [id, product] of Object.entries(checkoutProducts.products)) {
+
+            checkoutProductsList.push(
                 <Box key={product.id} display="flex" flexDirection="column" flex="2" css={{border: '1px solid #eaeaec'}}
                      mt={1}>
                     <Box display="flex" m={2}>
@@ -126,7 +196,8 @@ function Checkout(props) {
                                     {product.productBrandCategory.type}
                                 </Box>
                                 <Box>
-                                    Qty: 1 x $ 249  =  $ 249
+                                    {`Qty: ${addToCart.productQty[product.id]} x $${product.price} = `
+                                    + `$${addToCart.productQty[product.id] * product.price}`}
                                 </Box>
                             </Box>
                             <Box css={{fontSize: "1rem", fontWeight: 300}}>
@@ -137,12 +208,15 @@ function Checkout(props) {
                             </Box>
                             <Box width="30%" height="25%" pt={2}>
                                 <DropdownSection
-                                    attrList={[{id: 1, type: 1}, {id: 2, type: 2}]}
-                                    selectedValue={1}
+                                    attrList={getQuantityList(id)}
+                                    selectedValue={addToCart.productQty.hasOwnProperty(id) ? {
+                                        id: id,
+                                        value: addToCart.productQty[id]
+                                    } : 1}
                                     appendText="Qty:"
-                                    title="quantity"
+                                    title={id}
                                     size="sm"
-                                    onChangeHandler={onChangeHandler}/>
+                                    onChangeHandler={onQtyDropdownChangeHandler}/>
                             </Box>
                         </Box>
                     </Box>
@@ -152,20 +226,20 @@ function Checkout(props) {
                     </Box>
                     <Box display="flex" mx={2} mb={1} justifyContent="flex-start">
                         <Button variant="contained" size="medium" color="secondary"
+                                onClick={removeBtnClickHandler(id)}
                                 startIcon={<RemoveCircleOutlineIcon/>}>
                             Remove
                         </Button>
                     </Box>
                 </Box>
             )
-        })
-    }
+        }
 
-    const onChangeHandler = (id, value) => {
-        log.info("[Checkout] onChangeHandler.")
+        return checkoutProductsList
     }
 
     log.info("[Checkout] Rendering Checkout Component.")
+
     return (
         <>
             <Box display="flex" p={3}>
@@ -178,11 +252,11 @@ function Checkout(props) {
                 </Box>
 
                 <Box display="flex" flexDirection="row" py={4} css={{fontSize: '1.5rem', fontWeight: 600}}>
-                    <Box flex="0.67">
-                        My Shopping Bag (3 Items)
+                    <Box flex="0.65">
+                        {`My Shopping Bag (${addToCart.totalQuantity} Items)`}
                     </Box>
                     <Box>
-                        Total: $249
+                        {`Total: $${getCartTotal()}`}
                     </Box>
                 </Box>
                 <Box display="flex" justifyContent="center">
@@ -194,7 +268,7 @@ function Checkout(props) {
                         <Divider orientation="vertical" style={{height: "100%", width: 1}}/>
                     </Box>
 
-                    <Box display="flex" flex="1" flexDirection="column">
+                    <Box display="flex" flex="1" flexDirection="column" pt={1}>
                         <Box css={paymentStyles.header}>
                             PRICE DETAILS
                         </Box>
@@ -203,7 +277,7 @@ function Checkout(props) {
                                 Bag Total
                             </Box>
                             <Box>
-                                $ 249
+                                ${cartTotal}
                             </Box>
                         </Box>
                         <Box display="flex" flexDirection="row" pt={1} css={paymentStyles}>
@@ -222,7 +296,7 @@ function Checkout(props) {
                                 Total
                             </Box>
                             <Box>
-                                $ 249
+                                ${cartTotal}
                             </Box>
                         </Box>
                         <Box display="flex" py={2} justifyContent="flex-start">

@@ -4,7 +4,7 @@ import log from 'loglevel';
 import {useSelector} from "react-redux";
 
 const VerticalSlider = () => {
-    const homeAPIData = useSelector(state => state.homePageDataReducer? state.homePageDataReducer : null)
+    const homeAPIData = useSelector(state => state.homePageDataReducer ? state.homePageDataReducer : null)
 
     const params = {
         spaceBetween: 30,
@@ -51,7 +51,7 @@ const VerticalSlider = () => {
 
     log.info("[VerticalSlider]: Rendering VerticalSlider Component")
     return (
-        <Swiper {...params} >
+        <Swiper {...params}>
             {renderImageList(homeAPIData.carousels)}
         </Swiper>
     )

@@ -7,7 +7,7 @@ import {
 } from "../../actions/types";
 import log from "loglevel";
 
-export const homePageDataReducer =  (state = null, action) => {
+export const homePageDataReducer = (state = null, action) => {
     log.trace(`[HOME_SCREEN_REDUCER]: action.type = ${action.type}`)
     switch (action.type) {
         case HANDLE_MAIN_SCREEN:
@@ -18,16 +18,19 @@ export const homePageDataReducer =  (state = null, action) => {
     }
 };
 
-export const addToCartReducer =  (state = null, action) => {
+export const addToCartReducer = (state = {}, action) => {
     switch (action.type) {
         case ADD_TO_CART:
-            return action.payload;
+            return {
+                ...state, totalQuantity: action.payload.totalQuantity,
+                productQty: action.payload.productQty
+            };
         default:
             return state;
     }
 };
 
-export const tabsDataReducer =  (state = null, action) => {
+export const tabsDataReducer = (state = null, action) => {
     switch (action.type) {
         case LOAD_TABS_DATA:
             return action.payload;
@@ -36,7 +39,7 @@ export const tabsDataReducer =  (state = null, action) => {
     }
 };
 
-export const filterProductsReducer =  (state = null, action) => {
+export const filterProductsReducer = (state = null, action) => {
     switch (action.type) {
         case LOAD_FILTER_PRODUCTS:
             return action.payload;
@@ -56,7 +59,7 @@ export const filterAttributesReducer = (state = null, action) => {
     }
 };
 
-export const selectProductDetailReducer = (state = null, action) => {
+export const selectProductDetailReducer = (state = {isLoading: true}, action) => {
     switch (action.type) {
         case SELECT_PRODUCT_DETAIL:
             return action.payload
@@ -65,7 +68,7 @@ export const selectProductDetailReducer = (state = null, action) => {
     }
 };
 
-export const checkoutProductReducer = (state = null, action) => {
+export const checkoutProductReducer = (state = {isLoading: true}, action) => {
     switch (action.type) {
         case LOAD_CHECKOUT_PRODUCTS:
             return action.payload

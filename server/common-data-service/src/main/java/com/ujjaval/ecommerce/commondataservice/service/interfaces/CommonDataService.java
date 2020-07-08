@@ -24,7 +24,7 @@ public interface CommonDataService {
     Pair<Long, List<ProductInfo>> getProductsByCategories(HashMap<String,
             String> conditionMap) throws UnknownHostException;
 
-    List<ProductInfo> getProductsById(String[] productIds) throws UnknownHostException;
+    HashMap<Integer, ProductInfo> getProductsById(String[] productIds) throws UnknownHostException;
 
     HomeTabsDataResponse getBrandsAndApparelsByGender();
 }

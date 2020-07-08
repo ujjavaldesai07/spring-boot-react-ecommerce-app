@@ -24,8 +24,8 @@ function ClearAllButton() {
 
     return (
         <>
-            <Button onClick={handleClearAllClick} style={{fontWeight: "bold"}}
-                    color="secondary">CLEAR ALL</Button>
+            <div onClick={handleClearAllClick} style={{fontWeight: "bold", cursor: 'pointer',
+                fontSize: '0.9rem', height: 'inherit', color: 'red'}}>CLEAR ALL</div>
         </>
     );
 }

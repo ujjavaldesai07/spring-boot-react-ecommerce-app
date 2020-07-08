@@ -172,15 +172,20 @@ public class CommonDataServiceImpl implements CommonDataService {
         return result;
     }
 
-    public List<ProductInfo> getProductsById(String[] productIds) throws UnknownHostException {
+    public HashMap<Integer, ProductInfo> getProductsById(String[] productIds) throws UnknownHostException {
         List<ProductInfo> result = productInfoRepository.getProductsById(productIds);
 
+        HashMap<Integer, ProductInfo> resultMap = null;
+
         if (result != null) {
+            resultMap = new HashMap<>();
             for (ProductInfo info : result) {
                 info.setImageName(appendHostUrl(info.getImageName()));
+                resultMap.put(info.getId(), info);
             }
         }
-        return result;
+
+        return resultMap;
     }
 
     public HomeTabsDataResponse getBrandsAndApparelsByGender() {

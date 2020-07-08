@@ -96,15 +96,15 @@ public class CommonDataController {
             String[] productIds = queryParams.split(",");
 
             if(productIds.length > 0) {
-            List<ProductInfo> result = commonDataService.getProductsById(productIds);
+                HashMap<Integer, ProductInfo> resultMap = commonDataService.getProductsById(productIds);
 
-            if (result == null) {
+            if (resultMap == null) {
                 return new ResponseEntity<>(
                         "No search results are found",
                         HttpStatus.NO_CONTENT);
             }
 
-            return ResponseEntity.ok(result);
+            return ResponseEntity.ok(resultMap);
         }
         return ResponseEntity.badRequest().body("Query has not followed the required format.");
     }

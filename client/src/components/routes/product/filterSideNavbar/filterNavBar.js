@@ -1,11 +1,8 @@
 import React, {useEffect} from 'react';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import history from "../../../../history";
-
-import {NavbarHeader} from "../../../ui/headers";
 import ApparelCheckBox from "./apparelCheckBox";
 import log from "loglevel";
 import GenderRadioButton from "./genderRadioButton";
@@ -15,7 +12,7 @@ import ClearAllButton from "./clearAllButton";
 import {connect, useDispatch, useSelector} from "react-redux";
 import {loadFilterAttributes, loadProducts} from "../../../../actions";
 import {Box} from "@material-ui/core";
-import {useFilterNavBarStyles} from "../../../../styles/materialUI/filterNavBar";
+import {useFilterNavBarStyles} from "../../../../styles/materialUI/filterNavBarStyles";
 import {
     FILTER_ATTRIBUTES,
     MAX_PRODUCTS_PER_PAGE,
@@ -207,6 +204,7 @@ function FilterNavBar(props) {
             }
             log.info(`[FilterNavBar] setting filterAttributeFromUrlState to false`)
         }
+
         // eslint-disable-next-line
     }, [selectedFilterAttributes]);
 
@@ -236,20 +234,9 @@ function FilterNavBar(props) {
     };
 
     const renderDrawerComponents = (title, component) => {
-        const renderTitle = () => {
-            if (!title) {
-                return null
-            }
-            return (
-                <Box pt={2}>
-                    <NavbarHeader title={title}/>
-                </Box>
-            )
-        }
         return (
             <>
                 <Box display="flex" flexDirection="column" px={1} pl={3}>
-                    {renderTitle()}
                     <Box>
                         {component}
                     </Box>
@@ -261,16 +248,17 @@ function FilterNavBar(props) {
 
     const drawer = (
         <>
-            <Box display="flex" p={2} style={{fontWeight: "bold", fontSize: "1.2rem"}}>
+            <Box display="flex" p={2} style={{position: 'sticky', top: 0, backgroundColor: 'white',
+                fontWeight: "bold", fontSize: "1.2rem", zIndex: 1040}}>
                 <Box alignSelf="center" flex="1">FILTERS</Box>
                 <Box alignSelf="center"><ClearAllButton/></Box>
             </Box>
             <Divider/>
 
-            {renderDrawerComponents("Gender", <GenderRadioButton/>)}
+            {renderDrawerComponents(null, <GenderRadioButton/>)}
             {renderDrawerComponents(null, <ApparelCheckBox/>)}
             {renderDrawerComponents(null, <BrandCheckBox/>)}
-            {renderDrawerComponents("Price", <PriceCheckBox/>)}
+            {renderDrawerComponents(null, <PriceCheckBox/>)}
         </>
     );
 
@@ -280,7 +268,6 @@ function FilterNavBar(props) {
 
     return (
         <div className={classes.root}>
-            <CssBaseline/>
             <nav className={classes.drawer}>
                 <Hidden mdDown implementation="css">
                     <Drawer

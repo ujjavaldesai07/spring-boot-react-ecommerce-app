@@ -6,7 +6,7 @@ import {loadProducts} from "../../../actions";
 import Rating from '@material-ui/lab/Rating';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import log from "loglevel";
-import {PageNotFound} from "../../ui/pageNotFound";
+import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
 import {DETAILS_ROUTE, PRODUCTS_ROUTE} from "../../../constants/constants";
 import history from "../../../history";
 import {SELECT_PRODUCT_DETAIL} from "../../../actions/types";
@@ -23,7 +23,7 @@ const FilterProductDisplay = props => {
         const renderPageNotFound = () => {
             return (
                 <Box display="flex" pb={15} justifyContent="center" css={{width: '100%'}}>
-                    <PageNotFound/>
+                    <SearchMatchesNotFound/>
                 </Box>
             )
         }

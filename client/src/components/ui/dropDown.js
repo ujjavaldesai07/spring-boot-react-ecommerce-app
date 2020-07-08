@@ -24,9 +24,9 @@ const DropdownSection = props => {
         }
     })
 
-    const handleDropdownChange = (e, {value}) => {
-        log.debug(`[DropdownSection]: handleDropdownChange`)
-        props.onChangeHandler(value, optionList[value - 1].text)
+    const handleDropdownChange = (e, {id, value}) => {
+        log.info(`[DropdownSection]: handleDropdownChange`)
+        props.onChangeHandler(value, optionList[value - 1].text, id.split("-")[0])
     }
 
     const renderLargeDropdown = () => {

@@ -21,7 +21,14 @@ import Hidden from "@material-ui/core/Hidden";
 import BottomNavBar from "./bottomNavBar";
 import history from "../../../history";
 import BreadcrumbsSection from "../../ui/breadcrumbs";
-import {PageNotFound} from "../../ui/pageNotFound";
+import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
+
+export const stickyBoxStyle = {
+    position: 'sticky',
+    top: 80,
+    backgroundColor: '#fafafa',
+    zIndex: 1040
+}
 
 function Product() {
 
@@ -52,11 +59,9 @@ function Product() {
         };
     })
 
-    console.log(`history.location.pathname = ${JSON.stringify(history.location)}`)
-
     if (history.location.pathname.localeCompare('/products') !== 0
         || !history.location.search.startsWith('?q=')) {
-        return <PageNotFound/>
+        return <SearchMatchesNotFound/>
     }
 
     log.info("[Product] Rendering Product Component.")
@@ -69,19 +74,19 @@ function Product() {
                     </Grid>
 
                     <Grid item md={10}>
-                        <Box display="flex" p={2}>
-                            <Box width="80%">
-                            <BreadcrumbsSection linkList={breadcrumbLinks}/>
+                            <Box display="flex" pl={2} pt={2} style={{backgroundColor: '#fafafa'}}>
+                                <Box width="80%">
+                                    <BreadcrumbsSection linkList={breadcrumbLinks}/>
+                                </Box>
                             </Box>
-                            <Box width="auto">
-                                <FilterDropdown/>
+                            <Box display="flex" p={1} style={stickyBoxStyle}>
+                                <Box width="80%" alignSelf="center">
+                                    <FilterChips/>
+                                </Box>
+                                <Box width="auto" alignSelf="center">
+                                    <FilterDropdown/>
+                                </Box>
                             </Box>
-                        </Box>
-                        <Box display="flex">
-                            <Box width="75%" p={1}>
-                                <FilterChips/>
-                            </Box>
-                        </Box>
                         <Divider/>
                         <FilterProductsDisplay/>
                         <Divider/>

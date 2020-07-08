@@ -58,7 +58,7 @@ export const signOut = () => {
 
 export const signUp = formValues => async (dispatch) => {
     log.info(`[ACTION]: signUp API = ${JSON.stringify(formValues)}.`)
-    authApi.defaults.timeout = 5000;
+    authApi.defaults.timeout = 15000;
     const response = await authApi.post('/signup', {
         'username': formValues.Username,
         'password': formValues.Password,
@@ -127,12 +127,21 @@ export const loadSelectedProduct = (filterQuery, type) => async dispatch => {
     if (filterQuery) {
         // remove spaces from the url
         let uri = `/products?product_id=${filterQuery.replace(/\s/g, '')}`
-        const response = await commonServiceApi.get(uri);
+
+        commonServiceApi.defaults.timeout = 15000;
+        const response = await commonServiceApi
+            .get(uri)
+            .catch(err => {
+            log.info(`[ACTION]: unable to fetch response for Products API`)
+            dispatch({type: type, payload: {isLoading: false, responseFailure: true}});
+        });
+
         if (response != null) {
             log.debug(`[ACTION]: Products = ${JSON.stringify(response.data)}`)
-            dispatch({type: type, payload: JSON.parse(JSON.stringify(response.data))});
+            dispatch({type: type, payload: {isLoading: false, products: JSON.parse(JSON.stringify(response.data))}});
         } else {
             log.info(`[ACTION]: unable to fetch response for Products API`)
+            dispatch({type: type, payload: {isLoading: false, responseFailure: true}});
         }
 
     }

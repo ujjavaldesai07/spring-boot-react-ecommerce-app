@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import CheckboxList from "../../../ui/checkboxList";
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
 import {ADD_SELECTED_CATEGORY} from "../../../../actions/types";
+import {NavbarHeader} from "../../../ui/headers";
+import {Box} from "@material-ui/core";
 
 export default function PriceCheckBox() {
     const TITLE = "Price"
@@ -32,12 +34,15 @@ export default function PriceCheckBox() {
     log.info(`[PriceCheckBox] Rendering PriceCheckBox Component`)
 
     return (
-        <>
+        <Box pb={2}>
+            <Box pt={2.5} pb={1}>
+                <NavbarHeader title="Price"/>
+            </Box>
             <CheckboxList attrList={priceRangeList}
                           fontSize="0.9rem"
                           title={TITLE}
                           selectedAttrList={selectedPriceRanges}
                           onChangeHandler={handleCheckBoxChange}/>
-        </>
+        </Box>
     );
 }
