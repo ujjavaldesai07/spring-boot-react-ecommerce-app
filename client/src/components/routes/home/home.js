@@ -5,27 +5,47 @@ import TopCategoriesAndBrands from "./topCategoriesAndBrands";
 import {StyledSegment, StyledDimmer} from "../../../styles/semanticUI/customStyles";
 import {connect, useSelector} from "react-redux";
 import {DocumentTitle} from "../../ui/documentTitle";
-import {loadHomePage} from "../../../actions";
+import {getDataViaAPI} from "../../../actions";
 import log from 'loglevel';
-import {homePageDataReducer, tabsDataReducer} from "../../../reducers/screens/commonScreenReducer";
+import {homePageDataReducer} from "../../../reducers/screens/commonScreenReducer";
 import HomeMenuIcons from "./homeMenuIcons";
 import Hidden from "@material-ui/core/Hidden";
-import history from "../../../history";
-import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
+import Spinner from "../../ui/spinner";
+import {HTTPError} from "../../ui/error/httpError";
+import {LOAD_HOME_PAGE, HOME_PAGE_DATA_API, HOME_PAGE_API_OBJECT_LEN} from "../../../actions/types";
+import {BadRequest} from "../../ui/error/badRequest";
 
 const Home = props => {
     const {hover} = useSelector(state => state.tabHoverEventReducer)
+    const homeAPIData = useSelector(state => state.homePageDataReducer)
 
     // Main screen API is loaded during Component Did mount
     useEffect(() => {
         log.info("[Home]: component did mount and home API is called.")
-        props.loadHomePage();
+        props.getDataViaAPI(LOAD_HOME_PAGE, HOME_PAGE_DATA_API);
 
         // eslint-disable-next-line
     }, [homePageDataReducer]);
 
-    if(history.location.pathname.localeCompare('/') !== 0) {
-        return <SearchMatchesNotFound/>
+    if (homeAPIData.isLoading) {
+        log.info("[Home]: loading")
+        return <Spinner/>
+    } else {
+        if (homeAPIData.hasOwnProperty("data")) {
+            if (Object.entries(homeAPIData.data).length !== HOME_PAGE_API_OBJECT_LEN) {
+
+                log.info(`[Home]: homeAPIData.data length didn't matched` +
+                    `actual length = ${Object.entries(homeAPIData.data).length},` +
+                    `expected length = ${HOME_PAGE_API_OBJECT_LEN}`)
+
+                return <BadRequest/>
+            }
+        } else {
+            if (homeAPIData.hasOwnProperty('statusCode')) {
+                log.info(`[Home]: homeAPIData.statusCode = ${homeAPIData.statusCode}`)
+                return <HTTPError statusCode={homeAPIData.statusCode}/>
+            }
+        }
     }
 
     log.info("[Home]: Rendering Home Component")
@@ -33,10 +53,10 @@ const Home = props => {
         <Dimmer.Dimmable as={StyledSegment} dimmed={hover}>
             <DocumentTitle title="Online Shopping for Women, Men, Kids Fashion & Lifestyle - Shoppers"/>
             <Hidden only={['xs', 'sm', 'lg']}>
-            <HomeMenuIcons/>
+                <HomeMenuIcons/>
             </Hidden>
             <Hidden only={['xs']}>
-            <VerticalSlider/>
+                <VerticalSlider/>
             </Hidden>
             <TopCategoriesAndBrands/>
             <StyledDimmer active={hover}/>
@@ -44,4 +64,4 @@ const Home = props => {
     )
 }
 
-export default connect(null, {loadHomePage})(Home);
+export default connect(null, {getDataViaAPI})(Home);

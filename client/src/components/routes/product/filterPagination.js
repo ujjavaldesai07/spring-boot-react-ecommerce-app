@@ -9,9 +9,9 @@ import {INITIAL_PAGINATION_STATE, MAX_PRODUCTS_PER_PAGE} from "../../../constant
 export default function FilterPagination() {
     const dispatch = useDispatch()
     const selectedPage = useSelector(state => state.selectPageReducer)
-    const totalProducts = useSelector(state => state.filterProductsReducer?
-        state.filterProductsReducer.totalCount: null)
+    const filterProductsReducer = useSelector(state => state.filterProductsReducer)
     const selectedFilterAttributes = useSelector(state => state.selectedFilterAttributesReducer)
+    let totalProducts = 0
 
     useEffect(() => {
         log.info("[FilterPagination] Component will mount...")
@@ -32,6 +32,14 @@ export default function FilterPagination() {
                 maxProducts: MAX_PRODUCTS_PER_PAGE
             }
         })
+    }
+
+    if(!filterProductsReducer || filterProductsReducer.hasOwnProperty("data") === false ||
+        filterProductsReducer.data.hasOwnProperty("totalCount") === false) {
+        log.info(`[FilterPagination] totalProducts = ${totalProducts}`)
+        return null
+    } else {
+        totalProducts = filterProductsReducer.data.totalCount
     }
 
     log.info(`[FilterPagination] Rendering FilterPagination Component selectedPage = ${JSON.stringify(selectedPage)}`)

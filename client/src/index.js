@@ -7,6 +7,9 @@ import reducers from './reducers';
 import {Provider} from "react-redux";
 import {createStore, applyMiddleware, compose} from "redux";
 import thunk from "redux-thunk";
+import 'semantic-ui-css/semantic.min.css'
+import '../src/styles/library/swiper/swiper.css';
+import '../src/styles/library/swiper/swiper.min.css';
 import log from 'loglevel';
 
 // log.disableAll(true)

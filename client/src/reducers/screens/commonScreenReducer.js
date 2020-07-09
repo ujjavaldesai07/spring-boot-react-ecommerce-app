@@ -1,17 +1,26 @@
 import {
     ADD_TO_CART, DELETE_FILTER_QUERY,
-    HANDLE_MAIN_SCREEN, LOAD_CHECKOUT_PRODUCTS,
+    LOAD_HOME_PAGE, LOAD_CHECKOUT_PRODUCTS,
     LOAD_FILTER_ATTRIBUTES,
     LOAD_FILTER_PRODUCTS, LOAD_TABS_DATA, REMOVE_FILTER_ATTRIBUTES, SAVE_FILTER_QUERY,
     SELECT_PRODUCT_DETAIL
 } from "../../actions/types";
 import log from "loglevel";
 
-export const homePageDataReducer = (state = null, action) => {
+export const homePageDataReducer = (state = {isLoading: true}, action) => {
     log.trace(`[HOME_SCREEN_REDUCER]: action.type = ${action.type}`)
     switch (action.type) {
-        case HANDLE_MAIN_SCREEN:
+        case LOAD_HOME_PAGE:
             log.trace(`[HOME_SCREEN_REDUCER]: action.payload = ${JSON.stringify(action.payload)}`)
+            return action.payload;
+        default:
+            return state;
+    }
+};
+
+export const tabsDataReducer = (state = {isLoading: true}, action) => {
+    switch (action.type) {
+        case LOAD_TABS_DATA:
             return action.payload;
         default:
             return state;
@@ -30,16 +39,7 @@ export const addToCartReducer = (state = {}, action) => {
     }
 };
 
-export const tabsDataReducer = (state = null, action) => {
-    switch (action.type) {
-        case LOAD_TABS_DATA:
-            return action.payload;
-        default:
-            return state;
-    }
-};
-
-export const filterProductsReducer = (state = null, action) => {
+export const filterProductsReducer = (state = {isLoading: true}, action) => {
     switch (action.type) {
         case LOAD_FILTER_PRODUCTS:
             return action.payload;

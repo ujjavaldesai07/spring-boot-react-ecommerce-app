@@ -1,38 +1,35 @@
-import React, {useEffect, useState} from 'react';
-import Grid from '@material-ui/core/Grid';
+import React, {useEffect} from 'react';
 import {Link} from "react-router-dom";
 import {connect, useDispatch, useSelector} from "react-redux";
-import {loadProducts} from "../../../actions";
+import {getDataViaAPI} from "../../../actions";
 import Rating from '@material-ui/lab/Rating';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import log from "loglevel";
-import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
 import {DETAILS_ROUTE, PRODUCTS_ROUTE} from "../../../constants/constants";
 import history from "../../../history";
-import {SELECT_PRODUCT_DETAIL} from "../../../actions/types";
+import {
+    LOAD_FILTER_PRODUCTS,
+    PRODUCT_BY_CATEGORY_DATA_API,
+    SELECT_PRODUCT_DETAIL
+} from "../../../actions/types";
 import {Box} from "@material-ui/core";
 import Hidden from "@material-ui/core/Hidden";
 import Spinner from "../../ui/spinner";
+import {BadRequest} from "../../ui/error/badRequest";
+import {HTTPError} from "../../ui/error/httpError";
 
 const FilterProductDisplay = props => {
-        const filterProducts = useSelector(state => state.filterProductsReducer ?
-            state.filterProductsReducer.products : null)
+        const filterProductsReducer = useSelector(state => state.filterProductsReducer)
+        let filterProducts = null
         const filterQuery = useSelector(state => state.filterQueryReducer)
         const dispatch = useDispatch()
 
-        const renderPageNotFound = () => {
-            return (
-                <Box display="flex" pb={15} justifyContent="center" css={{width: '100%'}}>
-                    <SearchMatchesNotFound/>
-                </Box>
-            )
-        }
         useEffect(() => {
             log.info(`[FilterProductDisplay] Component did mount`)
 
             try {
                 if(filterQuery) {
-                    props.loadProducts(filterQuery)
+                    props.getDataViaAPI(LOAD_FILTER_PRODUCTS, PRODUCT_BY_CATEGORY_DATA_API + filterQuery)
                 }
             } catch (e) {
                 log.error(`[FilterProductDisplay] Bad URL found in history.location.search`)
@@ -44,20 +41,46 @@ const FilterProductDisplay = props => {
         }, [filterQuery]);
 
 
-        if (!filterProducts) {
+        if (filterProductsReducer.isLoading) {
             log.info(`[FilterProductDisplay] filterProducts is null`)
             return (
                 <Box display="flex" pb={15} justifyContent="center" css={{width: '100%'}}>
                     <Spinner/>
                 </Box>
             )
+        } else {
+            if (filterProductsReducer.hasOwnProperty("data")) {
+                if (Object.entries(filterProductsReducer.data).length === 0) {
+
+                    log.info(`[Home]: homeAPIData.data length =` +
+                        `${Object.entries(filterProductsReducer.data).length}`)
+
+                    return (
+                        <Box display="flex" justifyContent="center" css={{width: '100%', height: '100%'}}>
+                            <BadRequest/>
+                        </Box>
+                    )
+                }
+                filterProducts = filterProductsReducer.data.products
+
+            } else {
+                if (filterProductsReducer.hasOwnProperty('statusCode')) {
+                    log.info(`[Home]: homeAPIData.statusCode = ${filterProductsReducer.statusCode}`)
+                    return <HTTPError statusCode={filterProductsReducer.statusCode}/>
+                }
+            }
         }
 
         const handleImageClick = selectedProduct => () => {
             log.debug(`[FilterProductDisplay] dispatching the selected product = ${JSON.stringify(selectedProduct)}`)
             dispatch({
                 type: SELECT_PRODUCT_DETAIL,
-                payload: selectedProduct
+                payload: {
+                    isLoading: false,
+                    data: {
+                        [selectedProduct.id]: selectedProduct
+                    }
+                }
             })
         }
 
@@ -140,4 +163,4 @@ const FilterProductDisplay = props => {
         )
     }
 ;
-export default connect(null, {loadProducts})(FilterProductDisplay);
+export default connect(null, {getDataViaAPI})(FilterProductDisplay);

@@ -9,7 +9,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import Cookies from 'js-cookie';
-import {loadTabsData, setTokenFromCookie, signOut} from '../../../actions';
+import {getDataViaAPI, setTokenFromCookie, signOut} from '../../../actions';
 import {connect, useDispatch} from 'react-redux'
 
 import {
@@ -21,11 +21,20 @@ import useNavBarStyles from "../../../styles/materialUI/navBarStyles";
 import TabList from "./tabList";
 import {Link} from "react-router-dom";
 import {useSelector} from "react-redux";
-import {ADD_TO_CART, HANDLE_TAB_HOVER_EVENT, HANDLE_TOKEN_ID, SHOPPERS_PRODUCT_ID} from "../../../actions/types";
+import {
+    ADD_TO_CART,
+    HANDLE_TAB_HOVER_EVENT,
+    HANDLE_TOKEN_ID,
+    LOAD_TABS_DATA,
+    SHOPPERS_PRODUCT_ID, TABS_API_OBJECT_LEN, TABS_DATA_API
+} from "../../../actions/types";
 import log from "loglevel";
 import Hidden from "@material-ui/core/Hidden";
 import BagButton from "./bagButton";
 import {tabsDataReducer} from "../../../reducers/screens/commonScreenReducer";
+import Spinner from "../../ui/spinner";
+import {HTTPError} from "../../ui/error/httpError";
+import {BadRequest} from "../../ui/error/badRequest";
 
 const NavBar = props => {
     const classes = useNavBarStyles();
@@ -33,6 +42,7 @@ const NavBar = props => {
     const [mobileSearchState, setMobileSearchState] = React.useState(false);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
     const {isSignedIn, tokenId} = useSelector(state => state.authApiReducer)
+    const tabsAPIData = useSelector(state => state.tabsDataReducer)
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -49,7 +59,7 @@ const NavBar = props => {
             }
             savedProductsFromCookie.totalQuantity = totalQuantity
 
-            // log.info(`[BagButton] savedProductsFromCookie = ${savedProductsFromCookie}`)
+            log.info(`[BagButton] savedProductsFromCookie = ${savedProductsFromCookie}`)
 
             dispatch({
                 type: ADD_TO_CART,
@@ -68,11 +78,32 @@ const NavBar = props => {
                 props.setTokenFromCookie(tokenIdFromCookie)
             }
         }
-        props.loadTabsData()
+        props.getDataViaAPI(LOAD_TABS_DATA, TABS_DATA_API)
         setAddToCartValuesFromCookie()
 
         // eslint-disable-next-line
     }, [isSignedIn, tabsDataReducer]);
+
+    if (tabsAPIData.isLoading) {
+        log.info("[NavBar]: loading")
+        return <Spinner/>
+    } else {
+        if (tabsAPIData.hasOwnProperty("data")) {
+            if (Object.entries(tabsAPIData.data).length !== TABS_API_OBJECT_LEN) {
+
+                log.info(`[NavBar]: tabsAPIData.data length didn't matched` +
+                    `actual length = ${Object.entries(tabsAPIData.data).length},` +
+                    `expected length = ${TABS_API_OBJECT_LEN}`)
+
+                return <BadRequest/>
+            }
+        } else {
+            if (tabsAPIData.hasOwnProperty("statusCode")) {
+                log.info(`[NavBar]: tabsAPIData.statusCode = ${tabsAPIData.statusCode}`)
+                return <HTTPError statusCode={tabsAPIData.statusCode}/>
+            }
+        }
+    }
 
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -291,4 +322,4 @@ const NavBar = props => {
     );
 };
 
-export default connect(null, {setTokenFromCookie, signOut, loadTabsData})(NavBar);
+export default connect(null, {setTokenFromCookie, signOut, getDataViaAPI})(NavBar);

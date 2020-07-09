@@ -2,12 +2,15 @@ import {
     HANDLE_SIGN_IN,
     HANDLE_SIGN_UP,
     HANDLE_SIGN_UP_ERROR,
-    HANDLE_MAIN_SCREEN,
+    LOAD_HOME_PAGE,
     HANDLE_SIGN_OUT,
     HANDLE_TOKEN_ID,
     HANDLE_SIGN_IN_ERROR,
     LOAD_FILTER_PRODUCTS,
-    LOAD_FILTER_ATTRIBUTES, LOAD_TABS_DATA,
+    LOAD_FILTER_ATTRIBUTES,
+    LOAD_TABS_DATA,
+    INTERNAL_SERVER_ERROR_CODE,
+    BAD_REQUEST_ERROR_CODE,
 } from './types';
 import authApi from "../api/authServiceApi";
 import history from "../history";
@@ -83,69 +86,35 @@ export const signUp = formValues => async (dispatch) => {
     }
 }
 
-export const loadHomePage = () => async dispatch => {
-    log.info(`[ACTION]: loadHomePage Calling homepage API.`)
-    const response = await commonServiceApi.get('/home');
+export const getDataViaAPI = (type, url) => async dispatch => {
+    log.info(`[ACTION]: invokeAndDispatchAPIData Calling API = ${url}.`)
 
-    if (response != null) {
-        log.debug(`[ACTION]: loadMainScreen API = ${JSON.parse(JSON.stringify(response.data))}.`)
-        dispatch({type: HANDLE_MAIN_SCREEN, payload: JSON.parse(JSON.stringify(response.data))});
-    }
-};
-
-export const loadTabsData = () => async dispatch => {
-    log.info(`[ACTION]: loadTabsData Calling tabs data API.`)
-    const response = await commonServiceApi.get('/tabs');
-
-    if (response != null) {
-        log.debug(`[ACTION]: tabs data API = ${JSON.parse(JSON.stringify(response.data))}.`)
-        dispatch({type: LOAD_TABS_DATA, payload: JSON.parse(JSON.stringify(response.data))});
-    }
-};
-
-export const loadProducts = filterQuery => async dispatch => {
-    log.info(`[ACTION]: loadFilterProducts Calling Products API filterQuery = ${filterQuery}`)
-
-    if (filterQuery) {
-        // remove spaces from the url
-        let uri = `/products?q=${filterQuery.replace(/\s/g, '')}`
-        const response = await commonServiceApi.get(uri);
-        if (response != null) {
-            window.history.pushState('', '', uri)
-            log.trace(`[ACTION]: Products = ${JSON.stringify(response.data)}`)
-            dispatch({type: LOAD_FILTER_PRODUCTS, payload: JSON.parse(JSON.stringify(response.data))});
-        } else {
-            log.info(`[ACTION]: unable to fetch response for Products API`)
-        }
-
-    }
-};
-
-export const loadSelectedProduct = (filterQuery, type) => async dispatch => {
-    log.info(`[ACTION]: loadSelectedProduct Calling Products API filterQuery = ${filterQuery}, type = ${type}`)
-
-    if (filterQuery) {
-        // remove spaces from the url
-        let uri = `/products?product_id=${filterQuery.replace(/\s/g, '')}`
-
+    if(url) {
         commonServiceApi.defaults.timeout = 15000;
-        const response = await commonServiceApi
-            .get(uri)
+        url = url.replace(/\s/g, '')
+        let responseError = false
+        const response = await commonServiceApi.get(url)
             .catch(err => {
-            log.info(`[ACTION]: unable to fetch response for Products API`)
-            dispatch({type: type, payload: {isLoading: false, responseFailure: true}});
-        });
+                log.info(`[ACTION]: unable to fetch response for API = ${url}`)
+                dispatch({type: type, payload: {isLoading: false, statusCode: INTERNAL_SERVER_ERROR_CODE}});
+                responseError = true
+            });
 
-        if (response != null) {
-            log.debug(`[ACTION]: Products = ${JSON.stringify(response.data)}`)
-            dispatch({type: type, payload: {isLoading: false, products: JSON.parse(JSON.stringify(response.data))}});
-        } else {
-            log.info(`[ACTION]: unable to fetch response for Products API`)
-            dispatch({type: type, payload: {isLoading: false, responseFailure: true}});
+        if (responseError) {
+            return
         }
 
+        if (response != null) {
+            log.debug(`[ACTION]: Data = ${JSON.parse(JSON.stringify(response.data))}.`)
+            dispatch({
+                type: type, payload:
+                    {isLoading: false, data: JSON.parse(JSON.stringify(response.data))}
+            });
+        } else {
+            dispatch({type: type, payload: {isLoading: false, statusCode: BAD_REQUEST_ERROR_CODE}});
+        }
     }
-};
+}
 
 export const loadFilterAttributes = filterQuery => async dispatch => {
     log.info(`[ACTION]: loadFilterAttributes Calling Filter API filterQuery = ${filterQuery}`)

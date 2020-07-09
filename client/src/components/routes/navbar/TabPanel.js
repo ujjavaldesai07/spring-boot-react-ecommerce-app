@@ -7,6 +7,7 @@ import {HANDLE_TAB_HOVER_EVENT,} from "../../../actions/types";
 import {Box} from "@material-ui/core";
 import {Link} from "react-router-dom";
 import {MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
+import {BadRequest} from "../../ui/error/badRequest";
 
 const tabConfig = {
     0: "women",
@@ -20,11 +21,19 @@ function TabPanel(props) {
     const {value, index, tabColor} = props;
     const classes = useTabStyles();
     const dispatch = useDispatch();
-    const tabsData = useSelector(state => state.tabsDataReducer ? state.tabsDataReducer : null)
+    const tabsData = useSelector(state => state.tabsDataReducer.data)
 
-    if (!tabsData) {
-        log.info(`[TabPanel]: tabsData is null`)
-        return null
+    const renderDataList = (brandList, queryParam) => {
+        return brandList.map(({id, value}) => {
+            return (
+                <Link key={id} to={`/products?q=${queryParam}=${id}::page=0,${MAX_PRODUCTS_PER_PAGE}`}>
+                    <Box pt={1.5} css={{color: "#282c3f", fontWeight: 500,
+                        fontSize: '15px', fontFamily: 'Arial, Helvetica, sans-serif'}}>
+                        {value}
+                    </Box>
+                </Link>
+            )
+        })
     }
 
     const mouseLeaveHandler = () => {
@@ -38,6 +47,14 @@ function TabPanel(props) {
     }
 
     const renderTabPanel = (brandList, apparelList) => {
+        if(!brandList) {
+            log.info(`[TabPanel]: brandList is null = ${brandList}`)
+            return <BadRequest/>
+        } else if(!apparelList) {
+            log.info(`[TabPanel]: apparelList is null = ${apparelList}`)
+            return <BadRequest/>
+        }
+
         return (
             <Paper square className={classes.paperRoot} onMouseLeave={mouseLeaveHandler}
                    style={{left: `${index * 70 + 130}px`}}>
@@ -57,17 +74,8 @@ function TabPanel(props) {
         )
     }
 
-    const renderDataList = (brandList, queryParam) => {
-        return brandList.map(({id, value}) => {
-            return (
-                <Link key={id} to={`/products?q=${queryParam}=${id}::page=0,${MAX_PRODUCTS_PER_PAGE}`}>
-                    <Box pt={1.5} css={{color: "#282c3f", fontWeight: 500,
-                        fontSize: '15px', fontFamily: 'Arial, Helvetica, sans-serif'}}>
-                        {value}
-                    </Box>
-                </Link>
-            )
-        })
+    if(isNaN(index)) {
+        return
     }
 
     return (

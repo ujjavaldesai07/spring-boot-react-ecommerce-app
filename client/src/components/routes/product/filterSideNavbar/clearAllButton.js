@@ -1,9 +1,7 @@
 import React from 'react';
 import log from 'loglevel';
-import {connect, useDispatch, useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {REMOVE_SELECTED_CATEGORY} from "../../../../actions/types";
-import Button from "@material-ui/core/Button";
-import {loadProducts} from "../../../../actions";
 
 function ClearAllButton() {
     const dispatch = useDispatch()
@@ -30,4 +28,4 @@ function ClearAllButton() {
     );
 }
 
-export default connect(null, {loadProducts})(ClearAllButton);
+export default ClearAllButton;

@@ -1,8 +1,8 @@
 import React from 'react';
 import {Box} from "@material-ui/core";
-import internalServerErrorImage from '../../../images/internalServer500.png'
+import badRequestImage from '../../../images/badRequest400.png'
 
-export const InternalServerError = () => {
+export const BadRequest = () => {
 
     return (
         <Box display="flex"
@@ -10,7 +10,7 @@ export const InternalServerError = () => {
              flexDirection="column"
              alignItems="center">
             <Box alignSelf="center">
-                <img src={internalServerErrorImage} alt="internalServerErrorImage"/>
+                <img src={badRequestImage} alt="badRequestImage"/>
             </Box>
         </Box>
     );

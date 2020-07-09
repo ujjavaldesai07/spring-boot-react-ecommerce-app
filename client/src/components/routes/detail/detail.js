@@ -8,20 +8,20 @@ import Box from "@material-ui/core/Box";
 import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
 import {useDispatch, useSelector} from "react-redux";
 import {connect} from 'react-redux';
-import {loadSelectedProduct} from '../../../actions'
+import {getDataViaAPI} from '../../../actions'
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import PaymentIcon from '@material-ui/icons/Payment';
 import {Link} from "react-router-dom";
 import Cookies from 'js-cookie';
-import {ADD_TO_CART, SELECT_PRODUCT_DETAIL, SHOPPERS_PRODUCT_ID} from "../../../actions/types";
+import {ADD_TO_CART, PRODUCT_BY_ID_DATA_API, SELECT_PRODUCT_DETAIL, SHOPPERS_PRODUCT_ID} from "../../../actions/types";
 import RemoveIcon from '@material-ui/icons/Remove';
 import AddIcon from '@material-ui/icons/Add';
 import {makeStyles} from "@material-ui/core/styles";
 import Spinner from "../../ui/spinner";
 import {InternalServerError} from "../../ui/error/internalServerError";
+import {BadRequest} from "../../ui/error/badRequest";
 
-
-export const useButtonStyles = makeStyles((theme) => ({
+export const useButtonStyles = makeStyles(() => ({
     buttonStartIcon: {
         margin: 0,
     },
@@ -31,14 +31,15 @@ function Detail(props) {
     const classes = useButtonStyles()
     const selectProductDetail = useSelector(state => state.selectProductDetailReducer)
 
-    const selectedProduct = selectProductDetail.hasOwnProperty("products")?
-        selectProductDetail.products[history.location.search.split("product_id=")[1]] : null
+    const selectedProduct = selectProductDetail.hasOwnProperty("data")?
+        selectProductDetail.data[history.location.search.split("product_id=")[1]] : null
 
     const dispatch = useDispatch()
     const addToCart = useSelector(state => state.addToCartReducer)
     const [productQuantity, setProductQuantity] = useState(1)
 
     useEffect(() => {
+        log.info(`[Detail] Component did mount selectProductDetail = ${JSON.stringify(selectProductDetail)}`)
         log.info(`[Detail] Component did mount selectedProduct = ${JSON.stringify(selectedProduct)}`)
 
         if (selectedProduct && addToCart.hasOwnProperty("productQty") &&
@@ -80,19 +81,19 @@ function Detail(props) {
 
     if (!selectedProduct) {
         try {
-            log.info(`selectProductDetail = ${JSON.stringify(selectProductDetail)}`)
-            if(selectProductDetail.hasOwnProperty("responseFailure")) {
-                log.info(`Returning ===========> PageNotFound`)
+            log.info(`[Detail] selectProductDetail = ${JSON.stringify(selectProductDetail)}`)
+            if(selectProductDetail.hasOwnProperty("statusCode")) {
+                log.info(`[Detail] Internal Server Error`)
                 return <InternalServerError/>
             }
             const extractedProductId = history.location.search.split("product_id=")
-            log.info(`extractedProductId = ${JSON.stringify(extractedProductId)}, length = ${extractedProductId.length}`)
+            log.info(`[Detail] extractedProductId = ${JSON.stringify(extractedProductId)}, length = ${extractedProductId.length}`)
             if (extractedProductId.length === 2) {
-                props.loadSelectedProduct(extractedProductId[1], SELECT_PRODUCT_DETAIL)
+                props.getDataViaAPI(SELECT_PRODUCT_DETAIL, PRODUCT_BY_ID_DATA_API + extractedProductId[1])
             }
         } catch (e) {
             log.error('[Detail] selectedProduct is null')
-            return <SearchMatchesNotFound/>
+            return <BadRequest/>
         }
     }
 
@@ -100,7 +101,7 @@ function Detail(props) {
         return <Spinner/>
     } else {
         if(!selectedProduct) {
-            return <SearchMatchesNotFound/>
+            return <BadRequest/>
         }
     }
 
@@ -139,10 +140,6 @@ function Detail(props) {
 
     if (props.window) {
         props.window.scrollTo(0, 0)
-    }
-
-    if (selectedProduct) {
-        log.info(`selectedProduct = ${JSON.stringify(selectedProduct)}`)
     }
 
     log.info(`[Detail] Rendering Detail Component. selectedProduct = ${JSON.stringify(selectedProduct)}`)
@@ -232,4 +229,4 @@ function Detail(props) {
     );
 }
 
-export default connect(null, {loadSelectedProduct})(Detail);
+export default connect(null, {getDataViaAPI})(Detail);

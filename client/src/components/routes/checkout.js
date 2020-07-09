@@ -1,22 +1,27 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import log from 'loglevel';
 import BreadcrumbsSection from "../ui/breadcrumbs";
 import {HOME_ROUTE, MAX_PRODUCTS_PER_PAGE} from "../../constants/constants";
 import history from "../../history";
 import Box from "@material-ui/core/Box";
-import {SearchMatchesNotFound} from "../ui/error/searchMatchesNotFound";
 import {useDispatch, useSelector} from "react-redux";
 import Cookies from "js-cookie";
-import {ADD_TO_CART, LOAD_CHECKOUT_PRODUCTS, SHOPPERS_PRODUCT_ID} from "../../actions/types";
+import {
+    ADD_TO_CART,
+    LOAD_CHECKOUT_PRODUCTS,
+    PRODUCT_BY_ID_DATA_API,
+    SHOPPERS_PRODUCT_ID
+} from "../../actions/types";
 import DropdownSection from "../ui/dropDown";
 import {Button, Divider} from "@material-ui/core";
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import {connect} from "react-redux";
-import {loadSelectedProduct} from '../../actions';
+import {getDataViaAPI} from '../../actions';
 import _ from 'lodash';
 import Spinner from "../ui/spinner";
 import {EmptyCheckoutCart} from "../ui/error/emptyCheckoutCart";
-import {Link} from "react-router-dom";
+import {PageNotFound} from "../ui/error/pageNotFound";
+import {HTTPError} from "../ui/error/httpError";
 
 const paymentStyles = {
     header: {
@@ -43,7 +48,6 @@ function Checkout(props) {
         return idList
     }
 
-
     useEffect(() => {
         log.info("[Checkout] Component will mount... addToCart = " + JSON.stringify(addToCart))
 
@@ -57,11 +61,11 @@ function Checkout(props) {
 
 
             if (idList.length > 0) {
-                props.loadSelectedProduct(idList.toString(), LOAD_CHECKOUT_PRODUCTS)
+                props.getDataViaAPI(LOAD_CHECKOUT_PRODUCTS, PRODUCT_BY_ID_DATA_API + idList.toString())
             } else {
                 dispatch({
                     type: LOAD_CHECKOUT_PRODUCTS,
-                    payload: {}
+                    payload: {isLoading: false, data: {}}
                 })
             }
 
@@ -75,7 +79,7 @@ function Checkout(props) {
     if (history.location.pathname.localeCompare('/checkout') !== 0 &&
         history.location.pathname.localeCompare('/products/details/checkout') !== 0) {
         log.info(`[Checkout] corrupted url.`)
-        return <SearchMatchesNotFound/>
+        return <PageNotFound/>
     }
 
     const getStringBeforeLastDelimiter = (str, delimiter) => {
@@ -115,10 +119,11 @@ function Checkout(props) {
     }
 
     const getCartTotal = () => {
-        if (checkoutProducts && addToCart.hasOwnProperty("productQty")) {
+        log.info(`[Checkout] checkoutProducts = ${JSON.stringify(checkoutProducts)}`)
+        if (checkoutProducts.data && addToCart.hasOwnProperty("productQty")) {
             for (const [id, qty] of Object.entries(addToCart.productQty)) {
-                if (checkoutProducts.hasOwnProperty(id)) {
-                    cartTotal += qty * checkoutProducts[id].price
+                if (checkoutProducts.data.hasOwnProperty(id)) {
+                    cartTotal += qty * checkoutProducts.data[id].price
                 }
             }
         }
@@ -156,21 +161,28 @@ function Checkout(props) {
     if (checkoutProducts.isLoading) {
         return <Spinner/>
     } else {
-        if (Object.keys(checkoutProducts).length === 0) {
-            return (
-                <Box display="flex" flexDirection="column">
-                    <Box>
-                        <EmptyCheckoutCart/>
+        if (checkoutProducts.hasOwnProperty("data")) {
+            if (Object.keys(checkoutProducts.data).length === 0) {
+                return (
+                    <Box display="flex" flexDirection="column">
+                        <Box>
+                            <EmptyCheckoutCart/>
+                        </Box>
+                        <Box display="flex" py={2} justifyContent="center">
+                            <Button variant="contained" size="large" color="secondary"
+                                    onClick={wannaShopBtnClick}
+                                    style={{width: '20%'}}>
+                                Wanna Shop? Click Here
+                            </Button>
+                        </Box>
                     </Box>
-                    <Box display="flex" py={2} justifyContent="center">
-                        <Button variant="contained" size="large" color="secondary"
-                                onClick={wannaShopBtnClick}
-                                style={{width: '20%'}}>
-                            Wanna Shop? Click Here
-                        </Button>
-                    </Box>
-                </Box>
-            )
+                )
+            }
+        } else {
+            if (checkoutProducts.hasOwnProperty('statusCode')) {
+                log.info(`[Checkout]: checkoutProducts.statusCode = ${checkoutProducts.statusCode}`)
+                return <HTTPError statusCode={checkoutProducts.statusCode}/>
+            }
         }
     }
 
@@ -179,7 +191,7 @@ function Checkout(props) {
 
         let checkoutProductsList = []
 
-        for (const [id, product] of Object.entries(checkoutProducts.products)) {
+        for (const [id, product] of Object.entries(checkoutProducts.data)) {
 
             checkoutProductsList.push(
                 <Box key={product.id} display="flex" flexDirection="column" flex="2" css={{border: '1px solid #eaeaec'}}
@@ -312,4 +324,4 @@ function Checkout(props) {
         ;
 }
 
-export default connect(null, {loadSelectedProduct})(Checkout);
+export default connect(null, {getDataViaAPI})(Checkout);

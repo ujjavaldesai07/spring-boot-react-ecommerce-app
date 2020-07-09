@@ -57,7 +57,6 @@ public class ProductInfoRepositoryImpl {
     }
 
     public List<ProductInfo> getProductsById(String[] product_ids_str) {
-//        System.out.println("product_ids_str = " + product_ids_str[0]);
         List<Integer> productIds = new ArrayList<>();
 
         for (String id : product_ids_str) {

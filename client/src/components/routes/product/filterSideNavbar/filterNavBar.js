@@ -10,7 +10,7 @@ import BrandCheckBox from "./brandCheckBox";
 import PriceCheckBox from "./priceCheckBox";
 import ClearAllButton from "./clearAllButton";
 import {connect, useDispatch, useSelector} from "react-redux";
-import {loadFilterAttributes, loadProducts} from "../../../../actions";
+import {loadFilterAttributes} from "../../../../actions";
 import {Box} from "@material-ui/core";
 import {useFilterNavBarStyles} from "../../../../styles/materialUI/filterNavBarStyles";
 import {
@@ -20,11 +20,10 @@ import {
 } from "../../../../constants/constants";
 import {
     ADD_SELECTED_CATEGORY,
-    SAVE_FILTER_QUERY, SELECT_SORT_CATEGORY
+    SAVE_FILTER_QUERY,
 } from "../../../../actions/types";
 
 function FilterNavBar(props) {
-    const {window} = props
     const classes = useFilterNavBarStyles();
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const selectedGenders = useSelector(state => state.selectedFilterAttributesReducer.genders)
@@ -262,8 +261,6 @@ function FilterNavBar(props) {
         </>
     );
 
-    const container = window !== undefined ? () => window().document.body : undefined;
-
     log.info("[FilterNavBar] Rendering FilterNavBar Component.")
 
     return (
@@ -284,4 +281,4 @@ function FilterNavBar(props) {
     );
 }
 
-export default connect(null, {loadFilterAttributes, loadProducts})(FilterNavBar);
+export default connect(null, {loadFilterAttributes})(FilterNavBar);

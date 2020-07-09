@@ -10,7 +10,6 @@ import SignUp from "./routes/signUp";
 import Product from "./routes/product/product";
 import Detail from "./routes/detail/detail";
 import Checkout from "./routes/checkout";
-import {SearchMatchesNotFound} from "./ui/error/searchMatchesNotFound";
 
 
 const App = () => {

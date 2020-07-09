@@ -6,6 +6,7 @@ import {MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
 import {useSelector} from "react-redux";
 import Box from "@material-ui/core/Box";
 import Hidden from "@material-ui/core/Hidden";
+import {BadRequest} from "../../ui/error/badRequest";
 
 const queryType = {
     brand: 1,
@@ -13,23 +14,12 @@ const queryType = {
 }
 
 const TopCategoriesAndBrands = () => {
-    const homeAPIData = useSelector(state => state.homePageDataReducer ? state.homePageDataReducer : null)
-
-    if (!homeAPIData) {
-        log.debug("[TopCategoriesAndBrands]: homeAPIData is null")
-        return null
-    } else if (!homeAPIData.brands) {
-        log.debug("[TopCategoriesAndBrands]: homeAPIData.brands is null")
-        return null
-    } else if (!homeAPIData.apparels) {
-        log.debug("[TopCategoriesAndBrands]: homeAPIData.apparels is null")
-        return null
-    }
+    const homeAPIData = useSelector(state => state.homePageDataReducer)
 
     const renderImageList = (imageList, filterQueryType) => {
-        if (imageList == null) {
-            log.debug(`[TopCategoriesAndBrands]: imageList is null`)
-            return null
+        if(!imageList) {
+            log.info(`[TopCategoriesAndBrands]: imageList is null`)
+            return <BadRequest/>
         }
 
         return imageList.map(info => {
@@ -98,13 +88,13 @@ const TopCategoriesAndBrands = () => {
     return (
         <div>
             <Hidden xsDown>
-                {renderDesktopSection("#Shop Top Brands", homeAPIData.brands, queryType.brand)}
-                {renderDesktopSection("#Shop Top Categories", homeAPIData.apparels, queryType.apparel)}
+                {renderDesktopSection("#Shop Top Brands", homeAPIData.data.brands, queryType.brand)}
+                {renderDesktopSection("#Shop Top Categories", homeAPIData.data.apparels, queryType.apparel)}
             </Hidden>
 
             <Hidden smUp>
-                {renderMobileSection("#Shop Top Brands", homeAPIData.brands, queryType.brand)}
-                {renderMobileSection("#Shop Top Categories", homeAPIData.apparels, queryType.apparel)}
+                {renderMobileSection("#Shop Top Brands", homeAPIData.data.brands, queryType.brand)}
+                {renderMobileSection("#Shop Top Categories", homeAPIData.data.apparels, queryType.apparel)}
             </Hidden>
         </div>
     )

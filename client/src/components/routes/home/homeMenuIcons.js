@@ -4,22 +4,16 @@ import {Link} from "react-router-dom";
 import log from 'loglevel';
 import {MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
 import {useSelector} from "react-redux";
+import {BadRequest} from "../../ui/error/badRequest";
 
 const HomeMenuIcons = () => {
-    const homeAPIData = useSelector(state => state.homePageDataReducer? state.homePageDataReducer : null)
-
-    if (!homeAPIData) {
-        log.info("[HomeMenuIcons]: homeAPIData is null")
-        return null
-    } else if (!homeAPIData.carousels) {
-        log.info("[HomeMenuIcons]: homeAPIData.carousels is null")
-        return null
-    }
+    const homeAPIData = useSelector(state => state.homePageDataReducer)
 
     const renderImageList = (imageList) => {
-        if (imageList == null) {
-            log.debug(`[TopCategoriesAndBrands]: imageList is null`)
-            return null
+
+        if(!imageList) {
+            log.info(`[HomeMenuIcons]: imageList is null`)
+            return <BadRequest/>
         }
 
         // filter out images which are related to home icons.
@@ -43,9 +37,9 @@ const HomeMenuIcons = () => {
     log.info("[HomeMenuIcons]: Rendering HomeMenuIcons Component")
 
     return (
-            <Grid container spacing={6} style={{padding: '20px 0 70px 30px'}}>
-                {renderImageList(homeAPIData.carousels)}
-            </Grid>
+        <Grid container spacing={6} style={{padding: '20px 0 70px 30px'}}>
+            {renderImageList(homeAPIData.data.carousels)}
+        </Grid>
     )
 };
 export default HomeMenuIcons;

@@ -2,9 +2,10 @@ import React from 'react';
 import Swiper from 'react-id-swiper';
 import log from 'loglevel';
 import {useSelector} from "react-redux";
+import {BadRequest} from "../../ui/error/badRequest";
 
 const VerticalSlider = () => {
-    const homeAPIData = useSelector(state => state.homePageDataReducer ? state.homePageDataReducer : null)
+    const homeAPIData = useSelector(state => state.homePageDataReducer)
 
     const params = {
         spaceBetween: 30,
@@ -23,18 +24,11 @@ const VerticalSlider = () => {
         }
     }
 
-    if (!homeAPIData) {
-        log.debug("[VerticalSlider]: homeAPIData is null")
-        return null
-    } else if (!homeAPIData.carousels) {
-        log.debug("[VerticalSlider]: homeAPIData.carousels is null")
-        return null
-    }
-
     const renderImageList = (imageList) => {
-        if (imageList == null) {
-            log.debug("[VerticalSlider]: imageList is null")
-            return null
+
+        if(!imageList) {
+            log.info(`[VerticalSlider]: imageList is null`)
+            return <BadRequest/>
         }
 
         // filter out images which are not for carousels.
@@ -52,7 +46,7 @@ const VerticalSlider = () => {
     log.info("[VerticalSlider]: Rendering VerticalSlider Component")
     return (
         <Swiper {...params}>
-            {renderImageList(homeAPIData.carousels)}
+            {renderImageList(homeAPIData.data.carousels)}
         </Swiper>
     )
 };
