@@ -83,7 +83,7 @@ function Product() {
                                 <Box width="80%" alignSelf="center">
                                     <FilterChips/>
                                 </Box>
-                                <Box width="auto" alignSelf="center">
+                                <Box width="20%" alignSelf="center">
                                     <FilterDropdown/>
                                 </Box>
                             </Box>

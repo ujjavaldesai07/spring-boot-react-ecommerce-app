@@ -10,6 +10,7 @@ import SignUp from "./routes/signUp";
 import Product from "./routes/product/product";
 import Detail from "./routes/detail/detail";
 import Checkout from "./routes/checkout";
+import Payment from "./routes/payment";
 
 
 const App = () => {
@@ -22,6 +23,7 @@ const App = () => {
             <Route path="/login" exact component={Login}/>
             <Route path="/signup" exact component={SignUp}/>
             <Route path="/checkout" exact component={Checkout}/>
+            <Route path="/payment" exact component={Payment}/>
             <Route path="/products/details/:checkout" exact component={Checkout}/>
             <Route path="/products/:details" exact component={Detail}/>
             <Route path="/products" exact component={Product}/>

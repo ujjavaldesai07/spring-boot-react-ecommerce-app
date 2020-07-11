@@ -35,6 +35,7 @@ import {tabsDataReducer} from "../../../reducers/screens/commonScreenReducer";
 import Spinner from "../../ui/spinner";
 import {HTTPError} from "../../ui/error/httpError";
 import {BadRequest} from "../../ui/error/badRequest";
+import SearchBar from "./searchBar";
 
 const NavBar = props => {
     const classes = useNavBarStyles();
@@ -201,19 +202,9 @@ const NavBar = props => {
         )
     }
 
-    const mouseEnterHandler = () => {
-        log.info(`[NavBar]: dispatching HANDLE_TAB_HOVER_EVENT with index and hover as false`)
-        dispatch({
-            type: HANDLE_TAB_HOVER_EVENT, payload: {
-                index: false,
-                hover: false
-            }
-        })
-    }
-
     log.info(`[NavBar]: Rendering NavBar Component`)
     return (
-        <div style={{paddingBottom: 80}} onMouseEnter={mouseEnterHandler}>
+        <div style={{paddingBottom: 80}}>
             <AppBar color="default" className={classes.appBarRoot}>
                 <Toolbar classes={{root: classes.toolBarRoot}}>
                     <Hidden mdUp>
@@ -242,25 +233,7 @@ const NavBar = props => {
                     <div className={classes.grow_1}/>
 
                     <Hidden xsDown>
-                        <div className={classes.searchContainer}>
-                            <div className={classes.search}>
-                                <div className={classes.searchIcon}>
-                                    <SearchIcon fontSize="large"/>
-                                </div>
-                                <InputBase
-                                    placeholder="Search for products, brands and more"
-                                    classes={{
-                                        root: classes.inputRoot,
-                                        input: classes.inputInput
-                                    }}
-                                    inputProps={{"aria-label": "search"}}/>
-                            </div>
-                            <div className={classes.arrowIcon}>
-                                <IconButton size="medium">
-                                    <ArrowForwardIcon fontSize="large"/>
-                                </IconButton>
-                            </div>
-                        </div>
+                        <SearchBar/>
                     </Hidden>
 
                     <Hidden smUp>
@@ -284,7 +257,7 @@ const NavBar = props => {
                                 <Box pl={1}>
                                     <AccountCircle/>
                                 </Box>
-                                <Box style={{fontSize: "0.8rem", fontWeight: 'bold'}}>
+                                <Box style={{color: "black", fontSize: "0.8rem", fontWeight: 'bold'}}>
                                     Profile
                                 </Box>
                             </Box>

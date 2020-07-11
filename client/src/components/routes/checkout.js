@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import log from 'loglevel';
 import BreadcrumbsSection from "../ui/breadcrumbs";
 import {HOME_ROUTE, MAX_PRODUCTS_PER_PAGE} from "../../constants/constants";
@@ -7,7 +7,7 @@ import Box from "@material-ui/core/Box";
 import {useDispatch, useSelector} from "react-redux";
 import Cookies from "js-cookie";
 import {
-    ADD_TO_CART,
+    ADD_TO_CART, CART_TOTAL,
     LOAD_CHECKOUT_PRODUCTS,
     PRODUCT_BY_ID_DATA_API,
     SHOPPERS_PRODUCT_ID
@@ -17,26 +17,21 @@ import {Button, Divider} from "@material-ui/core";
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import {connect} from "react-redux";
 import {getDataViaAPI} from '../../actions';
-import _ from 'lodash';
 import Spinner from "../ui/spinner";
 import {EmptyCheckoutCart} from "../ui/error/emptyCheckoutCart";
 import {PageNotFound} from "../ui/error/pageNotFound";
 import {HTTPError} from "../ui/error/httpError";
+import PriceDetails from "./priceDetails";
+import Modal from "../../components/ui/modal";
+import _ from 'lodash';
 
-const paymentStyles = {
-    header: {
-        fontColor: "#535766",
-        fontWeight: 600
-    },
-    fontColor: "#282c3f",
-    fontWeight: 400,
-    fontSize: "0.9rem"
-}
+const modalWidth = 430
 
 function Checkout(props) {
     const addToCart = useSelector(state => state.addToCartReducer)
     const checkoutProducts = useSelector(state => state.checkoutProductReducer)
     const dispatch = useDispatch()
+    const [itemRemovalModalState, setItemRemovalModalState] = useState({active: false, productId: null})
     let cartTotal = 0
 
     const extractIdsFromObject = object => {
@@ -127,6 +122,14 @@ function Checkout(props) {
                 }
             }
         }
+
+        Cookies.set(CART_TOTAL, cartTotal, {expires: 7});
+
+        dispatch({
+            type: CART_TOTAL,
+            payload: cartTotal
+        })
+
         return cartTotal
     }
 
@@ -142,16 +145,64 @@ function Checkout(props) {
         })
     }
 
+    const renderRemoveModalWarning = () => {
+        log.info(`Rendering renderRemoveModalWarning`)
+        return (
+            <>
+                <Box display="flex" flexDirection="row">
+                    <Box mx={2.5} mt={2} mb={1}>
+                        <img src={checkoutProducts.data[itemRemovalModalState.productId].imageName}
+                             width={60} height={90} alt="image"/>
+                    </Box>
+                    <Box mt={2.5} display="flex" flexDirection="column">
+                        <Box style={{color: "#3e4152", fontSize: 14, fontWeight: 200}}>
+                            Remove Item
+                        </Box>
+                        <Box style={{color: "#696b79", fontSize: 14, fontWeight: 200}}>
+                            Are you sure you want to remove this item?
+                        </Box>
+                    </Box>
+                </Box>
+                <Box>
+                    <Divider style={{width: modalWidth, height: 1}}/>
+                </Box>
+                <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
+                    <Box pl={10} onClick={removeConfirmBtnClickHandler} style={{color: "red"
+                        , width: "50%", fontWeight: "bold", cursor: "pointer"}}>
+                        REMOVE
+                    </Box>
+                    <Box>
+                        <Divider orientation="vertical" style={{height: 45}}/>
+                    </Box>
+                    <Box pl={10} onClick={closeModal} style={{width: "50%", fontWeight: "bold", cursor: "pointer"}}>
+                        CANCEL
+                    </Box>
+                </Box>
+            </>
+        )
+    }
+
+    const removeConfirmBtnClickHandler = () => {
+        setItemRemovalModalState({active: false, productId: null})
+        if(itemRemovalModalState.productId) {
+            let newAddToCart = addToCart
+            newAddToCart.totalQuantity -= newAddToCart.productQty[itemRemovalModalState.productId]
+            newAddToCart.productQty = _.omit(newAddToCart.productQty, itemRemovalModalState.productId)
+            Cookies.set(SHOPPERS_PRODUCT_ID, newAddToCart, {expires: 7});
+            dispatch({
+                type: ADD_TO_CART,
+                payload: newAddToCart
+            })
+        }
+    }
+
+    const closeModal = () => {
+        setItemRemovalModalState({active: false, productId: null})
+    }
+
     const removeBtnClickHandler = id => () => {
         log.info(`[Checkout] removeBtnChangeHandler id = ${id}`)
-        let newAddToCart = addToCart
-        newAddToCart.totalQuantity -= newAddToCart.productQty[id]
-        newAddToCart.productQty = _.omit(newAddToCart.productQty, id)
-        Cookies.set(SHOPPERS_PRODUCT_ID, newAddToCart, {expires: 7});
-        dispatch({
-            type: ADD_TO_CART,
-            payload: newAddToCart
-        })
+        setItemRemovalModalState({active: true, productId: id})
     }
 
     const wannaShopBtnClick = () => {
@@ -237,7 +288,7 @@ function Checkout(props) {
                         <Divider style={{width: "100%", height: 1}}/>
                     </Box>
                     <Box display="flex" mx={2} mb={1} justifyContent="flex-start">
-                        <Button variant="contained" size="medium" color="secondary"
+                        <Button variant="outlined" size="medium" color="secondary"
                                 onClick={removeBtnClickHandler(id)}
                                 startIcon={<RemoveCircleOutlineIcon/>}>
                             Remove
@@ -248,6 +299,10 @@ function Checkout(props) {
         }
 
         return checkoutProductsList
+    }
+
+    const continueBtnClickHandler = () => {
+        window.history.pushState('', '', "/payment")
     }
 
     log.info("[Checkout] Rendering Checkout Component.")
@@ -280,48 +335,15 @@ function Checkout(props) {
                         <Divider orientation="vertical" style={{height: "100%", width: 1}}/>
                     </Box>
 
-                    <Box display="flex" flex="1" flexDirection="column" pt={1}>
-                        <Box css={paymentStyles.header}>
-                            PRICE DETAILS
-                        </Box>
-                        <Box display="flex" flexDirection="row" pt={2} css={paymentStyles}>
-                            <Box flex="1">
-                                Bag Total
-                            </Box>
-                            <Box>
-                                ${cartTotal}
-                            </Box>
-                        </Box>
-                        <Box display="flex" flexDirection="row" pt={1} css={paymentStyles}>
-                            <Box flex="1">
-                                Delivery Charges
-                            </Box>
-                            <Box css={{color: 'green'}}>
-                                Free
-                            </Box>
-                        </Box>
-                        <Box display="flex" mb={1} py={1}>
-                            <Divider style={{width: "100%", height: 1}}/>
-                        </Box>
-                        <Box display="flex" flexDirection="row" css={paymentStyles.header}>
-                            <Box flex="1">
-                                Total
-                            </Box>
-                            <Box>
-                                ${cartTotal}
-                            </Box>
-                        </Box>
-                        <Box display="flex" py={2} justifyContent="flex-start">
-                            <Button variant="contained" size="medium" color="secondary" style={{width: '100%'}}>
-                                CONTINUE
-                            </Button>
-                        </Box>
-                    </Box>
+                    <PriceDetails buttonName="Continue" onbtnClickHandler={continueBtnClickHandler}/>
+
                 </Box>
+                {itemRemovalModalState.active ? <Modal renderWarningComponent={renderRemoveModalWarning()}
+                                                modalWidth={modalWidth}
+                                                closeHandler={closeModal}/> : null}
             </Box>
         </>
     )
-        ;
 }
 
 export default connect(null, {getDataViaAPI})(Checkout);

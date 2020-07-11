@@ -4,6 +4,8 @@ import com.ujjaval.ecommerce.commondataservice.dao.sql.info.queryhelpers.Product
 import com.ujjaval.ecommerce.commondataservice.dao.sql.info.queryhelpers.context.ParamsToQueryContext;
 import com.ujjaval.ecommerce.commondataservice.dto.BrandsAndApparelsDTO;
 import com.ujjaval.ecommerce.commondataservice.dto.FilterAttributesWithTotalItemsDTO;
+import com.ujjaval.ecommerce.commondataservice.dto.SearchSuggestionForThreeAttrDTO;
+import com.ujjaval.ecommerce.commondataservice.dto.SearchSuggestionForTwoAttrDTO;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
 import com.ujjaval.ecommerce.commondataservice.model.FilterAttributesResponse;
 import com.ujjaval.ecommerce.commondataservice.model.HomeTabsDataResponse;
@@ -146,4 +148,40 @@ public class ProductInfoRepositoryImpl {
         return homeTabsDataResponse;
     }
 
+    public List<SearchSuggestionForThreeAttrDTO> getSearchSuggestionListForThreeAttr() {
+        ListResultTransformer listResultTransformer = new ListResultTransformer();
+
+        return listResultTransformer.getSearchSuggestionForThreeAttrResultTransformer("SELECT DISTINCT " +
+                        " p.genderCategory.id, p.genderCategory.type," +
+                        " p.apparelCategory.id, p.apparelCategory.type," +
+                        " p.productBrandCategory.id, p.productBrandCategory.type from ProductInfo p"
+                , entityManager);
+    }
+
+    public List<SearchSuggestionForTwoAttrDTO> getSearchSuggestionListForGenderAndApparel() {
+        ListResultTransformer listResultTransformer = new ListResultTransformer();
+        return listResultTransformer.getSearchSuggestionForTwoAttrResultTransformer("SELECT DISTINCT " +
+                        " p.genderCategory.id, p.genderCategory.type," +
+                        " p.apparelCategory.id, p.apparelCategory.type" +
+                        " from ProductInfo p"
+                , entityManager);
+    }
+
+    public List<SearchSuggestionForTwoAttrDTO> getSearchSuggestionListForGenderAndBrand() {
+        ListResultTransformer listResultTransformer = new ListResultTransformer();
+        return listResultTransformer.getSearchSuggestionForTwoAttrResultTransformer("SELECT DISTINCT " +
+                        " p.genderCategory.id, p.genderCategory.type," +
+                        " p.productBrandCategory.id, p.productBrandCategory.type" +
+                        " from ProductInfo p"
+                , entityManager);
+    }
+
+    public List<SearchSuggestionForTwoAttrDTO> getSearchSuggestionListForApparelAndBrand() {
+        ListResultTransformer listResultTransformer = new ListResultTransformer();
+        return listResultTransformer.getSearchSuggestionForTwoAttrResultTransformer("SELECT DISTINCT " +
+                        " p.apparelCategory.id, p.apparelCategory.type," +
+                        " p.productBrandCategory.id, p.productBrandCategory.type" +
+                        " from ProductInfo p"
+                , entityManager);
+    }
 }

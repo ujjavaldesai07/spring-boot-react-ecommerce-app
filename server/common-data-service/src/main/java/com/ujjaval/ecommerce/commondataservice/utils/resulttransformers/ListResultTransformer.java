@@ -2,6 +2,8 @@ package com.ujjaval.ecommerce.commondataservice.utils.resulttransformers;
 
 import com.ujjaval.ecommerce.commondataservice.dto.FilterAttributesDTO;
 import com.ujjaval.ecommerce.commondataservice.dto.FilterAttributesWithTotalItemsDTO;
+import com.ujjaval.ecommerce.commondataservice.dto.SearchSuggestionForThreeAttrDTO;
+import com.ujjaval.ecommerce.commondataservice.dto.SearchSuggestionForTwoAttrDTO;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -38,5 +40,29 @@ public class ListResultTransformer {
                         )
                 ).setMaxResults(10)
                 .getResultList();
+    }
+
+    public List<SearchSuggestionForThreeAttrDTO>
+    getSearchSuggestionForThreeAttrResultTransformer(String queryStr,
+                                         EntityManager entityManager) {
+
+        Query query = entityManager.createQuery(queryStr);
+        return query.unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer((IListResultTransformer)
+                        (tuple, aliases) -> new SearchSuggestionForThreeAttrDTO((Integer) tuple[0], (String) tuple[1],
+                                (Integer) tuple[2], (String) tuple[3],(Integer) tuple[4], (String) tuple[5])
+                ).getResultList();
+    }
+
+    public List<SearchSuggestionForTwoAttrDTO>
+    getSearchSuggestionForTwoAttrResultTransformer(String queryStr,
+                                         EntityManager entityManager) {
+
+        Query query = entityManager.createQuery(queryStr);
+        return query.unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer((IListResultTransformer)
+                        (tuple, aliases) -> new SearchSuggestionForTwoAttrDTO((Integer) tuple[0], (String) tuple[1],
+                                (Integer) tuple[2], (String) tuple[3])
+                ).getResultList();
     }
 }

@@ -3,7 +3,7 @@ import {
     LOAD_HOME_PAGE, LOAD_CHECKOUT_PRODUCTS,
     LOAD_FILTER_ATTRIBUTES,
     LOAD_FILTER_PRODUCTS, LOAD_TABS_DATA, REMOVE_FILTER_ATTRIBUTES, SAVE_FILTER_QUERY,
-    SELECT_PRODUCT_DETAIL
+    SELECT_PRODUCT_DETAIL, CART_TOTAL
 } from "../../actions/types";
 import log from "loglevel";
 
@@ -83,6 +83,15 @@ export const filterQueryReducer = (state = null, action) => {
             return action.payload
         case DELETE_FILTER_QUERY:
             return null
+        default:
+            return state;
+    }
+};
+
+export const cartTotalReducer = (state = null, action) => {
+    switch (action.type) {
+        case CART_TOTAL:
+            return action.payload
         default:
             return state;
     }

@@ -42,6 +42,12 @@ const useNavBarStyles = makeStyles(theme => ({
             paddingBottom: 0,
         },
     },
+    autoCompleteRoot: {
+        width: "500px",
+        [theme.breakpoints.down("sm")]: {
+            width: "350px",
+        },
+    },
     searchContainer: {
         display: "flex",
         alignItems: "center",
@@ -107,6 +113,7 @@ const useNavBarStyles = makeStyles(theme => ({
             width: '0ch',
             '&:focus': {
                 width: '40ch',
+                backgroundColor: fade(theme.palette.common.white, 0.9),
             },
         },
         [theme.breakpoints.up("sm")]: {

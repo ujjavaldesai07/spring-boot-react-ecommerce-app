@@ -7,6 +7,9 @@ import com.ujjaval.ecommerce.commondataservice.dao.sql.images.ApparelImagesRepos
 import com.ujjaval.ecommerce.commondataservice.dao.sql.info.*;
 import com.ujjaval.ecommerce.commondataservice.dto.BrandImagesDTO;
 import com.ujjaval.ecommerce.commondataservice.dto.ApparelImagesDTO;
+import com.ujjaval.ecommerce.commondataservice.dto.SearchSuggestionForThreeAttrDTO;
+import com.ujjaval.ecommerce.commondataservice.dto.SearchSuggestionForTwoAttrDTO;
+import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.GenderCategory;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.images.BrandImages;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.images.CarouselImages;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.images.ApparelImages;
@@ -14,6 +17,7 @@ import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
 import com.ujjaval.ecommerce.commondataservice.model.FilterAttributesResponse;
 import com.ujjaval.ecommerce.commondataservice.model.HomeTabsDataResponse;
 import com.ujjaval.ecommerce.commondataservice.model.MainScreenResponse;
+import com.ujjaval.ecommerce.commondataservice.model.SearchSuggestionResponse;
 import com.ujjaval.ecommerce.commondataservice.service.interfaces.CommonDataService;
 import org.javatuples.Pair;
 import org.modelmapper.ModelMapper;
@@ -74,6 +78,10 @@ public class CommonDataServiceImpl implements CommonDataService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    private HashMap<String, Pair<String, String>> searchSuggestionMap;
+
+    private final String PRODUCT_QUERY_URI = "/products?q=";
 
     public ProductInfo findAddressById(Integer id) {
         Optional<ProductInfo> result = productInfoRepository.findById(id);
@@ -191,4 +199,69 @@ public class CommonDataServiceImpl implements CommonDataService {
     public HomeTabsDataResponse getBrandsAndApparelsByGender() {
         return productInfoRepository.getBrandsAndApparelsByGender();
     }
+
+    private void constructAndAppendSearchSuggestion(String attr1_Name, String attr2_Name,
+                                                    List<SearchSuggestionForTwoAttrDTO> searchSuggestionList,
+                                                    List<SearchSuggestionResponse> searchSuggestionResponseList) {
+
+        if (searchSuggestionList == null) {
+            return;
+        }
+
+        for (SearchSuggestionForTwoAttrDTO searchSuggestion : searchSuggestionList) {
+            StringJoiner title = new StringJoiner(" ");
+            title.add(searchSuggestion.getAttr1_Name());
+            title.add(searchSuggestion.getAttr2_Name());
+
+            StringBuilder link = new StringBuilder(PRODUCT_QUERY_URI);
+            link.append(attr1_Name).append("=").append(searchSuggestion.getAttr1_Id());
+            link.append("::").append(attr2_Name).append("=").append(searchSuggestion.getAttr2_Id());
+            searchSuggestionResponseList.add(new SearchSuggestionResponse(title, link));
+        }
+    }
+
+    public List<SearchSuggestionResponse> getSearchSuggestionList() {
+
+        List<SearchSuggestionForThreeAttrDTO> searchSuggestionForThreeAttrDTOList =
+                productInfoRepository.getSearchSuggestionListForThreeAttr();
+        List<SearchSuggestionResponse> searchSuggestionResponseList = new LinkedList<>();
+
+        List<GenderCategory> genderCategoryList = genderCategoryRepository.getAllData();
+
+//        for (GenderCategory genderCategory: genderCategoryList) {
+//
+//        }
+
+
+        constructAndAppendSearchSuggestion("genders", "apparels",
+                productInfoRepository.getSearchSuggestionListForGenderAndApparel(),
+                searchSuggestionResponseList);
+
+        constructAndAppendSearchSuggestion("genders", "brands",
+                productInfoRepository.getSearchSuggestionListForGenderAndBrand(),
+                searchSuggestionResponseList);
+
+        constructAndAppendSearchSuggestion("apparels", "brands",
+                productInfoRepository.getSearchSuggestionListForApparelAndBrand(),
+                searchSuggestionResponseList);
+
+        for (SearchSuggestionForThreeAttrDTO searchSuggestionForThreeAttrDTO : searchSuggestionForThreeAttrDTOList) {
+            StringJoiner title = new StringJoiner(" ");
+            title.add(searchSuggestionForThreeAttrDTO.getGenderName());
+            title.add(searchSuggestionForThreeAttrDTO.getApparelName());
+            title.add(searchSuggestionForThreeAttrDTO.getBrandName());
+
+            StringBuilder link = new StringBuilder(PRODUCT_QUERY_URI);
+            link.append("genders=").append(searchSuggestionForThreeAttrDTO.getGenderId());
+            link.append("::apparels=").append(searchSuggestionForThreeAttrDTO.getApparelId());
+            link.append("::brands=").append(searchSuggestionForThreeAttrDTO.getBrandId());
+            searchSuggestionResponseList.add(new SearchSuggestionResponse(title, link));
+        }
+
+
+
+        return searchSuggestionResponseList;
+    }
+
+
 }

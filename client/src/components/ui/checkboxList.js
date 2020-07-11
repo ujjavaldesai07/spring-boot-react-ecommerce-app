@@ -85,7 +85,7 @@ export default function CheckboxList(props) {
                             <ListItemText id={id} primary={value} style={{fontSize: props.fontSize}}
                                           disableTypography/>
                         </Box>
-                        <Box alignSelf="center" pl={0.5} pt={0.10} css={{color: "#94969f", fontSize: "0.8rem"}}>
+                        <Box alignSelf="center" pl={0.5}  css={{color: "#94969f", fontSize: "0.8rem"}}>
                             {`(${totalItems})`}
                         </Box>
                     </Box>

@@ -205,8 +205,9 @@ function Detail(props) {
 
                     <Box display="flex" flexDirection="row">
                         <Box mt={3} mr={4} width="25%" height="70%" justifyContent="center">
-                            <Button variant="contained" size="large" color="secondary"
-                                    style={{width: "100%", height: "100%"}}
+                            <Button variant="contained" size="large"
+                                    style={{width: "100%", height: "100%", color: 'white',
+                                        fontWeight: "bold", backgroundColor: "#AB0000"}}
                                     startIcon={<AddShoppingCartIcon/>}
                                     onClick={handleAddToBagButton(selectedProduct.id)}
                             >

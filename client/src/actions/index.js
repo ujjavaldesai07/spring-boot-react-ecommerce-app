@@ -86,16 +86,16 @@ export const signUp = formValues => async (dispatch) => {
     }
 }
 
-export const getDataViaAPI = (type, url) => async dispatch => {
-    log.info(`[ACTION]: invokeAndDispatchAPIData Calling API = ${url}.`)
+export const getDataViaAPI = (type, uri) => async dispatch => {
+    log.info(`[ACTION]: invokeAndDispatchAPIData Calling API = ${uri}.`)
 
-    if(url) {
+    if(uri) {
         commonServiceApi.defaults.timeout = 15000;
-        url = url.replace(/\s/g, '')
+        uri = uri.replace(/\s/g, '')
         let responseError = false
-        const response = await commonServiceApi.get(url)
+        const response = await commonServiceApi.get(uri)
             .catch(err => {
-                log.info(`[ACTION]: unable to fetch response for API = ${url}`)
+                log.info(`[ACTION]: unable to fetch response for API = ${uri}`)
                 dispatch({type: type, payload: {isLoading: false, statusCode: INTERNAL_SERVER_ERROR_CODE}});
                 responseError = true
             });
@@ -110,6 +110,9 @@ export const getDataViaAPI = (type, url) => async dispatch => {
                 type: type, payload:
                     {isLoading: false, data: JSON.parse(JSON.stringify(response.data))}
             });
+            if(LOAD_FILTER_PRODUCTS.localeCompare(type) === 0) {
+                window.history.pushState('', '', uri)
+            }
         } else {
             dispatch({type: type, payload: {isLoading: false, statusCode: BAD_REQUEST_ERROR_CODE}});
         }
