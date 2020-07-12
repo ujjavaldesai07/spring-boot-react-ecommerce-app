@@ -8,9 +8,9 @@ import Home from "./routes/home/home";
 import Login from "./routes/login";
 import SignUp from "./routes/signUp";
 import Product from "./routes/product/product";
-import Detail from "./routes/detail/detail";
+import Detail from "./routes/detail/productDetails";
 import Checkout from "./routes/checkout";
-import Payment from "./routes/payment";
+import ShoppingBag from "./routes/shoppingBag";
 
 
 const App = () => {
@@ -22,9 +22,9 @@ const App = () => {
             <Route path="/" exact component={Home}/>
             <Route path="/login" exact component={Login}/>
             <Route path="/signup" exact component={SignUp}/>
+            <Route path="/shopping-bag" exact component={ShoppingBag}/>
             <Route path="/checkout" exact component={Checkout}/>
-            <Route path="/payment" exact component={Payment}/>
-            <Route path="/products/details/:checkout" exact component={Checkout}/>
+            <Route path="/products/details/:shopping-bag" exact component={ShoppingBag}/>
             <Route path="/products/:details" exact component={Detail}/>
             <Route path="/products" exact component={Product}/>
         </Router>

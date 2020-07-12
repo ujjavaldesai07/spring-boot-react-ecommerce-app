@@ -2,7 +2,7 @@ import React from 'react';
 import {Box} from "@material-ui/core";
 import emptyCheckoutCartImage from '../../../images/emptyCheckoutCart.png'
 
-export const EmptyCheckoutCart = () => {
+export const EmptyShoppingBag = () => {
 
     return (
         <Box display="flex"

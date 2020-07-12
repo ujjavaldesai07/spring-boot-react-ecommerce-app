@@ -1,75 +1,79 @@
 import React from 'react';
 import log from 'loglevel';
-import Box from "@material-ui/core/Box";
-import {Button, Divider} from "@material-ui/core";
+import {Button, Divider, Grid} from "@material-ui/core";
 import {useSelector} from "react-redux";
 import {PageNotFound} from "../ui/error/pageNotFound";
 import Cookies from "js-cookie";
-import {CART_TOTAL, SHOPPERS_PRODUCT_ID} from "../../actions/types";
+import {CART_TOTAL} from "../../actions/types";
 
 const paymentStyles = {
     header: {
         fontColor: "#535766",
-        fontWeight: 600
+        fontWeight: "bolder",
+        fontSize: "1.2rem",
+        paddingTop: 20,
     },
     fontColor: "#282c3f",
     fontWeight: 400,
-    fontSize: "0.9rem"
+    fontSize: "1.1rem",
 }
 
 function PriceDetails(props) {
     let cartTotal = useSelector(state => state.cartTotalReducer);
 
-    if(!cartTotal) {
+    if (!cartTotal) {
         cartTotal = Cookies.get(CART_TOTAL)
-        if(cartTotal) {
+        if (cartTotal) {
             cartTotal = JSON.parse(cartTotal)
         } else {
             return <PageNotFound/>
         }
     }
 
+    const renderGridData = (label, value, styles) => {
+        return (
+            <Grid container sm={10} style={styles}>
+                <Grid container sm={10}>
+                    {label}
+                </Grid>
+                <Grid container sm={2} justify="flex-end">
+                    {value}
+                </Grid>
+            </Grid>
+        )
+    }
+
     log.info("[Checkout] Rendering PriceDetails Component.")
 
     return (
-        <Box display="flex" flex="1" flexDirection="column" pt={1}>
-            <Box css={paymentStyles.header}>
+        <Grid container justify="center">
+            <Grid item sm={10} style={paymentStyles.header}>
                 PRICE DETAILS
-            </Box>
-            <Box display="flex" flexDirection="row" pt={2} css={paymentStyles}>
-                <Box flex="1">
-                    Bag Total
-                </Box>
-                <Box>
-                    ${cartTotal}
-                </Box>
-            </Box>
-            <Box display="flex" flexDirection="row" pt={1} css={paymentStyles}>
-                <Box flex="1">
-                    Delivery Charges
-                </Box>
-                <Box css={{color: 'green'}}>
-                    Free
-                </Box>
-            </Box>
-            <Box display="flex" mb={1} py={1}>
+            </Grid>
+
+            {renderGridData("Bag Total", `$${cartTotal}`, {...paymentStyles, paddingTop: 10})}
+            {renderGridData("Shipping", "FREE", {...paymentStyles, paddingTop: 10})}
+
+            <Grid container sm={10} style={{paddingTop: 17}}>
                 <Divider style={{width: "100%", height: 1}}/>
-            </Box>
-            <Box display="flex" flexDirection="row" css={paymentStyles.header}>
-                <Box flex="1">
-                    Total
-                </Box>
-                <Box>
-                    ${cartTotal}
-                </Box>
-            </Box>
-            <Box display="flex" py={2} justifyContent="flex-start">
-                <Button variant="contained" size="medium" style={{width: '100%', color: 'white',
-                    fontWeight: "bold", backgroundColor: "#AB0000"}}>
+            </Grid>
+
+            {renderGridData("Order Total", `$${cartTotal}`,
+                {...paymentStyles.header, paddingTop: 17})}
+
+            <Grid container sm={9} justify="center"
+                  style={{...paymentStyles.header, padding: "30px 0 30px 0"}}
+            >
+                <Button variant="contained" size="medium"
+                        onClick={props.onBtnClickHandler}
+                        style={{
+                            width: '100%', height: 40, color: 'white',
+                            fontWeight: "bold", backgroundColor: "#AB0000"
+                        }}>
                     {props.buttonName}
                 </Button>
-            </Box>
-        </Box>
+            </Grid>
+        </Grid>
     )
 }
 

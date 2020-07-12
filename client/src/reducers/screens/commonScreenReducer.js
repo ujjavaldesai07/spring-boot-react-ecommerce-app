@@ -1,6 +1,6 @@
 import {
     ADD_TO_CART, DELETE_FILTER_QUERY,
-    LOAD_HOME_PAGE, LOAD_CHECKOUT_PRODUCTS,
+    LOAD_HOME_PAGE, LOAD_SHOPPING_BAG_PRODUCTS,
     LOAD_FILTER_ATTRIBUTES,
     LOAD_FILTER_PRODUCTS, LOAD_TABS_DATA, REMOVE_FILTER_ATTRIBUTES, SAVE_FILTER_QUERY,
     SELECT_PRODUCT_DETAIL, CART_TOTAL
@@ -68,9 +68,9 @@ export const selectProductDetailReducer = (state = {isLoading: true}, action) =>
     }
 };
 
-export const checkoutProductReducer = (state = {isLoading: true}, action) => {
+export const shoppingBagProductReducer = (state = {isLoading: true}, action) => {
     switch (action.type) {
-        case LOAD_CHECKOUT_PRODUCTS:
+        case LOAD_SHOPPING_BAG_PRODUCTS:
             return action.payload
         default:
             return state;

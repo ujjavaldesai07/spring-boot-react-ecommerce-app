@@ -7,7 +7,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import Cookies from 'js-cookie';
 import {getDataViaAPI, setTokenFromCookie, signOut} from '../../../actions';
 import {connect, useDispatch} from 'react-redux'
@@ -23,7 +22,6 @@ import {Link} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {
     ADD_TO_CART,
-    HANDLE_TAB_HOVER_EVENT,
     HANDLE_TOKEN_ID,
     LOAD_TABS_DATA,
     SHOPPERS_PRODUCT_ID, TABS_API_OBJECT_LEN, TABS_DATA_API
@@ -207,7 +205,7 @@ const NavBar = props => {
         <div style={{paddingBottom: 80}}>
             <AppBar color="default" className={classes.appBarRoot}>
                 <Toolbar classes={{root: classes.toolBarRoot}}>
-                    <Hidden mdUp>
+                    <Hidden lgUp>
                         <IconButton
                             edge="start"
                             className={classes.menuButton}
@@ -262,7 +260,7 @@ const NavBar = props => {
                                 </Box>
                             </Box>
                             <Box width="50%" p={1}>
-                                <Link to="/checkout">
+                                <Link to="/shopping-bag">
                                     <Box pb={0.5}>
                                         <BagButton/>
                                     </Box>

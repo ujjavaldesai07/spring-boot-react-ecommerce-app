@@ -29,9 +29,9 @@ export default function TabList() {
     }
 
     const mouseLeaveHandler = event => {
-        log.info(`[TabList]: mouseLeaveHandler`)
+        log.info(`[TabList]: mouseLeaveHandler = ${event.pageY}, ${window.scrollY}`)
         // detect the mouse is going out horizontally and vertically upwards.
-        if(event.pageX < 190 || event.pageX > 700 || event.pageY < 1) {
+        if(event.pageX < 190 || event.pageX > 700 || (event.pageY - window.scrollY) < 1) {
             dispatch({
                 type: HANDLE_TAB_HOVER_EVENT, payload: {
                     index: false,

@@ -4,7 +4,7 @@ import authApiReducer from "./api/authApiReducer";
 
 import {
     homePageDataReducer, addToCartReducer,
-    selectProductDetailReducer, checkoutProductReducer,
+    selectProductDetailReducer, shoppingBagProductReducer,
     filterProductsReducer, filterAttributesReducer,
     filterQueryReducer, tabsDataReducer,
     cartTotalReducer
@@ -28,7 +28,7 @@ export default combineReducers({
     selectSortReducer,
     selectPageReducer,
     selectProductDetailReducer,
-    checkoutProductReducer,
+    shoppingBagProductReducer,
     filterQueryReducer,
     selectedFilterAttributesReducer,
     tabsDataReducer,
