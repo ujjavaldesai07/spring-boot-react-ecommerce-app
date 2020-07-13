@@ -136,7 +136,7 @@ const useNavBarStyles = makeStyles(theme => ({
     },
     sectionMobile: {
         display: "flex",
-        [theme.breakpoints.up("md")]: {
+        [theme.breakpoints.up("sm")]: {
             display: "none",
         }
     },

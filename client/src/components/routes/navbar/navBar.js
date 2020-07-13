@@ -249,7 +249,7 @@ const NavBar = props => {
 
                     <div className={classes.grow_1}/>
 
-                    <Hidden smDown>
+                    <Hidden xsDown>
                         <Box display="flex" justifyContent="center" alignItems="center" css={{width: 90}}>
                             <Box width="50%" onClick={handleProfileMenuOpen} css={{cursor: 'pointer'}}>
                                 <Box pl={1}>

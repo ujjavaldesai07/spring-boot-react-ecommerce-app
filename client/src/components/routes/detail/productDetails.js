@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Grid, Box} from "@material-ui/core";
+import {Button, Grid, Box, Hidden} from "@material-ui/core";
 import log from 'loglevel';
 import BreadcrumbsSection from "../../ui/breadcrumbs";
 import {HOME_ROUTE} from "../../../constants/constants";
@@ -10,7 +10,6 @@ import {connect} from 'react-redux';
 import {getDataViaAPI} from '../../../actions'
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import LocalMallIcon from '@material-ui/icons/LocalMall';
-import {Link} from "react-router-dom";
 import Cookies from 'js-cookie';
 import {ADD_TO_CART, PRODUCT_BY_ID_DATA_API, SELECT_PRODUCT_DETAIL, SHOPPERS_PRODUCT_ID} from "../../../actions/types";
 import RemoveIcon from '@material-ui/icons/Remove';
@@ -113,7 +112,7 @@ function ProductDetails(props) {
         })
     }
 
-    const handleAddToBagButton = product_id => () => {
+    const handleAddToBagBtnClick = product_id => () => {
         log.info(`[Product Detail] Product is added to cart`)
         let newAddToCart = addToCart
 
@@ -137,6 +136,10 @@ function ProductDetails(props) {
         dispatchAddToCart(newAddToCart)
     }
 
+    const handleProceedToBagBtnClick = () => {
+        history.push(`${history.location.pathname}/shopping-bag${history.location.search}`)
+    }
+
     if (props.window) {
         props.window.scrollTo(0, 0)
     }
@@ -148,87 +151,90 @@ function ProductDetails(props) {
                 <BreadcrumbsSection linkList={breadcrumbLinks}/>
             </Box>
 
-            <Grid container justify={"center"}>
-                <Grid item md={4}>
-                    <Box >
-                        <img src={selectedProduct.imageName} alt={selectedProduct.name}
-                             style={{height: 500, width: 400}}
-                             title={selectedProduct.name}/>
-                    </Box>
+            <Grid container style={{height: 500}}>
+
+                <Grid item container justify="center" sm={6} md={5}>
+                    <img src={selectedProduct.imageName} alt={selectedProduct.name}
+                         style={{height: "100%", width: "90%", paddingBottom: "2rem"}}
+                         title={selectedProduct.name}/>
                 </Grid>
-                <Grid item md={7}>
-                    <Box display="flex" flexDirection="column">
-                        <Box pb={3}>
-                            <div style={{fontSize: "2rem", fontWeight: 500}}>
-                                {selectedProduct.productBrandCategory.type}
-                            </div>
-                        </Box>
-                        <Box pb={5}>
-                            <div style={{fontSize: "1.7rem", fontWeight: 300}}>
-                                {selectedProduct.name}
-                            </div>
-                        </Box>
-                        <Box pb={3}>
-                            <Box style={{fontSize: "1.8rem", fontWeight: 600}}>{`$ ${selectedProduct.price}`}</Box>
-                            <Box pt={2} color="green" style={{fontSize: "1rem", fontWeight: 700}}>inclusive of all
-                                taxes</Box>
-                        </Box>
 
-                        <Box display="flex" style={{height: '8%'}} py={4} alignItems="center">
-                            <Box width="5%" style={{fontSize: '1.2rem', fontWeight: "lighter"}}>
-                                Qty:
-                            </Box>
+                <Grid item xs={11} sm={5} md={6} container direction={"column"} spacing={2}
+                      style={{marginLeft: "1rem"}}>
+                    <Grid item style={{fontSize: "2rem", fontWeight: "bolder"}}>
+                        {selectedProduct.productBrandCategory.type}
+                    </Grid>
 
-                            <Box width="4%" style={{fontSize: '1.2rem', fontWeight: "bold"}}>
-                                {productQuantity}
-                            </Box>
+                    <Grid item style={{fontSize: "1.7rem", fontWeight: 600, paddingTop: "1rem"}}>
+                        {selectedProduct.name}
+                    </Grid>
 
-                            <Box>
-                                <Button variant="outlined" color="primary" size="large"
-                                        style={{height: 40}}
-                                        classes={{startIcon: classes.buttonStartIcon}}
-                                        startIcon={<RemoveIcon fontSize="large"/>}
-                                        disabled={productQuantity === 1}
-                                        onClick={() => setProductQuantity(productQuantity - 1)}
-                                >
-                                </Button>
-                            </Box>
+                    <Grid item style={{fontSize: "1.8rem", fontWeight: 600, paddingTop: "1rem"}}>
+                        {`$ ${selectedProduct.price}`}
+                    </Grid>
 
-                            <Box>
-                                <Button variant="outlined" color="primary" size="large"
-                                        style={{height: 40}}
-                                        classes={{startIcon: classes.buttonStartIcon}}
-                                        startIcon={<AddIcon fontSize="large"/>}
-                                        onClick={() => setProductQuantity(productQuantity + 1)}
-                                >
-                                </Button>
-                            </Box>
-                        </Box>
+                    <Grid item style={{fontSize: "1rem", fontWeight: 700, color: "green"}}>
+                        inclusive of all taxes
+                    </Grid>
 
-                        <Box display="flex" flexDirection="row">
-                            <Box mt={3} mr={4} width="25%" height="70%" justifyContent="center">
-                                <Button variant="contained" size="large"
-                                        style={{
-                                            width: "100%", height: "100%", color: 'white',
-                                            fontWeight: "bold", backgroundColor: "#AB0000"
-                                        }}
-                                        startIcon={<AddShoppingCartIcon/>}
-                                        onClick={handleAddToBagButton(selectedProduct.id)}
-                                >
-                                    ADD TO BAG
-                                </Button>
-                            </Box>
-                            <Box mt={3} width="25%" height="70%" justifyContent="center">
-                                <Link to={`${history.location.pathname}/shopping-bag${history.location.search}`}>
-                                    <Button variant="outlined" size="large" color="default"
-                                            style={{width: "100%", height: "100%", fontWeight: "bold"}}
-                                            startIcon={<LocalMallIcon/>}>
-                                        PROCEED TO BAG
-                                    </Button>
-                                </Link>
-                            </Box>
-                        </Box>
-                    </Box>
+                    <Grid item container alignItems="center">
+                        <Grid item xs={1} style={{fontSize: '1.2rem', fontWeight: "lighter"}}>
+                            Qty:
+                        </Grid>
+
+                        <Grid item xs={1} style={{fontSize: '1.2rem', fontWeight: "bold"}}>
+                            {productQuantity}
+                        </Grid>
+
+                        <Grid item>
+                            <Button variant="outlined" color="primary" size="large"
+                                    style={{height: 40}}
+                                    classes={{startIcon: classes.buttonStartIcon}}
+                                    startIcon={<RemoveIcon fontSize="large"/>}
+                                    disabled={productQuantity === 1}
+                                    onClick={() => setProductQuantity(productQuantity - 1)}
+                            >
+                            </Button>
+                        </Grid>
+
+                        <Grid item>
+                            <Button variant="outlined" color="primary" size="large"
+                                    style={{height: 40}}
+                                    classes={{startIcon: classes.buttonStartIcon}}
+                                    startIcon={<AddIcon fontSize="large"/>}
+                                    onClick={() => setProductQuantity(productQuantity + 1)}
+                            >
+                            </Button>
+                        </Grid>
+                    </Grid>
+
+                    <Grid item container spacing={2}>
+                        <Grid item xs={12} sm={8} md={4}>
+                            <Button
+                                style={{
+                                    height: 44, color: 'white',
+                                    fontWeight: "bold", backgroundColor: "#AB0000"
+                                }}
+                                fullWidth
+                                startIcon={<AddShoppingCartIcon/>}
+                                onClick={handleAddToBagBtnClick(selectedProduct.id)}
+                            >
+                                ADD TO BAG
+                            </Button>
+                        </Grid>
+
+                        <Grid item xs={12} sm={8} md={5}>
+                            <Button variant="outlined" size="large" color="default"
+                                    style={{height: 44, fontWeight: "bold"}}
+                                    fullWidth
+                                    startIcon={<LocalMallIcon/>}
+                                    onClick={handleProceedToBagBtnClick}
+                            >
+                                PROCEED TO BAG
+                            </Button>
+                        </Grid>
+                    </Grid>
+
                 </Grid>
             </Grid>
         </>
