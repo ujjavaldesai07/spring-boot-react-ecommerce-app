@@ -20,12 +20,12 @@ public class CarouselImages {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
 
-    private String title;
+    private String link;
 
     private String filePath;
 
-    public CarouselImages(String title, String filePath) {
-        this.title = title;
+    public CarouselImages(String link, String filePath) {
+        this.link = link;
         this.filePath = filePath;
     }
 }

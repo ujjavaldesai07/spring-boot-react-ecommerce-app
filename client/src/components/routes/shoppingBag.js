@@ -249,31 +249,28 @@ function ShoppingBag(props) {
         for (const [id, product] of Object.entries(shoppingBagProducts.data)) {
 
             shoppingBagProductsList.push(
-                <Box key={product.id} display="flex" flexDirection="column" flex="2" css={{border: '1px solid #eaeaec'}}
-                     mt={1}>
-                    <Box display="flex" m={2}>
+                <Grid item container key={product.id} style={{border: '1px solid #eaeaec', margin: "1rem 0"}}>
+                    <Grid item container justify="center" xs={5} sm={3}>
+                        <img src={product.imageName} style={{height: "90%", width: "80%", paddingTop: "1rem"}}/>
+                    </Grid>
 
-                        <Box flex="0.5">
-                            <img src={product.imageName} style={{height: 148, width: 111}}/>
-                        </Box>
-
-                        <Box flex="6" ml={2}>
-                            <Box display="flex" flexDirection="row" css={{fontSize: "1rem", fontWeight: 600}}>
-                                <Box flex="1">
+                    <Grid item container xs={7} sm={9}>
+                        <Grid item container direction="column" sm={6} spacing={1}>
+                            <Grid item container style={{fontSize: "1rem", fontWeight: 600, paddingTop: "1rem"}}>
+                                <Grid item xs={7}>
                                     {product.productBrandCategory.type}
-                                </Box>
-                                <Box>
-                                    {`Qty: ${addToCart.productQty[product.id]} x $${product.price} = `
-                                    + `$${addToCart.productQty[product.id] * product.price}`}
-                                </Box>
-                            </Box>
-                            <Box css={{fontSize: "1rem", fontWeight: 300}}>
+                                </Grid>
+                            </Grid>
+
+                            <Grid item style={{fontSize: "1rem", fontWeight: 300}}>
                                 {product.name}
-                            </Box>
-                            <Box css={{fontSize: "0.85rem", color: "#94969f"}}>
+                            </Grid>
+
+                            <Grid item style={{fontSize: "0.85rem", color: "#94969f"}}>
                                 Sold by
-                            </Box>
-                            <Box width="30%" height="25%" pt={2}>
+                            </Grid>
+
+                            <Grid item>
                                 <DropdownSection
                                     attrList={getQuantityList(id)}
                                     selectedValue={addToCart.productQty.hasOwnProperty(id) ? {
@@ -284,21 +281,31 @@ function ShoppingBag(props) {
                                     title={id}
                                     size="sm"
                                     onChangeHandler={onQtyDropdownChangeHandler}/>
-                            </Box>
-                        </Box>
-                    </Box>
+                            </Grid>
+                        </Grid>
 
-                    <Box display="flex" mx={2} mb={1}>
-                        <Divider style={{width: "100%", height: 1}}/>
-                    </Box>
-                    <Box display="flex" mx={2} mb={1} justifyContent="flex-end">
-                        <Button variant="contained" size="medium" color="secondary"
-                                onClick={removeBtnClickHandler(id)}
-                                startIcon={<RemoveCircleOutlineIcon/>}>
-                            Remove
-                        </Button>
-                    </Box>
-                </Box>
+                        <Grid item container justify="flex-end" sm={6} style={{paddingRight: "1rem"}}>
+                            {`Qty: ${addToCart.productQty[product.id]} x $${product.price} = `
+                            + `$${addToCart.productQty[product.id] * product.price}`}
+                        </Grid>
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <Divider/>
+                    </Grid>
+
+                    <Grid item container justify="flex-end" style={{padding: "0.5rem 0.7rem 0.5rem 0"}}>
+                        <Grid item sm={3}>
+                            <Button variant="contained" size="medium" color="secondary"
+                                    style={{width: "100%"}}
+                                    onClick={removeBtnClickHandler(id)}
+                                    startIcon={<RemoveCircleOutlineIcon/>}>
+                                Remove
+                            </Button>
+                        </Grid>
+                    </Grid>
+
+                </Grid>
             )
         }
 
@@ -313,50 +320,45 @@ function ShoppingBag(props) {
 
     return (
         <>
-        <Hidden xsDown>
             <Box display="flex" p={3}>
                 <BreadcrumbsSection linkList={breadcrumbLinks}/>
             </Box>
-        </Hidden>
 
-        <Grid container justify="center" spacing={5} style={{height: "100%"}}>
-            <Grid item xs={11} sm={10} md={6}>
-                <Box display="flex" flexDirection="column" pl={3}>
-                    <Box display="flex">
-                        <Divider style={{width: "100%", height: 1}}/>
-                    </Box>
+            <Grid container justify="center" style={{height: "100%"}}>
+                <Grid item xs={12} sm={11} md={7}>
 
-                    <Box display="flex" flexDirection="row" py={4} css={{fontSize: '1.5rem', fontWeight: 600}}>
-                        <Box flex={1}>
+                    <Divider/>
+
+                    <Grid item container justify="center"
+                          style={{fontSize: '1.2rem', fontWeight: 600, padding: "1rem 0.5rem"}}>
+                        <Grid item xs={8}>
                             {`My Shopping Bag (${addToCart.totalQuantity} Items)`}
-                        </Box>
-                        <Box>
+                        </Grid>
+
+                        <Grid item container xs={4} justify="flex-end">
                             {`Total: $${getCartTotal()}`}
-                        </Box>
+                        </Grid>
+                    </Grid>
+
+                    {renderShoppingBagProducts()}
+                </Grid>
+
+                <Hidden smDown>
+                    <Grid item style={{ padding: "0 2rem"}}>
+                        <Divider orientation="vertical" style={{height: "100%", width: 1}}/>
+                    </Grid>
+                </Hidden>
+
+                <Grid sm={8} md={4}>
+                    <Box pt={2}>
+                        <PriceDetails buttonName="Proceed To Checkout" onBtnClickHandler={continueBtnClickHandler}/>
                     </Box>
-
-                    <Box display="flex" justifyContent="center">
-                        <Box display="flex" flex="2.5" flexDirection="column">
-                            {renderShoppingBagProducts()}
-                        </Box>
-                    </Box>
-                </Box>
+                </Grid>
             </Grid>
 
-            <Grid item>
-                <Divider orientation="vertical" style={{height: "100%", width: 1}}/>
-            </Grid>
-
-            <Grid sm={2} md={3}>
-                <Box pt={2}>
-                    <PriceDetails buttonName="Proceed To Checkout" onBtnClickHandler={continueBtnClickHandler}/>
-                </Box>
-            </Grid>
-        </Grid>
-
-        {itemRemovalModalState.active ? <Modal renderWarningComponent={renderItemRemoveConfirmation()}
-                                               modalWidth={modalWidth}
-                                               closeHandler={closeModalClickHandler}/> : null}
+            {itemRemovalModalState.active ? <Modal renderWarningComponent={renderItemRemoveConfirmation()}
+                                                   modalWidth={modalWidth}
+                                                   closeHandler={closeModalClickHandler}/> : null}
         </>
     )
 }

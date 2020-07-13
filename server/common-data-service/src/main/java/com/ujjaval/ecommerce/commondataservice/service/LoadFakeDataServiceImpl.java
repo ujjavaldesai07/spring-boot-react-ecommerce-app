@@ -149,7 +149,18 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                         }
                         break;
                     case "carousel":
-                        CarouselImages carouselImages = new CarouselImages(title, filePath);
+                        StringBuilder link = null;
+                        if(title != null) {
+                            title += ",";
+                            String[] categories = title.split(",");
+                            link = new StringBuilder("genders=");
+                            for(String category: categories) {
+                                genderCategory = genderCategoryRepository.findByType(category);
+                                link.append(genderCategory.getId()).append(",");
+                            }
+                        }
+
+                        CarouselImages carouselImages = new CarouselImages(link !=null? link.toString(): null, filePath);
                         carouselImagesRepository.save(carouselImages);
                         break;
                     default:

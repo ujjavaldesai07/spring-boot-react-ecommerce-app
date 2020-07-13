@@ -14,8 +14,8 @@ carousel|Website/carousel/c1.webp
 carousel|Website/carousel/c4.webp
 carousel|Website/carousel/c2.webp
 carousel|Website/carousel/c3.webp
-carousel|Website/carousel/men-circular-icon.webp
-carousel|Website/carousel/women-circular-icon.webp
-carousel|Website/carousel/kids-circular-icon.webp
-carousel|Website/carousel/home-circular-icon.webp
-carousel|Website/carousel/essentials-circular-icon.webp
+carousel|Website/carousel/men-circular-icon.webp|Men
+carousel|Website/carousel/women-circular-icon.webp|Women
+carousel|Website/carousel/kids-circular-icon.webp|Boys,Girls
+carousel|Website/carousel/home-circular-icon.webp|Home & Living
+carousel|Website/carousel/essentials-circular-icon.webp|Essentials

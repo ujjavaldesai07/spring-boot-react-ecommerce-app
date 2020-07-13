@@ -52,7 +52,7 @@ const Home = props => {
     return (
         <Dimmer.Dimmable as={StyledSegment} dimmed={hover}>
             <DocumentTitle title="Online Shopping for Women, Men, Kids Fashion & Lifestyle - Shoppers"/>
-            <Hidden only={['xs', 'sm', 'lg']}>
+            <Hidden only={['xs', 'lg']}>
                 <HomeMenuIcons/>
             </Hidden>
             <Hidden only={['xs']}>

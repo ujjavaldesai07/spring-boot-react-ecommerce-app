@@ -1,10 +1,9 @@
 import React from 'react';
-import {Typography} from "@material-ui/core";
+import {Grid, Box, Typography} from "@material-ui/core";
 import {Link} from "react-router-dom";
 import log from 'loglevel';
 import {MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
 import {useSelector} from "react-redux";
-import Box from "@material-ui/core/Box";
 import Hidden from "@material-ui/core/Hidden";
 import {BadRequest} from "../../ui/error/badRequest";
 
@@ -56,27 +55,25 @@ const TopCategoriesAndBrands = () => {
     const renderDesktopSection = (title, dataList, queryType) => {
         return (
             <>
-                <Box display="flex" justifyContent="center" style={{backgroundColor: "pink", marginTop: 30}}>
-                    <Typography variant="h4" noWrap style={{fontWeight: "bold"}}>
-                        {title}
-                    </Typography>
-                </Box>
-                <Box display="flex" justifyContent="center" flexWrap="nowrap" style={{padding: '30px 0 0 0'}}>
+                <Grid container style={{backgroundColor: "pink", fontWeight: "bold",
+                    fontSize: "2rem", padding: "1rem 0"}}>
+                    {title}
+                </Grid>
+                <Box display="flex" justifyContent="center" flexWrap="nowrap" style={{paddingTop: '2rem'}}>
                     {renderImageList(dataList, queryType)}
                 </Box>
             </>
         )
     }
 
-    const renderMobileSection = (title, dataList, queryType) => {
+    const renderMobileSection = (title, dataList, queryType, paddingTop) => {
         return (
             <>
-                <Box display="flex" justifyContent="center" style={{backgroundColor: "pink"}}>
-                    <Typography variant="h4" style={{fontWeight: "bold"}}>
+                <Grid container style={{backgroundColor: "pink", fontWeight: "bold",
+                    fontSize: "2.5rem", padding: "3rem 0"}}>
                         {title}
-                    </Typography>
-                </Box>
-                <Box display="flex" justifyContent="center" flexWrap="wrap" style={{padding: '50px 0 30px 0'}}>
+                </Grid>
+                <Box display="flex" justifyContent="center" flexWrap="wrap" style={{padding: `${paddingTop} 0`}}>
                     {renderImageList(dataList, queryType)}
                 </Box>
             </>
@@ -93,8 +90,10 @@ const TopCategoriesAndBrands = () => {
             </Hidden>
 
             <Hidden smUp>
-                {renderMobileSection("#Shop Top Brands", homeAPIData.data.brands, queryType.brand)}
-                {renderMobileSection("#Shop Top Categories", homeAPIData.data.apparels, queryType.apparel)}
+                {renderMobileSection("#Shop Top Brands", homeAPIData.data.brands, queryType.brand,
+                    '1rem')}
+                {renderMobileSection("#Shop Top Categories", homeAPIData.data.apparels, queryType.apparel,
+                    '3rem')}
             </Hidden>
         </div>
     )
