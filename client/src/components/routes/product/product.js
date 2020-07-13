@@ -27,7 +27,8 @@ export const stickyBoxStyle = {
     position: 'sticky',
     top: 80,
     backgroundColor: '#fafafa',
-    zIndex: 1040
+    zIndex: 1040,
+    paddingLeft: "1rem"
 }
 
 function Product() {
@@ -66,41 +67,32 @@ function Product() {
 
     log.info("[Product] Rendering Product Component.")
     return (
-        <>
-            <Hidden mdDown>
-                <Grid container>
-                    <Grid item md={2}>
-                        <FilterNavBar/>
-                    </Grid>
-
-                    <Grid item md={10}>
-                            <Box display="flex" pl={2} pt={2} style={{backgroundColor: '#fafafa'}}>
-                                <Box width="80%">
-                                    <BreadcrumbsSection linkList={breadcrumbLinks}/>
-                                </Box>
-                            </Box>
-                            <Box display="flex" p={1} style={stickyBoxStyle}>
-                                <Box width="80%" alignSelf="center">
-                                    <FilterChips/>
-                                </Box>
-                                <Box width="20%" alignSelf="center">
-                                    <FilterDropdown/>
-                                </Box>
-                            </Box>
-                        <Divider/>
-                        <FilterProductsDisplay/>
-                        <Divider/>
-                        <FilterPagination/>
-                    </Grid>
-                </Grid>
-            </Hidden>
-
-            <Hidden lgUp>
+        <Grid container>
+            <Grid item md={3} lg={2}>
                 <FilterNavBar/>
+            </Grid>
+
+            <Grid item md={9} lg={10}>
+                <Grid item style={{padding: "1rem", backgroundColor: '#fafafa'}}>
+                    <BreadcrumbsSection linkList={breadcrumbLinks}/>
+                </Grid>
+
+                <Hidden xsDown>
+                    <Grid item container alignItems="center" style={stickyBoxStyle}>
+                        <Grid item md={9}>
+                            <FilterChips/>
+                        </Grid>
+                        <Grid item container justify="flex-end" md={3} style={{padding: "0 1.8rem 0.5rem 0"}}>
+                            <FilterDropdown/>
+                        </Grid>
+                    </Grid>
+                </Hidden>
+                <Divider/>
                 <FilterProductsDisplay/>
-                {/*<BottomNavBar/>*/}
-            </Hidden>
-        </>
+                <Divider/>
+                <FilterPagination/>
+            </Grid>
+        </Grid>
     );
 }
 

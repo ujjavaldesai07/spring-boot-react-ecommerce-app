@@ -6,6 +6,7 @@ import log from 'loglevel';
 
 export default function BreadcrumbsSection(props) {
     const renderLinks = () => {
+        log.info(`[BreadcrumbsSection] props.linkList = ${props.linkList}`)
         return props.linkList.splice(0, props.linkList.length-1).map(({name, link}) => {
             if(link.length > 0) {
                 return (

@@ -42,40 +42,26 @@ const TopCategoriesAndBrands = () => {
 
             log.trace(`[TopCategoriesAndBrands]: filterQuery = ${filterQuery}, filterQueryType = ${filterQueryType}`)
             return (
-                <Box key={info.title} css={{maxHeight: 400, maxWidth: 200}}>
+                <Grid item xs={6} sm={2} key={info.title} style={{textAlign: "center"}}>
                     <Link to={`/products?q=${filterQuery}::page=0,${MAX_PRODUCTS_PER_PAGE}`}>
-                        <img src={info.filePath} alt={info.filePath} style={{width: '90%', height: '100%'}}
+                        <img src={info.filePath} alt={info.filePath} style={{width: '80%', height: '100%'}}
                              title={info.title}/>
                     </Link>
-                </Box>
+                </Grid>
             )
         });
     };
 
-    const renderDesktopSection = (title, dataList, queryType) => {
+    const renderCategoryAndBrandsList = (title, dataList, queryType) => {
         return (
             <>
-                <Grid container style={{backgroundColor: "pink", fontWeight: "bold",
-                    fontSize: "2rem", padding: "1rem 0"}}>
+                <Grid container style={{fontWeight: "bold",
+                    fontSize: "2rem", padding: "2rem 0 0 1rem", textDecoration: "underline"}}>
                     {title}
                 </Grid>
-                <Box display="flex" justifyContent="center" flexWrap="nowrap" style={{paddingTop: '2rem'}}>
+                <Grid container style={{padding: '2rem 0'}}>
                     {renderImageList(dataList, queryType)}
-                </Box>
-            </>
-        )
-    }
-
-    const renderMobileSection = (title, dataList, queryType, paddingTop) => {
-        return (
-            <>
-                <Grid container style={{backgroundColor: "pink", fontWeight: "bold",
-                    fontSize: "2.5rem", padding: "3rem 0"}}>
-                        {title}
                 </Grid>
-                <Box display="flex" justifyContent="center" flexWrap="wrap" style={{padding: `${paddingTop} 0`}}>
-                    {renderImageList(dataList, queryType)}
-                </Box>
             </>
         )
     }
@@ -83,19 +69,10 @@ const TopCategoriesAndBrands = () => {
     log.info("[TopCategoriesAndBrands]: Rendering TopCategoriesAndBrands Component")
 
     return (
-        <div>
-            <Hidden xsDown>
-                {renderDesktopSection("#Shop Top Brands", homeAPIData.data.brands, queryType.brand)}
-                {renderDesktopSection("#Shop Top Categories", homeAPIData.data.apparels, queryType.apparel)}
-            </Hidden>
-
-            <Hidden smUp>
-                {renderMobileSection("#Shop Top Brands", homeAPIData.data.brands, queryType.brand,
-                    '1rem')}
-                {renderMobileSection("#Shop Top Categories", homeAPIData.data.apparels, queryType.apparel,
-                    '3rem')}
-            </Hidden>
-        </div>
+        <>
+            {renderCategoryAndBrandsList("#Shop Top Brands", homeAPIData.data.brands, queryType.brand)}
+            {renderCategoryAndBrandsList("#Shop Top Categories", homeAPIData.data.apparels, queryType.apparel)}
+        </>
     )
 };
 export default TopCategoriesAndBrands;

@@ -232,7 +232,7 @@ function FilterNavBar(props) {
         setMobileOpen(!mobileOpen);
     };
 
-    const renderDrawerComponents = (title, component) => {
+    const renderDrawerComponents = (component) => {
         return (
             <>
                 <Box display="flex" flexDirection="column" px={1} pl={3}>
@@ -254,10 +254,10 @@ function FilterNavBar(props) {
             </Box>
             <Divider/>
 
-            {renderDrawerComponents(null, <GenderRadioButton/>)}
-            {renderDrawerComponents(null, <ApparelCheckBox/>)}
-            {renderDrawerComponents(null, <BrandCheckBox/>)}
-            {renderDrawerComponents(null, <PriceCheckBox/>)}
+            {renderDrawerComponents(<GenderRadioButton/>)}
+            {renderDrawerComponents(<ApparelCheckBox/>)}
+            {renderDrawerComponents(<BrandCheckBox/>)}
+            {renderDrawerComponents(<PriceCheckBox/>)}
         </>
     );
 
@@ -266,7 +266,7 @@ function FilterNavBar(props) {
     return (
         <div className={classes.root}>
             <nav className={classes.drawer}>
-                <Hidden mdDown implementation="css">
+                <Hidden smDown implementation="css">
                     <Drawer
                         classes={{
                             paper: classes.drawerPaper,

@@ -12,8 +12,7 @@ import {
     PRODUCT_BY_CATEGORY_DATA_API,
     SELECT_PRODUCT_DETAIL
 } from "../../../actions/types";
-import {Box} from "@material-ui/core";
-import Hidden from "@material-ui/core/Hidden";
+import {Box, Grid} from "@material-ui/core";
 import Spinner from "../../ui/spinner";
 import {BadRequest} from "../../ui/error/badRequest";
 import {HTTPError} from "../../ui/error/httpError";
@@ -28,7 +27,7 @@ const FilterProductDisplay = props => {
             log.info(`[FilterProductDisplay] Component did mount`)
 
             try {
-                if(filterQuery) {
+                if (filterQuery) {
                     props.getDataViaAPI(LOAD_FILTER_PRODUCTS, PRODUCT_BY_CATEGORY_DATA_API + filterQuery)
                 }
             } catch (e) {
@@ -84,39 +83,38 @@ const FilterProductDisplay = props => {
             })
         }
 
-        const renderImageList = (imageList, boxSize, imageSize, margin) => {
-            log.trace(`[FilterProductDisplay] Rendering renderImageList imageList = ${JSON.stringify(imageList)}`)
+        const renderProductList = (productList) => {
+            log.trace(`[FilterProductDisplay] Rendering renderImageList imageList = ${JSON.stringify(productList)}`)
 
-            return imageList.map((info) => {
+            return productList.map((info) => {
                 log.trace(`[FilterProductDisplay] Rendering imageList info = ${info}`)
                 return (
-                    <Box display="flex" flexDirection="column" key={info.id}
-                         css={{height: boxSize.height, width: boxSize.width, margin: margin}}>
-                        <Box>
+                    <Grid item container direction="column" spacing={1} xs={6} sm={4} md={4} lg={3} key={info.id}>
+                        <Grid item>
                             <Link to={`${DETAILS_ROUTE}${history.location.search}::product_id=${info.id}`}
                                   onClick={handleImageClick(info)}>
                                 <img src={info.imageName} alt={info.name}
-                                     style={{height: imageSize.height, width: imageSize.width}}
+                                     style={{height: "100%", width: "100%"}}
                                      title={info.name}/>
                             </Link>
-                        </Box>
-                        <Box pt={1} style={{fontSize: "16px", fontWeight: "bold"}}>
+                        </Grid>
+                        <Grid item>
                             <Link to={`${PRODUCTS_ROUTE}?q=brand=${info.productBrandCategory.id}`}>
-                                <div style={{color: 'black'}}>
+                                <div style={{color: 'black', fontSize: "16px", fontWeight: "bold"}}>
                                     {info.productBrandCategory.type}
                                 </div>
                             </Link>
-                        </Box>
-                        <Box pt={1} style={{fontSize: "14px", color: "grey"}}>
+                        </Grid>
+                        <Grid item style={{fontSize: "14px", color: "grey"}}>
                             {info.name}
-                        </Box>
-                        <Box pt={1} style={{fontSize: "16px", fontWeight: "bold"}}>
+                        </Grid>
+                        <Grid item style={{fontSize: "16px", fontWeight: "bold"}}>
                             {`$${info.price}`}
-                        </Box>
-                        <Box pt={1} style={{fontSize: "14px"}}>
+                        </Grid>
+                        <Grid item style={{fontSize: "14px"}}>
                             Free ship at $25
-                        </Box>
-                        <Box pt={1}>
+                        </Grid>
+                        <Grid item>
                             <Rating
                                 style={{zIndex: "1"}}
                                 name="customized-empty"
@@ -125,41 +123,17 @@ const FilterProductDisplay = props => {
                                 readOnly
                                 emptyIcon={<StarBorderIcon fontSize="inherit"/>}
                             />
-                        </Box>
-                    </Box>
+                        </Grid>
+                    </Grid>
                 )
             });
         };
 
         log.info(`[FilterProductDisplay] Rendering FilterProductDisplay Component`)
         return (
-            <>
-                {/*Desktop*/}
-                <Hidden only={['xs', 'sm', 'md']}>
-                    <Box display="flex" flexWrap="wrap" m={3}>
-                        {renderImageList(filterProducts, {height: 450, width: 210},
-                            {height: 280, width: 210}, 10)}
-                    </Box>
-                </Hidden>
-
-
-                {/*Ipad*/}
-                <Hidden only={['xs', 'sm', 'lg', 'xl']}>
-                    <Box display="flex" flexWrap="wrap" justifyContent="center" pb={15}>
-                        {renderImageList(filterProducts, {height: 700, width: 450},
-                            {height: 500, width: 450}, 20)}
-                    </Box>
-                </Hidden>
-
-                {/*Mobile*/}
-                <Hidden only={['md', 'lg', 'xl']}>
-                    <Box display="flex" flexWrap="wrap" justifyContent="center">
-                        {renderImageList(filterProducts, {height: 600, width: 300},
-                            {height: 400, width: 300}, 1)}
-                    </Box>
-                </Hidden>
-
-            </>
+            <Grid item container spacing={2} xs={12} md={12} style={{margin: "1rem 0 1rem 1rem"}}>
+                {renderProductList(filterProducts)}
+            </Grid>
         )
     }
 ;

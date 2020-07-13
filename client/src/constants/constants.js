@@ -1,5 +1,5 @@
 
-export const MAX_PRODUCTS_PER_PAGE = 15;
+export const MAX_PRODUCTS_PER_PAGE = 16;
 
 export const TAB_CONFIG = [
     {index: 0, label: 'MEN', color: '#ee5f73', mapKey: "men"},

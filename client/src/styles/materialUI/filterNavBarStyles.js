@@ -24,7 +24,8 @@ export const useFilterNavBarStyles = makeStyles((theme) => ({
         top: 80,
         width: drawerWidth,
         position: "fixed",
-        maxHeight: '87vh'
+        height: "calc(100% - 80px)",
+        overflow: 'auto'
     },
     content: {
         flexGrow: 1,
