@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {NavbarHeader} from "../../../ui/headers";
+import {NavBarHeader} from "../../../ui/headers";
 import CollapsableSearch from "../../../ui/collapsableSearch";
 import CheckboxList from "../../../ui/checkboxList";
 import log from 'loglevel';
@@ -67,7 +67,7 @@ export default function BrandCheckBox() {
         <>
             <Box display="flex" alignItems="center" pt={2}>
                 <Box width="50%">
-                    <NavbarHeader title={TITLE}/>
+                    <NavBarHeader title={TITLE}/>
                 </Box>
                 <Box width="50%">
                     <CollapsableSearch

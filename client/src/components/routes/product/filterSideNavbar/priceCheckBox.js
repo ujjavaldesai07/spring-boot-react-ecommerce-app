@@ -3,7 +3,7 @@ import CheckboxList from "../../../ui/checkboxList";
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
 import {ADD_SELECTED_CATEGORY} from "../../../../actions/types";
-import {NavbarHeader} from "../../../ui/headers";
+import {NavBarHeader} from "../../../ui/headers";
 import {Box} from "@material-ui/core";
 
 export default function PriceCheckBox() {
@@ -36,7 +36,7 @@ export default function PriceCheckBox() {
     return (
         <Box pb={2}>
             <Box pt={2.5} pb={1}>
-                <NavbarHeader title="Price"/>
+                <NavBarHeader title="Price"/>
             </Box>
             <CheckboxList attrList={priceRangeList}
                           fontSize="0.9rem"

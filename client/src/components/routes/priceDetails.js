@@ -11,7 +11,7 @@ const paymentStyles = {
         fontColor: "#535766",
         fontWeight: "bolder",
         fontSize: "1.2rem",
-        paddingTop: 20,
+        padding: "20px 0",
     },
     fontColor: "#282c3f",
     fontWeight: 400,
@@ -32,11 +32,14 @@ function PriceDetails(props) {
 
     const renderGridData = (label, value, styles) => {
         return (
-            <Grid container sm={10} style={styles}>
-                <Grid container sm={10}>
+            <Grid container xs={10} sm={11} style={styles}>
+
+                <Grid item xs={6} sm={6}>
                     {label}
                 </Grid>
-                <Grid container sm={2} justify="flex-end">
+
+                <Grid item container xs={6} justify="flex-end"
+                      style={{fontWeight: "bolder", fontSize: "1.2rem"}}>
                     {value}
                 </Grid>
             </Grid>
@@ -47,8 +50,10 @@ function PriceDetails(props) {
 
     return (
         <Grid container justify="center">
-            <Grid item sm={10} style={paymentStyles.header}>
-                PRICE DETAILS
+
+            <Grid item xs={10} sm={11}
+                  style={{fontSize: "1.5rem", fontWeight: "bolder", padding: "25px 0 15px 0"}}>
+                Price Details
             </Grid>
 
             {renderGridData("Bag Total", `$${cartTotal}`, {...paymentStyles, paddingTop: 10})}
@@ -59,16 +64,17 @@ function PriceDetails(props) {
             </Grid>
 
             {renderGridData("Order Total", `$${cartTotal}`,
-                {...paymentStyles.header, paddingTop: 17})}
+                {...paymentStyles.header})}
 
-            <Grid container sm={9} justify="center"
+            <Grid container xs={12} sm={9} justify="center"
                   style={{...paymentStyles.header, padding: "30px 0 30px 0"}}
             >
                 <Button variant="contained" size="medium"
                         onClick={props.onBtnClickHandler}
                         style={{
-                            width: '100%', height: 40, color: 'white',
-                            fontWeight: "bold", backgroundColor: "#AB0000"
+                            width: '87%', height: 50, color: 'white',
+                            fontWeight: "bold", backgroundColor: "#e01a2b",
+                            fontSize: "1rem"
                         }}>
                     {props.buttonName}
                 </Button>

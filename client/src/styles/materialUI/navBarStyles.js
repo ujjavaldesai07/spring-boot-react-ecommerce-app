@@ -16,15 +16,9 @@ const useNavBarStyles = makeStyles(theme => ({
     appBarRoot: {
         boxShadow: "none !important",
         height: 80,
-        [theme.breakpoints.down("xs")]: {
-            height: 60,
-        }
     },
     toolBarRoot: {
         minHeight: 80,
-        [theme.breakpoints.down("xs")]: {
-            minHeight: 60,
-        }
     },
     title: {
         flexGrow: 1,

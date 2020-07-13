@@ -3,7 +3,7 @@ import CheckboxList from "../../../ui/checkboxList";
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
 import { ADD_SELECTED_CATEGORY} from "../../../../actions/types";
-import {NavbarHeader} from "../../../ui/headers";
+import {NavBarHeader} from "../../../ui/headers";
 import {Box} from "@material-ui/core";
 import CollapsableSearch from "../../../ui/collapsableSearch";
 import Button from '@material-ui/core/Button';
@@ -80,7 +80,7 @@ export default function ApparelCheckBox() {
             <>
                 <Box display="flex" alignItems="center" pt={2}>
                     <Box width="50%">
-                        <NavbarHeader title={TITLE}/>
+                        <NavBarHeader title={TITLE}/>
                     </Box>
                     <Box width="50%">
                         <CollapsableSearch

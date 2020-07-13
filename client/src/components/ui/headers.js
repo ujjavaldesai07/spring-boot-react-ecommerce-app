@@ -1,6 +1,7 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
+import {Grid} from "@material-ui/core";
 
 const useStyles = makeStyles((theme, props) => ({
     root: {
@@ -28,7 +29,7 @@ export const TitleHeader = (props) => {
     );
 }
 
-export const NavbarHeader = (props) => {
+export const NavBarHeader = (props) => {
     return (
         <p style={{fontSize: '1rem', fontWeight: 600}}>{props.title.toUpperCase()}</p>
     )

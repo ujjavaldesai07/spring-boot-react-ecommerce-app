@@ -4,7 +4,7 @@ import RadioButtonsGroup from "../../../ui/radioButtonGroup";
 import {useDispatch, useSelector} from "react-redux";
 import {ADD_SELECTED_CATEGORY} from "../../../../actions/types";
 import {Box} from "@material-ui/core";
-import {NavbarHeader} from "../../../ui/headers";
+import {NavBarHeader} from "../../../ui/headers";
 
 export default function GenderRadioButton() {
     const dispatch = useDispatch()
@@ -42,7 +42,7 @@ export default function GenderRadioButton() {
     return (
         <Box pb={1}>
             <Box pt={2.5} pb={1}>
-                <NavbarHeader title="Gender"/>
+                <NavBarHeader title="Gender"/>
             </Box>
             <RadioButtonsGroup onChangeHandler={handleRadioButtonChange}
                                attrList={genderList.filter(obj => obj.id < 5)}
