@@ -95,7 +95,7 @@ export const TabPanelList = () => {
         return null;
     }
 
-    const renderTabPanels = (selectedIndex) => {
+    const renderTabPanels = () => {
         return TAB_CONFIG.map((conf) => {
             return <TabPanel key={conf.index} value={index} index={conf.index}/>
         })

@@ -151,9 +151,9 @@ function ProductDetails(props) {
                 <BreadcrumbsSection linkList={breadcrumbLinks}/>
             </Box>
 
-            <Grid container style={{height: 500}}>
+            <Grid container>
 
-                <Grid item container justify="center" sm={6} md={5}>
+                <Grid item container justify="center" sm={6} md={5} lg={4}>
                     <img src={selectedProduct.imageName} alt={selectedProduct.name}
                          style={{height: "100%", width: "90%", paddingBottom: "2rem"}}
                          title={selectedProduct.name}/>

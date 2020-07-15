@@ -131,7 +131,7 @@ const FilterProductDisplay = props => {
 
         log.info(`[FilterProductDisplay] Rendering FilterProductDisplay Component`)
         return (
-            <Grid item container spacing={2} xs={12} md={12} style={{margin: "1rem 0 1rem 1rem"}}>
+            <Grid item container spacing={2} xs={12} md={12} style={{padding: "1rem 0 1rem 1rem", margin: 0}}>
                 {renderProductList(filterProducts)}
             </Grid>
         )

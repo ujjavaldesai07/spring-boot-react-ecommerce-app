@@ -36,10 +36,16 @@ const useNavBarStyles = makeStyles(theme => ({
             paddingBottom: 0,
         },
     },
-    autoCompleteRoot: {
-        width: "500px",
-        [theme.breakpoints.down("sm")]: {
-            width: "350px",
+    autoCompleteSearchBarRoot: {
+        [theme.breakpoints.down("xs")]: {
+            height: 80,
+            paddingTop: "0.5rem",
+            left: 0,
+            backgroundColor: "#fff",
+            overflow: 'visible',
+            position: 'absolute',
+            alignSelf: 'center',
+            zIndex: '1001',
         },
     },
     searchContainer: {

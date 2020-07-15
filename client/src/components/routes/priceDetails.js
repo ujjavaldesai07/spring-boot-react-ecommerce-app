@@ -32,7 +32,7 @@ function PriceDetails(props) {
 
     const renderGridData = (label, value, styles) => {
         return (
-            <Grid container xs={10} sm={11} style={styles}>
+            <Grid item container xs={10} sm={11} style={styles}>
 
                 <Grid item xs={6} sm={6}>
                     {label}
@@ -59,14 +59,14 @@ function PriceDetails(props) {
             {renderGridData("Bag Total", `$${cartTotal}`, {...paymentStyles, paddingTop: 10})}
             {renderGridData("Shipping", "FREE", {...paymentStyles, paddingTop: 10})}
 
-            <Grid container sm={10} style={{paddingTop: 17}}>
+            <Grid item container sm={10} style={{paddingTop: 17}}>
                 <Divider style={{width: "100%", height: 1}}/>
             </Grid>
 
             {renderGridData("Order Total", `$${cartTotal}`,
                 {...paymentStyles.header})}
 
-            <Grid container xs={12} sm={9} justify="center"
+            <Grid item container xs={12} sm={9} justify="center"
                   style={{...paymentStyles.header, padding: "30px 0 30px 0"}}
             >
                 <Button variant="contained" size="medium"

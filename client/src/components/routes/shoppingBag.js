@@ -242,7 +242,7 @@ function ShoppingBag(props) {
     }
 
     const renderShoppingBagProducts = () => {
-        log.info(`[ShoppingBag] ShoppingBag = ${JSON.stringify(shoppingBagProducts)}`)
+        log.trace(`[ShoppingBag] ShoppingBag = ${JSON.stringify(shoppingBagProducts)}`)
 
         let shoppingBagProductsList = []
 
@@ -256,13 +256,13 @@ function ShoppingBag(props) {
 
                     <Grid item container xs={7} sm={9}>
                         <Grid item container direction="column" sm={6} spacing={1}>
-                            <Grid item container style={{fontSize: "1rem", fontWeight: 600, paddingTop: "1rem"}}>
+                            <Grid item container style={{fontSize: "1.1rem", fontWeight: 600, paddingTop: "1rem"}}>
                                 <Grid item xs={7}>
                                     {product.productBrandCategory.type}
                                 </Grid>
                             </Grid>
 
-                            <Grid item style={{fontSize: "1rem", fontWeight: 300}}>
+                            <Grid item style={{fontSize: "1.1rem", fontWeight: 300}}>
                                 {product.name}
                             </Grid>
 
@@ -284,7 +284,8 @@ function ShoppingBag(props) {
                             </Grid>
                         </Grid>
 
-                        <Grid item container justify="flex-end" sm={6} style={{paddingRight: "1rem"}}>
+                        <Grid item container justify="flex-end" sm={6} style={{padding: "1rem 1rem 0 0",
+                            fontWeight: "bold", fontSize: "1.1rem"}}>
                             {`Qty: ${addToCart.productQty[product.id]} x $${product.price} = `
                             + `$${addToCart.productQty[product.id] * product.price}`}
                         </Grid>
@@ -329,8 +330,7 @@ function ShoppingBag(props) {
 
                     <Divider/>
 
-                    <Grid item container justify="center"
-                          style={{fontSize: '1.2rem', fontWeight: 600, padding: "1rem 0.5rem"}}>
+                    <Grid item container justify="center" style={{fontSize: '1.2rem', fontWeight: 600, padding: "1rem 0.5rem"}}>
                         <Grid item xs={8}>
                             {`My Shopping Bag (${addToCart.totalQuantity} Items)`}
                         </Grid>
@@ -349,7 +349,7 @@ function ShoppingBag(props) {
                     </Grid>
                 </Hidden>
 
-                <Grid sm={8} md={4}>
+                <Grid item sm={8} md={4}>
                     <Box pt={2}>
                         <PriceDetails buttonName="Proceed To Checkout" onBtnClickHandler={continueBtnClickHandler}/>
                     </Box>

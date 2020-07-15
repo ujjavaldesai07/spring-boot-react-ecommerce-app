@@ -1,67 +1,17 @@
-// import React, {useState} from 'react';
-// import log from "loglevel";
-// import {Box, IconButton, InputBase} from "@material-ui/core";
-// import SearchIcon from "@material-ui/icons/Search";
-// import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
-// import useNavBarStyles from "../../../styles/materialUI/navBarStyles";
-// import Paper from "@material-ui/core/Paper";
-//
-// export default function SearchBar() {
-//     const classes = useNavBarStyles();
-//     const [barActive, setBarActive] = useState(false)
-//
-//     const searchBarChange = () => {
-//         setBarActive(true)
-//     }
-//
-//     const renderSuggestions = () => {
-//         return (
-//             <Paper elevation={0} square>
-//                 <Box p={1}>
-//                     Ujjaval
-//                 </Box>
-//             </Paper>
-//         )
-//     }
-//
-//     log.info(`[BagButton]: Rendering BagButton Component`)
-//     return (
-//         <>
-//             <Box className={classes.searchContainer}>
-//                 <div className={classes.search}>
-//                     <div className={classes.searchIcon}>
-//                         <SearchIcon fontSize="large"/>
-//                     </div>
-//                     <InputBase
-//                         onChange={searchBarChange}
-//                         placeholder="Search for products, brands and more"
-//                         classes={{
-//                             root: classes.inputRoot,
-//                             input: classes.inputInput
-//                         }}
-//                         inputProps={{"aria-label": "search"}}/>
-//                 </div>
-//                 <div className={classes.arrowIcon}>
-//                     <IconButton size="medium">
-//                         <ArrowForwardIcon fontSize="large"/>
-//                     </IconButton>
-//                 </div>
-//             </Box>
-//             {/*{barActive? renderSuggestions():null}*/}
-//             {renderSuggestions()}
-//         </>
-//     );
-// };
-
-/* eslint-disable no-use-before-define */
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import useNavBarStyles from "../../../styles/materialUI/navBarStyles";
+import CloseIcon from '@material-ui/icons/Close';
 
-export default function SearchBar() {
+export default function SearchBar(props) {
     const [value, setValue] = React.useState(null);
     const classes = useNavBarStyles();
+
+    const handleClose = () => {
+        props.handleClose();
+    }
+
     return (
             <Autocomplete
                 value={value}
@@ -83,6 +33,7 @@ export default function SearchBar() {
                 selectOnFocus
                 clearOnBlur
                 handleHomeEndKeys
+                closeIcon={<CloseIcon/>}
                 id="free-solo-with-text-demo"
                 options={top100Films}
                 getOptionLabel={(option) => {
@@ -99,8 +50,10 @@ export default function SearchBar() {
                 }}
                 renderOption={(option) => option.title}
                 freeSolo
-                size="small"
-                classes={{root: classes.autoCompleteRoot}}
+                fullWidth
+                onClose={handleClose}
+                size={props.size}
+                classes={{root: classes.autoCompleteSearchBarRoot}}
                 renderInput={(params) => (
                     <TextField {...params} label="Search for products, brands and more" variant="outlined"/>
                 )}

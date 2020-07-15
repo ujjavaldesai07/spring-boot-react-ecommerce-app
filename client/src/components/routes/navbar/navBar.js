@@ -4,7 +4,7 @@ import LocalMallIcon from '@material-ui/icons/LocalMall';
 import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
+import {Menu, Grid} from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import Cookies from 'js-cookie';
@@ -34,12 +34,15 @@ import Spinner from "../../ui/spinner";
 import {HTTPError} from "../../ui/error/httpError";
 import {BadRequest} from "../../ui/error/badRequest";
 import SearchBar from "./searchBar";
+import SideBar from "./sideBar";
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 
 const NavBar = props => {
     const classes = useNavBarStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileSearchState, setMobileSearchState] = React.useState(false);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+    const [hamburgerBtnState, setHamburgerBtnState] = React.useState(false);
     const {isSignedIn, tokenId} = useSelector(state => state.authApiReducer)
     const tabsAPIData = useSelector(state => state.tabsDataReducer)
 
@@ -50,10 +53,10 @@ const NavBar = props => {
     const setAddToCartValuesFromCookie = () => {
         let savedProductsFromCookie = Cookies.get(SHOPPERS_PRODUCT_ID)
         let totalQuantity = 0
-        if(savedProductsFromCookie) {
+        if (savedProductsFromCookie) {
             savedProductsFromCookie = JSON.parse(savedProductsFromCookie)
 
-            for(const [, qty] of Object.entries(savedProductsFromCookie.productQty)) {
+            for (const [, qty] of Object.entries(savedProductsFromCookie.productQty)) {
                 totalQuantity += parseInt(qty)
             }
             savedProductsFromCookie.totalQuantity = totalQuantity
@@ -180,116 +183,129 @@ const NavBar = props => {
         </Menu>
     );
 
-    const handleMobileSearch = () => {
+    const handleMobileSearchOpen = () => {
         log.info("Mobile Search is clicked....")
         setMobileSearchState(true)
     }
 
+    const handleMobileSearchClose = () => {
+        log.info("Mobile Search is clicked....")
+        setMobileSearchState(false)
+    }
+
     const renderMobileSearchInputField = () => {
-        if (!mobileSearchState) {
+        if (mobileSearchState === false) {
             return null
         }
         return (
-            <InputBase
-                placeholder="Search for products, brands and more"
-                classes={{
-                    root: classes.inputRoot,
-                    input: classes.inputInput
-                }}
-                inputProps={{"aria-label": "search"}}/>
+            <SearchBar size="medium" handleClose={handleMobileSearchClose}/>
         )
+    }
+
+    const handleHamburgerBtnClick = () => {
+        log.info(`[NavBar] opening sidebar`)
+        setHamburgerBtnState(true)
+    }
+
+    const sidebarCloseHandler = () => {
+        log.info(`[NavBar] clickAwayListener is triggered`)
+        setHamburgerBtnState(false)
     }
 
     log.info(`[NavBar]: Rendering NavBar Component`)
     return (
-        <div style={{paddingBottom: 80}}>
-            <AppBar color="default" className={classes.appBarRoot}>
-                <Toolbar classes={{root: classes.toolBarRoot}}>
-                    <Hidden lgUp>
-                        <IconButton
-                            edge="start"
-                            className={classes.menuButton}
-                            color="inherit"
-                            aria-label="open drawer"
-                        >
-                            <MenuIcon fontSize="large"/>
-                        </IconButton>
-                    </Hidden>
+        <>
+            <SideBar open={hamburgerBtnState} closeHandler={sidebarCloseHandler}/>
 
-                    <Link to="/">
-                        <Typography className={classes.title}>
-                            Shoppers
-                        </Typography>
-                    </Link>
+            <div style={{paddingBottom: 80}}>
+                <AppBar color="default" className={classes.appBarRoot}>
+                    <Toolbar classes={{root: classes.toolBarRoot}}>
+                        <Hidden lgUp>
+                            <IconButton
+                                edge="start"
+                                className={classes.menuButton}
+                                color="inherit"
+                                aria-label="open drawer"
+                                onClick={handleHamburgerBtnClick}
+                            >
+                                <MenuIcon fontSize="large"/>
+                            </IconButton>
+                        </Hidden>
 
-                    <div className={classes.growQuarter}/>
+                        <Link to="/">
+                            <Typography className={classes.title}>
+                                Shoppers
+                            </Typography>
+                        </Link>
 
-                    <Hidden mdDown>
-                        <TabList/>
-                    </Hidden>
+                        <div className={classes.growQuarter}/>
 
-                    <div className={classes.grow_1}/>
+                        <Hidden mdDown>
+                            <TabList/>
+                        </Hidden>
 
-                    <Hidden xsDown>
-                        <SearchBar/>
-                    </Hidden>
+                        <div className={classes.grow_1}/>
 
-                    <Hidden smUp>
-                        <div className={classes.mobileSearchContainer}>
-                            <div className={classes.mobileSearchButton}>
-                                <IconButton size="medium"
-                                            onClick={handleMobileSearch}
+                        <Hidden xsDown>
+                            <Grid item container sm={6} lg={4}>
+                                <SearchBar size="small"/>
+                            </Grid>
+                        </Hidden>
+
+                        <Hidden smUp>
+                            <Grid item container justify="flex-end" xs={5}>
+                                <IconButton onClick={handleMobileSearchOpen}
                                             edge="end">
                                     <SearchIcon fontSize="large"/>
                                 </IconButton>
-                            </div>
+                            </Grid>
                             {renderMobileSearchInputField()}
-                        </div>
-                    </Hidden>
+                        </Hidden>
 
-                    <div className={classes.grow_1}/>
+                        <div className={classes.grow_1}/>
 
-                    <Hidden xsDown>
-                        <Box display="flex" justifyContent="center" alignItems="center" css={{width: 90}}>
-                            <Box width="50%" onClick={handleProfileMenuOpen} css={{cursor: 'pointer'}}>
-                                <Box pl={1}>
-                                    <AccountCircle/>
-                                </Box>
-                                <Box style={{color: "black", fontSize: "0.8rem", fontWeight: 'bold'}}>
-                                    Profile
-                                </Box>
-                            </Box>
-                            <Box width="50%" p={1}>
-                                <Link to="/shopping-bag">
-                                    <Box pb={0.5}>
-                                        <BagButton/>
+                        <Hidden xsDown>
+                            <Box display="flex" justifyContent="center" alignItems="center" css={{width: 90}}>
+                                <Box width="50%" onClick={handleProfileMenuOpen} css={{cursor: 'pointer'}}>
+                                    <Box pl={1}>
+                                        <AccountCircle/>
                                     </Box>
                                     <Box style={{color: "black", fontSize: "0.8rem", fontWeight: 'bold'}}>
-                                        Bag
+                                        Profile
                                     </Box>
-                                </Link>
+                                </Box>
+                                <Box width="50%" p={1}>
+                                    <Link to="/shopping-bag">
+                                        <Box pb={0.5}>
+                                            <BagButton/>
+                                        </Box>
+                                        <Box style={{color: "black", fontSize: "0.8rem", fontWeight: 'bold'}}>
+                                            Bag
+                                        </Box>
+                                    </Link>
+                                </Box>
                             </Box>
-                        </Box>
-                    </Hidden>
+                        </Hidden>
 
 
-                    <div className={classes.sectionMobile}>
-                        <IconButton
-                            aria-label="show more"
-                            aria-controls={mobileMenuId}
-                            aria-haspopup="true"
-                            onClick={handleMobileMenuOpen}
-                            color="inherit"
-                            edge="end"
-                        >
-                            <MoreIcon fontSize="large"/>
-                        </IconButton>
-                    </div>
-                </Toolbar>
-            </AppBar>
-            {renderMobileMenu}
-            {renderMenu}
-        </div>
+                        <div className={classes.sectionMobile}>
+                            <IconButton
+                                aria-label="show more"
+                                aria-controls={mobileMenuId}
+                                aria-haspopup="true"
+                                onClick={handleMobileMenuOpen}
+                                color="inherit"
+                                edge="end"
+                            >
+                                <MoreIcon fontSize="large"/>
+                            </IconButton>
+                        </div>
+                    </Toolbar>
+                </AppBar>
+                {renderMobileMenu}
+                {renderMenu}
+            </div>
+        </>
     );
 };
 

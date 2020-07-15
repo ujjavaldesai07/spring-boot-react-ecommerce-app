@@ -79,10 +79,10 @@ function Product() {
 
                 <Hidden xsDown>
                     <Grid item container alignItems="center" style={stickyBoxStyle}>
-                        <Grid item md={9}>
+                        <Grid item sm={8}>
                             <FilterChips/>
                         </Grid>
-                        <Grid item container justify="flex-end" md={3} style={{padding: "0 1.8rem 0.5rem 0"}}>
+                        <Grid item container justify="flex-end" sm={4} style={{padding: "0 2.5rem 0.5rem 0"}}>
                             <FilterDropdown/>
                         </Grid>
                     </Grid>
