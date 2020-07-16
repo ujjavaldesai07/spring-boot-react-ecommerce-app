@@ -16,6 +16,7 @@ import {Box, Grid} from "@material-ui/core";
 import Spinner from "../../ui/spinner";
 import {BadRequest} from "../../ui/error/badRequest";
 import {HTTPError} from "../../ui/error/httpError";
+import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
 
 const FilterProductDisplay = props => {
         const filterProductsReducer = useSelector(state => state.filterProductsReducer)
@@ -56,7 +57,7 @@ const FilterProductDisplay = props => {
 
                     return (
                         <Box display="flex" justifyContent="center" css={{width: '100%', height: '100%'}}>
-                            <BadRequest/>
+                            <SearchMatchesNotFound/>
                         </Box>
                     )
                 }

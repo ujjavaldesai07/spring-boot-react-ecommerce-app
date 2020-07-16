@@ -43,15 +43,22 @@ const addPayloadToNewState = (prevState, payload) => {
         if (payload[attribute]) {
             log.info(`[SelectedFilterAttributesReducer] payload[attribute] = ${JSON.stringify(payload[attribute])}`)
             if (payload[attribute].id) {
-                let filterList = removeValueIfExist(prevState[attribute], payload[attribute].id)
-                if (filterList) {
-                    // for single object removal from list
-                    log.info(`[SelectedFilterAttributesReducer] prevState = ${JSON.stringify(prevState)},` +
-                     `filterList = ${JSON.stringify(filterList)}`)
-                    prevState =  {...prevState, [attribute]: filterList}
+                if (payload[attribute].hasOwnProperty("append") && payload[attribute].append === false) {
+                    // swap the object property
+                    prevState = {...prevState, [attribute]: [payload[attribute]]}
                 } else {
-                    // for single object addition in list
-                    prevState = {...prevState, [attribute]: [...prevState[attribute], payload[attribute]]}
+                    let filterList = removeValueIfExist(prevState[attribute], payload[attribute].id)
+                    if (filterList) {
+
+                        // for single object removal from list
+                        log.info(`[SelectedFilterAttributesReducer] prevState = ${JSON.stringify(prevState)},` +
+                            `filterList = ${JSON.stringify(filterList)}`)
+                        prevState = {...prevState, [attribute]: filterList}
+                    } else {
+
+                        // for single object addition in list
+                        prevState = {...prevState, [attribute]: [...prevState[attribute], payload[attribute]]}
+                    }
                 }
             } else if (payload[attribute].attrList) {
                 log.info(`[SelectedFilterAttributesReducer] attrList = ${JSON.stringify(payload[attribute])}`)

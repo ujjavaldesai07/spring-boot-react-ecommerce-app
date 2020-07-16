@@ -21,7 +21,7 @@ const FilterChips = () => {
         return null
     }
 
-    const addBoxTagToList = (selectedAttrList, categoryId) => {
+    const addChips = (selectedAttrList, categoryId) => {
         let chipBoxList = []
         log.debug(`[FilterChips] addBoxTagToList boxDataList = ${JSON.stringify(selectedAttrList)}`)
 
@@ -44,16 +44,16 @@ const FilterChips = () => {
 
         let chipBoxList = []
         if (selectedGenders.length > 0) {
-            chipBoxList = chipBoxList.concat(addBoxTagToList(selectedGenders, "ge"))
+            chipBoxList = chipBoxList.concat(addChips(selectedGenders, "ge"))
         }
         if (selectedApparels.length > 0) {
-            chipBoxList = chipBoxList.concat(addBoxTagToList(selectedApparels, "ap"))
+            chipBoxList = chipBoxList.concat(addChips(selectedApparels, "ap"))
         }
         if (selectedBrands.length > 0) {
-            chipBoxList = chipBoxList.concat(addBoxTagToList(selectedBrands, "br"))
+            chipBoxList = chipBoxList.concat(addChips(selectedBrands, "br"))
         }
         if (selectedPriceRanges.length > 0) {
-            chipBoxList = chipBoxList.concat(addBoxTagToList(selectedPriceRanges, "pr"))
+            chipBoxList = chipBoxList.concat(addChips(selectedPriceRanges, "pr"))
         }
 
         if (chipBoxList) {

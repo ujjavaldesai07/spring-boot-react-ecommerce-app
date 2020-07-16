@@ -16,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ProductInfoRepositoryImpl {
 
@@ -72,40 +73,72 @@ public class ProductInfoRepositoryImpl {
         return query.getResultList();
     }
 
-    public FilterAttributesResponse getFilterAttributesByProducts(HashMap<String, String> conditionMap) {
-        ParamsToQueryContext paramsToQueryContext = new ProductQueryHelper().getParamsToQueryMap(conditionMap);
+    private ParamsToQueryContext filterAndGetConditionMap(ProductQueryHelper productQueryHelper,
+                                                          HashMap<String, String> conditionMap,
+                                                          String queryParam) {
+        Map<String, String> filterConditionMap = null;
 
-        HashMap<Integer, Object> mapParams = paramsToQueryContext.getMapParams();
-        List<String> conditions = paramsToQueryContext.getConditions();
+        if (conditionMap.containsKey(queryParam)) {
+            filterConditionMap = conditionMap.entrySet()
+                    .stream()
+                    .filter(map -> !map.getKey().equals(queryParam))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+            if (!filterConditionMap.containsKey("brands") && !filterConditionMap.containsKey("genders")
+                    && !filterConditionMap.containsKey("apparels") && !filterConditionMap.containsKey("prices")) {
+                filterConditionMap.put("category", "all");
+            }
+        }
+
+        ParamsToQueryContext paramsToQueryContext;
+        if (filterConditionMap != null) {
+            paramsToQueryContext =
+                    productQueryHelper.getParamsToQueryMap((HashMap<String, String>) filterConditionMap);
+        } else {
+            paramsToQueryContext = productQueryHelper.getParamsToQueryMap(conditionMap);
+        }
+
+        return paramsToQueryContext;
+    }
+
+    public FilterAttributesResponse getFilterAttributesByProducts(HashMap<String, String> conditionMap) {
+        ProductQueryHelper productQueryHelper = new ProductQueryHelper();
         ListResultTransformer listResultTransformer = new ListResultTransformer();
+
+        ParamsToQueryContext paramsToQueryContext = filterAndGetConditionMap(productQueryHelper,
+                conditionMap, "brands");
 
         List<FilterAttributesWithTotalItemsDTO>
                 brandList = listResultTransformer.getFilterAttributesWithTotalItemsResultTransformer(
                 "SELECT p.productBrandCategory.id, p.productBrandCategory.type, count(*) as totalItems " +
-                        "from ProductInfo p where " + String.join(" AND ", conditions) +
+                        "from ProductInfo p where " +
+                        String.join(" AND ", paramsToQueryContext.getConditions()) +
                         "group by p.productBrandCategory.id, p.productBrandCategory.type order by totalItems desc",
-                mapParams, entityManager);
+                paramsToQueryContext.getMapParams(), entityManager);
 
+        paramsToQueryContext = filterAndGetConditionMap(productQueryHelper, conditionMap, "genders");
         List<FilterAttributesWithTotalItemsDTO>
                 genderList = listResultTransformer.getFilterAttributesWithTotalItemsResultTransformer(
                 "SELECT p.genderCategory.id, p.genderCategory.type, count(*) as totalItems " +
-                        "from ProductInfo p where " + String.join(" AND ", conditions) +
+                        "from ProductInfo p where " + String.join(" AND ", paramsToQueryContext.getConditions()) +
                         "group by p.genderCategory.id, p.genderCategory.type order by totalItems desc",
-                mapParams, entityManager);
+                paramsToQueryContext.getMapParams(), entityManager);
 
+        paramsToQueryContext = filterAndGetConditionMap(productQueryHelper, conditionMap, "apparels");
         List<FilterAttributesWithTotalItemsDTO>
                 apparelList = listResultTransformer.getFilterAttributesWithTotalItemsResultTransformer(
                 "SELECT p.apparelCategory.id, p.apparelCategory.type, count(*) as totalItems " +
-                        "from ProductInfo p where " + String.join(" AND ", conditions) +
+                        "from ProductInfo p where " + String.join(" AND ", paramsToQueryContext.getConditions()) +
                         "group by p.apparelCategory.id, p.apparelCategory.type order by totalItems desc",
-                mapParams, entityManager);
+                paramsToQueryContext.getMapParams(), entityManager);
 
+        paramsToQueryContext = filterAndGetConditionMap(productQueryHelper, conditionMap, "prices");
         List<FilterAttributesWithTotalItemsDTO>
                 priceList = listResultTransformer.getFilterAttributesWithTotalItemsResultTransformer(
                 "SELECT p.priceRangeCategory.id, p.priceRangeCategory.type, count(*) as totalItems " +
-                        "from ProductInfo p where " + String.join(" AND ", conditions) +
+                        "from ProductInfo p where " + String.join(" AND ", paramsToQueryContext.getConditions()) +
                         "group by p.priceRangeCategory.id, p.priceRangeCategory.type order by p.priceRangeCategory.id",
-                mapParams, entityManager);
+                paramsToQueryContext.getMapParams(), entityManager);
 
         FilterAttributesResponse filterAttributesResponse = new FilterAttributesResponse();
         filterAttributesResponse.setBrands(brandList);

@@ -75,29 +75,8 @@ public class ProductQueryHelper {
                     break;
 
                 case prices:
-                    String[] prices = entry.getValue().split(",");
-                    for (String price : prices) {
-                        switch (Integer.parseInt(price)) {
-                            case 1:
-                                conditions.add(" (p.price <= 50)");
-                                break;
-                            case 2:
-                                conditions.add(" (p.price between 50 AND 100)");
-                                break;
-                            case 3:
-                                conditions.add(" (p.price between 100 AND 200)");
-                                break;
-                            case 4:
-                                conditions.add(" (p.price between 200 AND 300)");
-                                break;
-                            case 5:
-                                conditions.add(" (p.price between 300 AND 400)");
-                                break;
-                            case 6:
-                                conditions.add(" (p.price >= 400)");
-                                break;
-                        }
-                    }
+                    prepareConditionListById(mapParams, entry.getValue(), mapParametersKey,
+                            conditions, "p.priceRangeCategory.id");
                     break;
 
                 case category:
@@ -127,7 +106,6 @@ public class ProductQueryHelper {
 
                 case page:
                     pageInfo = entry.getValue().split(",");
-                    System.out.println("pageInfo[0] = " + pageInfo[0] + ", pageInfo[1] = " + pageInfo[1]);
                     break;
                 default:
                     System.out.println("UnsupportedType");

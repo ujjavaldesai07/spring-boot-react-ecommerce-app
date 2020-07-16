@@ -17,8 +17,10 @@ public class ListResultTransformer {
                                                        EntityManager entityManager) {
 
         Query query = entityManager.createQuery(queryStr);
-        mapParams.forEach(query::setParameter);
 
+        if(mapParams != null) {
+            mapParams.forEach(query::setParameter);
+        }
         return query.unwrap(org.hibernate.query.Query.class)
                 .setResultTransformer((IListResultTransformer)
                         (tuple, aliases) -> new FilterAttributesWithTotalItemsDTO((Integer) tuple[0],
@@ -32,7 +34,10 @@ public class ListResultTransformer {
                                          EntityManager entityManager) {
 
         Query query = entityManager.createQuery(queryStr);
-        mapParams.forEach(query::setParameter);
+
+        if(mapParams != null) {
+            mapParams.forEach(query::setParameter);
+        }
 
         return query.unwrap(org.hibernate.query.Query.class)
                 .setResultTransformer((IListResultTransformer)

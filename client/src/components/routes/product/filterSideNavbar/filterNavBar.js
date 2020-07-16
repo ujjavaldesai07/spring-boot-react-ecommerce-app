@@ -113,7 +113,9 @@ function FilterNavBar(props) {
             let selectedFilterAttributes = {}
             let filterAttributeIsAdded = false
 
-            FILTER_ATTRIBUTES.forEach((attribute) => {
+            let modified_filter_attributes = FILTER_ATTRIBUTES.filter((attribute) => attribute !== "genders")
+
+            modified_filter_attributes.forEach((attribute) => {
                 let queryParameters = query.split(`${attribute}=`)
 
                 log.info(`[FilterNavBar] queryParameters = ${JSON.stringify(queryParameters)}`)

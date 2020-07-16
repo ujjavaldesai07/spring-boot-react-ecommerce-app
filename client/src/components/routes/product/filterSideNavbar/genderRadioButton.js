@@ -27,7 +27,8 @@ export default function GenderRadioButton() {
                     payload: {
                         genders: {
                             id: genderList[i].id,
-                            value: value
+                            value: value,
+                            append: false
                         }
                     }
                 })
