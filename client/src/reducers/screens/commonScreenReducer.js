@@ -3,7 +3,7 @@ import {
     LOAD_HOME_PAGE, LOAD_SHOPPING_BAG_PRODUCTS,
     LOAD_FILTER_ATTRIBUTES,
     LOAD_FILTER_PRODUCTS, LOAD_TABS_DATA, REMOVE_FILTER_ATTRIBUTES, SAVE_FILTER_QUERY,
-    SELECT_PRODUCT_DETAIL, CART_TOTAL
+    SELECT_PRODUCT_DETAIL, CART_TOTAL, SAVE_SORT_LIST
 } from "../../actions/types";
 import log from "loglevel";
 
@@ -92,6 +92,20 @@ export const cartTotalReducer = (state = null, action) => {
     switch (action.type) {
         case CART_TOTAL:
             return action.payload
+        default:
+            return state;
+    }
+};
+
+export const savedSortedListReducer = (state = null, action) => {
+    switch (action.type) {
+        case SAVE_SORT_LIST:
+            if (action.payload.apparels) {
+                return {...state, apparels: action.payload.apparels}
+            } else if (action.payload.brands) {
+                return {...state, brands: action.payload.brands}
+            }
+            break
         default:
             return state;
     }
