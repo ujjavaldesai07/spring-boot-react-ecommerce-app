@@ -31,17 +31,19 @@ export default function CheckboxMoreButton(props) {
     const renderMoreButtonList = () => {
         return (
             <Paper elevation={3} variant="outlined" square
-                   style={{backgroundColor: "inherit", width: "100%", height: "70vh"}}>
-                <Grid item container direction="row" sm={11} style={{
-                    height: '70vh', zIndex: 1300, overflow: "auto", left: 0,
-                    position: "fixed", top: 180, backgroundColor: "rgb(230, 230, 230)",
+                   style={{backgroundColor: "inherit", width: "200vh", height: "70vh"}}>
+                <Grid container direction="row" style={{
+                    height: '70vh', zIndex: 1300, overflow: "auto", left: 0, width: "60%",
+                    position: "fixed", top: 150, backgroundColor: "white", border: "1px solid #eaeaec",
+                    boxShadow: "0 1px 8px rgba(0,0,0,.1)"
                 }}>
+                    <Grid item sm={11}>
                     <SortedCheckboxList attrList={props.checkboxList}
-                                        fontSize="0.9rem"
                                         title={props.title}
                                         propName={props.propName}
                                         selectedAttrList={props.selectedCheckboxList}
                                         onChangeHandler={handleCheckBoxChange}/>
+                    </Grid>
                     <Grid item sm={1} container justify="flex-end" style={{height: "5%", paddingRight: "0.5rem"}}>
                         <IconButton size="medium"
                                     color="primary"

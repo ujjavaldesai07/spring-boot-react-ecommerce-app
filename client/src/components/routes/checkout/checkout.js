@@ -8,6 +8,7 @@ import {withStyles} from '@material-ui/core/styles';
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
+import {useBackButton} from "../../backButtonHook";
 
 const checkoutBgColor = "#80808033"
 
@@ -56,6 +57,8 @@ const AccordionDetails = withStyles((theme) => ({
 
 function Checkout() {
     const [expanded, setExpanded] = React.useState('panel1');
+
+    useBackButton()
 
     const handleChange = (panel) => (event, newExpanded) => {
         setExpanded(newExpanded ? panel : false);

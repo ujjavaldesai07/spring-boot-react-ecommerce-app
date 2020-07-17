@@ -1,15 +1,15 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import CheckboxList from "../../../ui/checkboxList";
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
-import {ADD_SELECTED_CATEGORY} from "../../../../actions/types";
+import {ADD_SELECTED_CATEGORY, SAVE_SORT_LIST} from "../../../../actions/types";
 import CheckboxMoreButton from "./checkboxMoreButton";
 import CheckboxSearchBar from "./checkboxSearchBar";
 import {useSortList} from "./sortListHook";
 
 export default function BrandCheckBox() {
     const TITLE = "Brand"
-    const propName = "brands"
+    const propName="brands"
     const dispatch = useDispatch()
     const brandList = useSelector(state => state.filterAttributesReducer ?
         state.filterAttributesReducer.brands : null)
@@ -61,7 +61,7 @@ export default function BrandCheckBox() {
                           selectedAttrList={selectedBrands}
                           onChangeHandler={handleCheckBoxChange}/>
             <CheckboxMoreButton title={TITLE}
-                                propName="brands"
+                                propName={propName}
                                 checkboxList={brandList}
                                 selectedCheckboxList={selectedBrands}
                                 checkboxChangeHandler={handleCheckBoxChange}/>

@@ -13,7 +13,7 @@ import {connect, useDispatch} from 'react-redux'
 
 import {
     AppBar, Toolbar, IconButton, Typography,
-    InputBase, Badge, Box
+    Badge, Box
 } from '@material-ui/core';
 
 import useNavBarStyles from "../../../styles/materialUI/navBarStyles";
@@ -35,7 +35,6 @@ import {HTTPError} from "../../ui/error/httpError";
 import {BadRequest} from "../../ui/error/badRequest";
 import SearchBar from "./searchBar";
 import SideBar from "./sideBar";
-import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 
 const NavBar = props => {
     const classes = useNavBarStyles();

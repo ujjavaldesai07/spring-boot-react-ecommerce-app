@@ -14,10 +14,13 @@ import Spinner from "../../ui/spinner";
 import {HTTPError} from "../../ui/error/httpError";
 import {LOAD_HOME_PAGE, HOME_PAGE_DATA_API, HOME_PAGE_API_OBJECT_LEN} from "../../../actions/types";
 import {BadRequest} from "../../ui/error/badRequest";
+import {useBackButton} from "../../backButtonHook";
 
 const Home = props => {
     const {hover} = useSelector(state => state.tabHoverEventReducer)
     const homeAPIData = useSelector(state => state.homePageDataReducer)
+
+    useBackButton()
 
     // Main screen API is loaded during Component Did mount
     useEffect(() => {

@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import CheckboxList from "../../../ui/checkboxList";
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
-import {ADD_SELECTED_CATEGORY} from "../../../../actions/types";
+import {ADD_SELECTED_CATEGORY, SAVE_SORT_LIST} from "../../../../actions/types";
 import CheckboxMoreButton from "./checkboxMoreButton";
 import CheckboxSearchBar from "./checkboxSearchBar";
 import {useSortList} from "./sortListHook";

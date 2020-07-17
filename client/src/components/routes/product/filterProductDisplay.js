@@ -14,9 +14,9 @@ import {
 } from "../../../actions/types";
 import {Box, Grid} from "@material-ui/core";
 import Spinner from "../../ui/spinner";
-import {BadRequest} from "../../ui/error/badRequest";
 import {HTTPError} from "../../ui/error/httpError";
 import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
+import {compareURLWithFilterQuery} from "./filterSideNavbar/helper/helper";
 
 const FilterProductDisplay = props => {
         const filterProductsReducer = useSelector(state => state.filterProductsReducer)
@@ -29,6 +29,11 @@ const FilterProductDisplay = props => {
 
             try {
                 if (filterQuery) {
+                    if(filterProductsReducer.hasOwnProperty("data")
+                        && compareURLWithFilterQuery(filterQuery) === 0) {
+                        return
+                    }
+
                     props.getDataViaAPI(LOAD_FILTER_PRODUCTS, PRODUCT_BY_CATEGORY_DATA_API + filterQuery)
                 }
             } catch (e) {

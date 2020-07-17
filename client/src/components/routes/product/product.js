@@ -22,6 +22,7 @@ import BottomNavBar from "./bottomNavBar";
 import history from "../../../history";
 import BreadcrumbsSection from "../../ui/breadcrumbs";
 import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
+import {useBackButton} from "../../backButtonHook";
 
 export const stickyBoxStyle = {
     position: 'sticky',
@@ -32,8 +33,6 @@ export const stickyBoxStyle = {
 }
 
 function Product() {
-
-    const dispatch = useDispatch()
     const breadcrumbLinks = [
         {
             name: 'Home',
@@ -45,20 +44,7 @@ function Product() {
         },
     ]
 
-
-    useEffect(() => {
-        log.info("[Product] Component will mount...")
-
-        // componentWillUnmount
-        return () => {
-            log.info("[Product] Component will unmount...")
-            dispatch({type: REMOVE_SELECTED_CATEGORY})
-            dispatch({type: REMOVE_FILTER_ATTRIBUTES})
-            dispatch({type: DELETE_FILTER_QUERY})
-            dispatch({type: SELECT_PRODUCT_PAGE, payload: INITIAL_PAGINATION_STATE})
-            dispatch({type: SELECT_SORT_CATEGORY, payload: INITIAL_SORT_STATE})
-        };
-    })
+    useBackButton()
 
     if (history.location.pathname.localeCompare('/products') !== 0
         || !history.location.search.startsWith('?q=')) {

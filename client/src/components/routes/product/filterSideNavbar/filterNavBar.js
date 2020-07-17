@@ -22,6 +22,7 @@ import {
     ADD_SELECTED_CATEGORY,
     SAVE_FILTER_QUERY,
 } from "../../../../actions/types";
+import {compareURLWithFilterQuery} from "./helper/helper";
 
 function FilterNavBar(props) {
     const classes = useFilterNavBarStyles();
@@ -34,6 +35,7 @@ function FilterNavBar(props) {
     const selectedSort = useSelector(state => state.selectSortReducer)
     const selectedPage = useSelector(state => state.selectPageReducer)
     const filterAttributes = useSelector(state => state.filterAttributesReducer)
+    const filterQuery = useSelector(state => state.filterQueryReducer)
     const [filterAttributeFromUrlState, setFilterAttributeFromUrlState] = React.useState(false);
     const dispatch = useDispatch()
 
@@ -174,22 +176,34 @@ function FilterNavBar(props) {
             }
         }
     }
-    
+
     useEffect(() => {
         log.info("[FilterNavBar] Component did mount for " +
             "selectedApparels, selectedGenders, selectedBrands, selectedPriceRanges.")
-        
+
+        if(compareURLWithFilterQuery(filterQuery) === 0) {
+            return
+        }
+
+        log.info(`1) URL didn't matched history.location.search= ${history.location.search}, filterQuery = ${filterQuery}, result = ${history.location.search[1].localeCompare(filterQuery)}`)
         if (!filterAttributes) {
             log.info(`[FilterNavBar] setting selected attributes from URL`)
             let promise = props.loadFilterAttributes(history.location.search);
             promise.then((data) => {
                 dispatchFilterAttributesFromURL(data)
+
+                if (!data) {
+                    return
+                }
+
                 dispatch({
                     type: SAVE_FILTER_QUERY,
                     payload: history.location.search.split("?q=")[1]
                 })
-            }).catch((message) => log.error(`[FilterNavBar] ${message}`))
-            log.info(`[FilterNavBar] setting filterAttributeFromUrlState to true`)
+            }).catch((message) => {
+                log.error(`[FilterNavBar] ${message}}`)
+            })
+
         } else {
             log.info(`[FilterNavBar] prepare query for selectedFilterAttribute`)
             let query = prepareQuery()
@@ -203,7 +217,6 @@ function FilterNavBar(props) {
             } else {
                 setFilterAttributeFromUrlState(false)
             }
-            log.info(`[FilterNavBar] setting filterAttributeFromUrlState to false`)
         }
 
         // eslint-disable-next-line
@@ -212,6 +225,11 @@ function FilterNavBar(props) {
     useEffect(() => {
         log.info("[FilterNavBar] Component did mount selectedPage, selectedSort.")
 
+        if(compareURLWithFilterQuery(filterQuery) === 0) {
+            return
+        }
+
+        log.info(`2) URL didn't matched history.location.search= ${history.location.search}, filterQuery = ${filterQuery}`)
         if (filterAttributes) {
             log.info(`[FilterNavBar] prepare query for selectedPage, selectedSort`)
             let query = prepareQuery()
@@ -249,8 +267,10 @@ function FilterNavBar(props) {
 
     const drawer = (
         <>
-            <Box display="flex" p={2} style={{position: 'sticky', top: 0, backgroundColor: 'white',
-                fontWeight: "bold", fontSize: "1.2rem", zIndex: 1040}}>
+            <Box display="flex" p={2} style={{
+                position: 'sticky', top: 0, backgroundColor: 'white',
+                fontWeight: "bold", fontSize: "1.2rem", zIndex: 1040
+            }}>
                 <Box alignSelf="center" flex="1">FILTERS</Box>
                 <Box alignSelf="center"><ClearAllButton/></Box>
             </Box>

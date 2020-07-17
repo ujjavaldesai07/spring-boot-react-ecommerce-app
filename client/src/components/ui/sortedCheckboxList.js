@@ -1,6 +1,5 @@
 import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -20,20 +19,21 @@ const useStyles = makeStyles((theme) => ({
     },
     listItemRoot: {
         padding: 0,
+        height: "2rem"
     }
 }));
 
 export default function SortedCheckboxList(props) {
     const classes = useStyles();
     const savedSortedAttrList = useSelector(state =>
-        state.savedSortedListReducer.hasOwnProperty(props.propName)? state.savedSortedListReducer[props.propName]: null)
+        state.savedSortedListReducer.hasOwnProperty(props.propName) ? state.savedSortedListReducer[props.propName] : null)
 
     if (!props.attrList) {
         log.debug(`[CheckboxList] props.attrList is null`)
         return null
     }
 
-    if(!savedSortedAttrList) {
+    if (!savedSortedAttrList) {
         log.info(`[SortedCheckboxList] savedSortedAttrList is empty for prop = ${props.propName}`)
         return null
     }
@@ -75,29 +75,38 @@ export default function SortedCheckboxList(props) {
             return (
                 <div key={id}>
                     {newAlpha ?
-                        <Box display="flex" style={{fontWeight: "bolder", fontSize: "1rem"}}>{newAlpha}</Box> : null}
-                    <ListItem classes={{root: classes.listItemRoot}} role={undefined}
-                              button onClick={handleToggle(id)} style={{width: "100%", paddingRight: "1rem"}}>
-                        <ListItemIcon classes={{root: classes.listItemIconRoot}}>
-                            <Checkbox
-                                size="small"
-                                edge="start"
-                                checked={selectedIdList.length > 0 ? selectedIdList.includes(id) : false}
-                                tabIndex={-1}
-                                inputProps={{'aria-labelledby': id}}
-                            />
-                        </ListItemIcon>
-                        <Box display="flex" flexDirection="row">
-                            <Box>
+                        <Box display="flex" alignItems="center" style={{
+                            fontWeight: "bolder", width: "30px",
+                            fontSize: "1rem", height: "2rem"
+                        }}>{newAlpha}</Box> : null}
+
+                    <Box display="flex" style={{paddingRight: "1rem"}}>
+                        <ListItem classes={{root: classes.listItemRoot}} role={undefined}
+                                  button onClick={handleToggle(id)}>
+                            <ListItemIcon classes={{root: classes.listItemIconRoot}}>
+                                <Checkbox
+                                    size="small"
+                                    edge="start"
+                                    checked={selectedIdList.length > 0 ? selectedIdList.includes(id) : false}
+                                    tabIndex={-1}
+                                    inputProps={{'aria-labelledby': id}}
+                                />
+                            </ListItemIcon>
+                            <Box display="flex" alignItems="center">
                                 <ListItemText id={id} primary={value}
-                                              style={{fontSize: props.fontSize, fontWeight: "medium"}}
+                                              style={{
+                                                  fontSize: "0.9rem",
+                                                  fontWeight: "light",
+                                                  color: "#282c3f",
+                                                  paddingRight: "0.5rem"
+                                              }}
                                               disableTypography/>
+                                <p style={{color: "#94969f", fontSize: "0.8rem"}}>
+                                    {`(${totalItems})`}
+                                </p>
                             </Box>
-                            <Box alignSelf="center" pl={0.5} css={{color: "#94969f", fontSize: "0.8rem"}}>
-                                {`(${totalItems})`}
-                            </Box>
-                        </Box>
-                    </ListItem>
+                        </ListItem>
+                    </Box>
                 </div>
             );
         })
@@ -106,9 +115,14 @@ export default function SortedCheckboxList(props) {
     log.trace(`[CheckboxList] props.attrList = ${JSON.stringify(props.attrList)}`)
     log.debug(`[CheckboxList] Rendering CheckboxList Component`)
     return (
-        <Grid item container sm={11} spacing={0} direction="column" wrap="wrap"
-              style={{height: "100%", padding: "2.5rem 1rem 1rem 2rem"}}>
+        <Box display="flex" style={{
+            height: "70vh",
+            width: "100%",
+            flexFlow: "column",
+            flexWrap: "wrap",
+            padding: "2.5rem 2rem 1rem 2rem"
+        }}>
             {renderCheckBoxList()}
-        </Grid>
+        </Box>
     );
 }

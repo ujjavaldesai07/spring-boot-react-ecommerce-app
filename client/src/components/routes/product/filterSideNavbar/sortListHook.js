@@ -1,11 +1,11 @@
 import{ useEffect } from "react";
 import log from "loglevel";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {SAVE_SORT_LIST} from "../../../../actions/types";
-import {filterAttributesReducer} from "../../../../reducers/screens/commonScreenReducer";
 
 export function useSortList(list, propName) {
     const dispatch = useDispatch();
+    const filterQuery = useSelector(state => state.filterQueryReducer)
 
     useEffect(() => {
         if(!list) {
@@ -14,13 +14,15 @@ export function useSortList(list, propName) {
 
         try {
             log.info(`[useSortList] Sorting list for prop = ${propName}`)
-            let sortedAttrList = list.sort((a, b) =>
+            let cloneList = JSON.parse(JSON.stringify(list));
+
+            cloneList.sort((a, b) =>
                 (a.value.charAt(0).toUpperCase() > b.value.charAt(0).toUpperCase()) ? 1 : -1)
 
             dispatch({
                 type: SAVE_SORT_LIST,
                 payload: {
-                    [propName]: sortedAttrList
+                    [propName]: cloneList
                 }
             })
         } catch (e) {
@@ -28,5 +30,5 @@ export function useSortList(list, propName) {
             return null
         }
 
-    }, [filterAttributesReducer]);
+    }, [list]);
 }
