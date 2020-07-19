@@ -1,11 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import CheckboxList from "../../../ui/checkboxList";
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
-import {ADD_SELECTED_CATEGORY, SAVE_SORT_LIST} from "../../../../actions/types";
+import {ADD_SELECTED_CATEGORY} from "../../../../actions/types";
 import CheckboxMoreButton from "./checkboxMoreButton";
 import CheckboxSearchBar from "./checkboxSearchBar";
-import {useSortList} from "./sortListHook";
 
 export default function BrandCheckBox() {
     const TITLE = "Brand"
@@ -15,8 +14,6 @@ export default function BrandCheckBox() {
         state.filterAttributesReducer.brands : null)
     const selectedBrands = useSelector(state => state.selectedFilterAttributesReducer.brands)
     const [searchBrandList, setSearchBrandList] = useState(null)
-
-    useSortList(brandList, propName)
 
     if (!brandList) {
         log.debug(`[BrandCheckBox] brandList is null`)

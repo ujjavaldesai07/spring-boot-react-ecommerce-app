@@ -18,7 +18,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import Spinner from "../../ui/spinner";
 import {InternalServerError} from "../../ui/error/internalServerError";
 import {BadRequest} from "../../ui/error/badRequest";
-import {useBackButton} from "../../backButtonHook";
+import {useBackButton} from "../../../hooks/backButtonHook";
 
 export const useButtonStyles = makeStyles(() => ({
     buttonStartIcon: {

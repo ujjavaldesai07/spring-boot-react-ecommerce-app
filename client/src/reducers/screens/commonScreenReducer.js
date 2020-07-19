@@ -2,10 +2,11 @@ import {
     ADD_TO_CART, DELETE_FILTER_QUERY,
     LOAD_HOME_PAGE, LOAD_SHOPPING_BAG_PRODUCTS,
     LOAD_FILTER_ATTRIBUTES,
-    LOAD_FILTER_PRODUCTS, LOAD_TABS_DATA, REMOVE_FILTER_ATTRIBUTES, SAVE_FILTER_QUERY,
+    LOAD_FILTER_PRODUCTS, LOAD_TABS_DATA, REMOVE_FILTER_ATTRIBUTES, SAVE_QUERY_STATUS,
     SELECT_PRODUCT_DETAIL, CART_TOTAL, SAVE_SORT_LIST
 } from "../../actions/types";
 import log from "loglevel";
+import {INITIAL_QUERY_STATUS} from "../../constants/constants";
 
 export const homePageDataReducer = (state = {isLoading: true}, action) => {
     log.trace(`[HOME_SCREEN_REDUCER]: action.type = ${action.type}`)
@@ -79,10 +80,8 @@ export const shoppingBagProductReducer = (state = {isLoading: true}, action) => 
 
 export const filterQueryReducer = (state = null, action) => {
     switch (action.type) {
-        case SAVE_FILTER_QUERY:
+        case SAVE_QUERY_STATUS:
             return action.payload
-        case DELETE_FILTER_QUERY:
-            return null
         default:
             return state;
     }

@@ -16,25 +16,20 @@ import {Box, Grid} from "@material-ui/core";
 import Spinner from "../../ui/spinner";
 import {HTTPError} from "../../ui/error/httpError";
 import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
-import {compareURLWithFilterQuery} from "./filterSideNavbar/helper/helper";
 
 const FilterProductDisplay = props => {
         const filterProductsReducer = useSelector(state => state.filterProductsReducer)
         let filterProducts = null
-        const filterQuery = useSelector(state => state.filterQueryReducer)
+        const queryStatus = useSelector(state => state.filterQueryReducer)
         const dispatch = useDispatch()
 
         useEffect(() => {
             log.info(`[FilterProductDisplay] Component did mount`)
 
             try {
-                if (filterQuery) {
-                    if(filterProductsReducer.hasOwnProperty("data")
-                        && compareURLWithFilterQuery(filterQuery) === 0) {
-                        return
-                    }
-
-                    props.getDataViaAPI(LOAD_FILTER_PRODUCTS, PRODUCT_BY_CATEGORY_DATA_API + filterQuery)
+                if (queryStatus) {
+                    log.info(`[FilterProductDisplay] Getting products from API.....`)
+                    props.getDataViaAPI(LOAD_FILTER_PRODUCTS, PRODUCT_BY_CATEGORY_DATA_API + queryStatus)
                 }
             } catch (e) {
                 log.error(`[FilterProductDisplay] Bad URL found in history.location.search`)
@@ -43,7 +38,7 @@ const FilterProductDisplay = props => {
             window.scrollTo(0, 0)
 
             // eslint-disable-next-line
-        }, [filterQuery]);
+        }, [queryStatus]);
 
 
         if (filterProductsReducer.isLoading) {

@@ -30,7 +30,7 @@ function ShippingOptions() {
 
     const renderRadioBtnLabel = (lblText, helperText, price) => {
         return (
-            <Grid container xs={12} sm={12} style={{width: "inherit", paddingTop: 20}}>
+            <Grid item container xs={12} sm={12} style={{width: "inherit", paddingTop: 20}}>
 
                 <Grid item sm={5}>
                     <Grid item style={{fontWeight: "bolder", fontSize: "1.1rem"}}>
@@ -53,13 +53,13 @@ function ShippingOptions() {
 
     return (
         <Grid item style={{width: "100%", height: 400}}>
-            <Grid container sm={10} wrap="wrap" spacing={1}
+            <Grid item container sm={10} wrap="wrap" spacing={1}
                   style={{padding: "25px 0 0 30px", height: 80}}>
                 <Grid item sm={2}>
                     <img src=".." alt="image" width={65} height={80}/>
                 </Grid>
             </Grid>
-            <Grid container sm={12} justify="center">
+            <Grid item container sm={12} justify="center">
                 <FormControl component="fieldset" style={{width: "inherit"}}>
                     <RadioGroup aria-label="gender" name="gender1" value={value}
                                 onChange={handleRadioBtnChange} style={{width: "inherit"}}>
@@ -81,7 +81,7 @@ function ShippingOptions() {
                     </RadioGroup>
                 </FormControl>
             </Grid>
-            <Grid container justify="center" sm={12}
+            <Grid item container justify="center" sm={12}
                   style={{paddingTop: 20}}>
                 <Divider style={{height: 1, width: "inherit"}}/>
             </Grid>

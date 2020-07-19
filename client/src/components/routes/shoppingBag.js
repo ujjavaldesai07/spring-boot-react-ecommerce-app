@@ -25,7 +25,7 @@ import PriceDetails from "./priceDetails";
 import Modal from "../../components/ui/modal";
 import _ from 'lodash';
 import Hidden from "@material-ui/core/Hidden";
-import {useBackButton} from "../backButtonHook";
+import {useBackButton} from "../../hooks/backButtonHook";
 
 const modalWidth = 430
 

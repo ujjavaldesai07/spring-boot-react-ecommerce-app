@@ -1,11 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import CheckboxList from "../../../ui/checkboxList";
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
-import {ADD_SELECTED_CATEGORY, SAVE_SORT_LIST} from "../../../../actions/types";
+import {ADD_SELECTED_CATEGORY} from "../../../../actions/types";
 import CheckboxMoreButton from "./checkboxMoreButton";
 import CheckboxSearchBar from "./checkboxSearchBar";
-import {useSortList} from "./sortListHook";
 
 export default function ApparelCheckBox() {
     const TITLE = "Apparel"
@@ -15,8 +14,6 @@ export default function ApparelCheckBox() {
         state.filterAttributesReducer.apparels : null)
     const selectedApparels = useSelector(state => state.selectedFilterAttributesReducer.apparels)
     const [searchApparelList, setSearchApparelList] = useState(null)
-
-    useSortList(apparelList, propName)
 
     if (!apparelList) {
         log.debug(`[ApparelCheckBox] apparelList is null`)

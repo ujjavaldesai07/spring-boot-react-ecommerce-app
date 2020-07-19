@@ -72,14 +72,14 @@ function ShippingAddress() {
                     {renderTextField("Address Line 2 (optional)", false)}
 
                     <Grid item container>
-                        <Grid container xs={6} sm={6} style={{paddingRight: 15}}>
+                        <Grid item container xs={6} sm={6} style={{paddingRight: 15}}>
                             <TextField label="Zip Code" variant="outlined"
                                        size="medium" required
                                        fullWidth
                                        style={textFieldStyles}/>
                         </Grid>
 
-                        <Grid container xs={6} sm={6}>
+                        <Grid item container xs={6} sm={6}>
                             <TextField
                                 id="state-code"
                                 select

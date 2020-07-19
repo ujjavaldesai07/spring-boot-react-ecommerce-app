@@ -6,8 +6,7 @@ export function useBackButton() {
     useEffect(() => {
 
         function handleBackButton() {
-            log.info(`[useBackButton] GOING BACKKKKKKKKK..............................................`)
-            history.go(-1)
+            history.goBack()
         }
 
         // Bind the event listener

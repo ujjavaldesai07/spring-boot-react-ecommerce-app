@@ -19,11 +19,11 @@ export const INITIAL_SORT_STATE = {
     value: null
 }
 
-export const INITIAL_FILTER_ATTRIBUTE_STATE = {
+export const INITIAL_SELECTED_FILTER_ATTRIBUTE_STATE = {
     genders: [],
     apparels: [],
     brands: [],
-    prices: []
+    prices: [],
 }
 
 export const FILTER_ATTRIBUTES = ["genders", "apparels", "brands", "prices"]

@@ -7,10 +7,11 @@ import {
 import log from 'loglevel';
 import {
     FILTER_ATTRIBUTES,
-    INITIAL_FILTER_ATTRIBUTE_STATE,
+    INITIAL_SELECTED_FILTER_ATTRIBUTE_STATE,
     INITIAL_PAGINATION_STATE,
     INITIAL_SORT_STATE
 } from "../../../constants/constants";
+import history from "../../../history";
 
 const removeValueIfExist = (list, id) => {
     if (list.length === 0) {
@@ -37,7 +38,7 @@ const removeValueIfExist = (list, id) => {
     return null
 }
 
-const addPayloadToNewState = (prevState, payload) => {
+const appendNewPayloadToPrevState = (prevState, payload) => {
     log.info(`[SelectedFilterAttributesReducer] payload = ${JSON.stringify(payload)}`)
     FILTER_ATTRIBUTES.forEach((attribute) => {
         if (payload[attribute]) {
@@ -70,17 +71,18 @@ const addPayloadToNewState = (prevState, payload) => {
             }
         }
     })
+
     return prevState
 }
 
-export const selectedFilterAttributesReducer = (state = INITIAL_FILTER_ATTRIBUTE_STATE, action) => {
+export const selectedFilterAttributesReducer = (state = INITIAL_SELECTED_FILTER_ATTRIBUTE_STATE, action) => {
 
     switch (action.type) {
         case ADD_SELECTED_CATEGORY:
-            return addPayloadToNewState(state, action.payload);
+            return appendNewPayloadToPrevState(state, action.payload);
 
         case REMOVE_SELECTED_CATEGORY:
-            return INITIAL_FILTER_ATTRIBUTE_STATE
+            return {...INITIAL_SELECTED_FILTER_ATTRIBUTE_STATE, "query": action.payload}
 
         default:
             return state;

@@ -8,7 +8,7 @@ import Icon from "semantic-ui-react/dist/commonjs/elements/Icon";
 import {Typography} from "@material-ui/core";
 import {Link} from "react-router-dom";
 import log from "loglevel";
-import {useBackButton} from "../backButtonHook";
+import {useBackButton} from "../../hooks/backButtonHook";
 
 const Login = (props) => {
 

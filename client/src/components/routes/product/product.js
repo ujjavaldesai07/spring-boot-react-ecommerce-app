@@ -4,25 +4,19 @@ import Grid from '@material-ui/core/Grid';
 import FilterNavBar from "./filterSideNavbar/filterNavBar";
 import FilterProductsDisplay from "./filterProductDisplay";
 import log from 'loglevel';
-import Box from "@material-ui/core/Box";
 import FilterChips from "./filterChips";
 import {Divider} from "@material-ui/core";
 import FilterDropdown from "./filterDropdown";
 import FilterPagination from "./filterPagination";
-import {
-    DELETE_FILTER_QUERY, REMOVE_FILTER_ATTRIBUTES,
-    REMOVE_SELECTED_CATEGORY,
-    SELECT_PRODUCT_PAGE,
-    SELECT_SORT_CATEGORY
-} from "../../../actions/types";
-import {useDispatch} from "react-redux";
-import {HOME_ROUTE, INITIAL_PAGINATION_STATE, INITIAL_SORT_STATE} from "../../../constants/constants";
+import {HOME_ROUTE} from "../../../constants/constants";
 import Hidden from "@material-ui/core/Hidden";
 import BottomNavBar from "./bottomNavBar";
 import history from "../../../history";
 import BreadcrumbsSection from "../../ui/breadcrumbs";
 import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
-import {useBackButton} from "../../backButtonHook";
+import {useBackButton} from "../../../hooks/backButtonHook";
+import {useDispatch} from "react-redux";
+import {SAVE_QUERY_STATUS} from "../../../actions/types";
 
 export const stickyBoxStyle = {
     position: 'sticky',
@@ -33,6 +27,7 @@ export const stickyBoxStyle = {
 }
 
 function Product() {
+    const dispatch = useDispatch();
     const breadcrumbLinks = [
         {
             name: 'Home',
@@ -43,6 +38,20 @@ function Product() {
             link: `${history.location.pathname + history.location.search}`
         },
     ]
+
+    useEffect(() => {
+        log.info(`[Product] Component did mount...`)
+
+        return () => {
+            log.info(`[Product] Component will unmount...`)
+
+            dispatch({
+                type: SAVE_QUERY_STATUS,
+                payload: null
+            })
+
+        }
+    }, [])
 
     useBackButton()
 

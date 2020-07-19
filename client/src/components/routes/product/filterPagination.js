@@ -4,24 +4,13 @@ import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
 import {SELECT_PRODUCT_PAGE} from "../../../actions/types";
 import Pagination from "@material-ui/lab/Pagination";
-import {INITIAL_PAGINATION_STATE, MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
+import {MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
 
 export default function FilterPagination() {
     const dispatch = useDispatch()
     const selectedPage = useSelector(state => state.selectPageReducer)
     const filterProductsReducer = useSelector(state => state.filterProductsReducer)
-    const selectedFilterAttributes = useSelector(state => state.selectedFilterAttributesReducer)
     let totalProducts = 0
-
-    useEffect(() => {
-        log.info("[FilterPagination] Component will mount...")
-        dispatch({
-            type: SELECT_PRODUCT_PAGE,
-            payload: INITIAL_PAGINATION_STATE
-        })
-
-        // eslint-disable-next-line
-    },[selectedFilterAttributes])
 
     const handleChangePage = (event, page) => {
         log.info(`[FilterPagination] dispatching SELECT_PRODUCT_PAGE for page = ${page}`)

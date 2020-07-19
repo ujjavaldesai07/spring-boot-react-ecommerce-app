@@ -8,7 +8,7 @@ import {
     LOAD_FILTER_PRODUCTS,
     LOAD_FILTER_ATTRIBUTES,
     INTERNAL_SERVER_ERROR_CODE,
-    BAD_REQUEST_ERROR_CODE,
+    BAD_REQUEST_ERROR_CODE, SAVE_QUERY_STATE, SAVE_QUERY_STATUS,
 } from './types';
 import authApi from "../api/authServiceApi";
 import history from "../history";
@@ -87,7 +87,7 @@ export const signUp = formValues => async (dispatch) => {
 export const getDataViaAPI = (type, uri) => async dispatch => {
     log.info(`[ACTION]: invokeAndDispatchAPIData Calling API = ${uri}.`)
 
-    if(uri) {
+    if (uri) {
         commonServiceApi.defaults.timeout = 15000;
         uri = uri.replace(/\s/g, '')
         let responseError = false
@@ -108,7 +108,7 @@ export const getDataViaAPI = (type, uri) => async dispatch => {
                 type: type, payload:
                     {isLoading: false, data: JSON.parse(JSON.stringify(response.data))}
             });
-            if(LOAD_FILTER_PRODUCTS.localeCompare(type) === 0) {
+            if (LOAD_FILTER_PRODUCTS.localeCompare(type) === 0) {
                 window.history.pushState('', '', uri)
             }
         } else {
@@ -121,11 +121,26 @@ export const loadFilterAttributes = filterQuery => async dispatch => {
     log.info(`[ACTION]: loadFilterAttributes Calling Filter API filterQuery = ${filterQuery}`)
 
     if (filterQuery) {
-        let uri = `/filter${filterQuery.replace(/\s/g, '')}`
+        let removedSpacesFromFilterQuery = filterQuery.replace(/\s/g, '')
+        let uri = `/filter${removedSpacesFromFilterQuery}`
         const response = await commonServiceApi.get(uri);
         if (response != null) {
             log.trace(`[ACTION]: Filter = ${JSON.stringify(response.data)}`)
-            dispatch({type: LOAD_FILTER_ATTRIBUTES, payload: JSON.parse(JSON.stringify(response.data))});
+
+            const extractRequiredParams = removedSpacesFromFilterQuery.slice(3)
+
+            dispatch({
+                type: LOAD_FILTER_ATTRIBUTES,
+                payload: JSON.parse(JSON.stringify(
+                    {...response.data,
+                    "query": removedSpacesFromFilterQuery.slice(3)}))
+            });
+
+            dispatch({
+                type: SAVE_QUERY_STATUS,
+                payload: extractRequiredParams
+            });
+
             return JSON.parse(JSON.stringify(response.data))
         } else {
             log.info(`[ACTION]: unable to fetch response for Filter API`)

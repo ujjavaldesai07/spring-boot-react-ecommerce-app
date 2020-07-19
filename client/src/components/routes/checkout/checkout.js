@@ -8,7 +8,7 @@ import {withStyles} from '@material-ui/core/styles';
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
-import {useBackButton} from "../../backButtonHook";
+import {useBackButton} from "../../../hooks/backButtonHook";
 
 const checkoutBgColor = "#80808033"
 

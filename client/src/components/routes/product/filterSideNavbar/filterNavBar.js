@@ -14,19 +14,18 @@ import {loadFilterAttributes} from "../../../../actions";
 import {Box} from "@material-ui/core";
 import {useFilterNavBarStyles} from "../../../../styles/materialUI/filterNavBarStyles";
 import {
-    FILTER_ATTRIBUTES,
+    FILTER_ATTRIBUTES, INITIAL_PAGINATION_STATE,
     MAX_PRODUCTS_PER_PAGE,
     PRODUCTS_ROUTE
 } from "../../../../constants/constants";
 import {
     ADD_SELECTED_CATEGORY,
-    SAVE_FILTER_QUERY,
+    SAVE_QUERY_STATUS, SAVE_SORT_LIST, SELECT_PRODUCT_PAGE,
 } from "../../../../actions/types";
-import {compareURLWithFilterQuery} from "./helper/helper";
+import {sortByObjValues} from "./helper/helper";
 
 function FilterNavBar(props) {
     const classes = useFilterNavBarStyles();
-    const [mobileOpen, setMobileOpen] = React.useState(false);
     const selectedGenders = useSelector(state => state.selectedFilterAttributesReducer.genders)
     const selectedApparels = useSelector(state => state.selectedFilterAttributesReducer.apparels)
     const selectedBrands = useSelector(state => state.selectedFilterAttributesReducer.brands)
@@ -35,7 +34,6 @@ function FilterNavBar(props) {
     const selectedSort = useSelector(state => state.selectSortReducer)
     const selectedPage = useSelector(state => state.selectPageReducer)
     const filterAttributes = useSelector(state => state.filterAttributesReducer)
-    const filterQuery = useSelector(state => state.filterQueryReducer)
     const [filterAttributeFromUrlState, setFilterAttributeFromUrlState] = React.useState(false);
     const dispatch = useDispatch()
 
@@ -78,7 +76,7 @@ function FilterNavBar(props) {
             query.push(`prices=${appendQueryIds(selectedPriceRanges)}`)
         }
 
-        if (selectedSort) {
+        if (selectedSort.id > 1) {
             query.push(`sortby=${selectedSort.id}`)
         }
 
@@ -177,46 +175,65 @@ function FilterNavBar(props) {
         }
     }
 
+    const dispatchSortList = (filterAttr) => {
+        let sortListPayload = {}
+        sortListPayload.apparels = sortByObjValues(filterAttr.apparels)
+        sortListPayload.brands = sortByObjValues(filterAttr.brands)
+
+        dispatch({
+            type: SAVE_SORT_LIST,
+            payload: sortListPayload
+        })
+    }
+
     useEffect(() => {
         log.info("[FilterNavBar] Component did mount for " +
             "selectedApparels, selectedGenders, selectedBrands, selectedPriceRanges.")
 
-        if(compareURLWithFilterQuery(filterQuery) === 0) {
-            return
-        }
-
-        log.info(`1) URL didn't matched history.location.search= ${history.location.search}, filterQuery = ${filterQuery}, result = ${history.location.search[1].localeCompare(filterQuery)}`)
         if (!filterAttributes) {
             log.info(`[FilterNavBar] setting selected attributes from URL`)
             let promise = props.loadFilterAttributes(history.location.search);
             promise.then((data) => {
-                dispatchFilterAttributesFromURL(data)
 
                 if (!data) {
                     return
                 }
 
-                dispatch({
-                    type: SAVE_FILTER_QUERY,
-                    payload: history.location.search.split("?q=")[1]
-                })
+                dispatchFilterAttributesFromURL(data)
+                dispatchSortList(data)
+
             }).catch((message) => {
                 log.error(`[FilterNavBar] ${message}}`)
             })
 
         } else {
             log.info(`[FilterNavBar] prepare query for selectedFilterAttribute`)
+
             let query = prepareQuery()
-            if (filterAttributeFromUrlState === false) {
+
+            log.info(`[FilterNavBar] newQuery = ${query}, oldQuery = ${selectedFilterAttributes.query}`)
+
+            if (filterAttributes.query || filterAttributeFromUrlState === false) {
+
+                if (filterAttributes.query.localeCompare(query) === 0) {
+                    return
+                }
+
                 log.info(`[FilterNavBar] dispatching query to SAVE_FILTER_QUERY query = ${query}`)
-                dispatch({
-                    type: SAVE_FILTER_QUERY,
-                    payload: query
-                })
+
                 props.loadFilterAttributes(`?q=${query}`);
+
+                dispatchSortList(filterAttributes)
             } else {
                 setFilterAttributeFromUrlState(false)
             }
+        }
+
+        if (selectedPage.pageNumber > 1) {
+            dispatch({
+                type: SELECT_PRODUCT_PAGE,
+                payload: INITIAL_PAGINATION_STATE
+            })
         }
 
         // eslint-disable-next-line
@@ -225,16 +242,18 @@ function FilterNavBar(props) {
     useEffect(() => {
         log.info("[FilterNavBar] Component did mount selectedPage, selectedSort.")
 
-        if(compareURLWithFilterQuery(filterQuery) === 0) {
-            return
-        }
-
-        log.info(`2) URL didn't matched history.location.search= ${history.location.search}, filterQuery = ${filterQuery}`)
         if (filterAttributes) {
             log.info(`[FilterNavBar] prepare query for selectedPage, selectedSort`)
+
             let query = prepareQuery()
+
+            if (filterAttributes.query
+                && filterAttributes.query.localeCompare(query) === 0) {
+                return
+            }
+
             dispatch({
-                type: SAVE_FILTER_QUERY,
+                type: SAVE_QUERY_STATUS,
                 payload: query
             })
         }
@@ -246,11 +265,6 @@ function FilterNavBar(props) {
         log.info(`[FilterNavBar] filterAttributes is null.`)
         return null
     }
-
-    const handleDrawerToggle = () => {
-        log.debug(`[FilterNavBar] handleDrawerToggle is called`)
-        setMobileOpen(!mobileOpen);
-    };
 
     const renderDrawerComponents = (component) => {
         return (
