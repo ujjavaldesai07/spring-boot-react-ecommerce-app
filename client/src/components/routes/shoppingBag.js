@@ -25,7 +25,6 @@ import PriceDetails from "./priceDetails";
 import Modal from "../../components/ui/modal";
 import _ from 'lodash';
 import Hidden from "@material-ui/core/Hidden";
-import {useBackButton} from "../../hooks/backButtonHook";
 
 const modalWidth = 430
 
@@ -44,8 +43,6 @@ function ShoppingBag(props) {
         }
         return idList
     }
-
-    useBackButton()
 
     useEffect(() => {
         log.info("[ShoppingBag] Component will mount... addToCart = " + JSON.stringify(addToCart))

@@ -109,7 +109,9 @@ export const getDataViaAPI = (type, uri) => async dispatch => {
                     {isLoading: false, data: JSON.parse(JSON.stringify(response.data))}
             });
             if (LOAD_FILTER_PRODUCTS.localeCompare(type) === 0) {
-                window.history.pushState('', '', uri)
+                if(window.location.search.localeCompare(uri.split("/products")[1]) !== 0) {
+                    history.push(uri)
+                }
             }
         } else {
             dispatch({type: type, payload: {isLoading: false, statusCode: BAD_REQUEST_ERROR_CODE}});

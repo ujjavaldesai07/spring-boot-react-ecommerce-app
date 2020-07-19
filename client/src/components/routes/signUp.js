@@ -5,15 +5,12 @@ import {signUp} from "../../actions";
 import {Grid} from "semantic-ui-react";
 import {StyledLoginScreenGrid} from "../../styles/semanticUI/customStyles";
 import log from "loglevel";
-import {useBackButton} from "../../hooks/backButtonHook";
 
 const SignUp = (props) => {
     const onSubmit = formValues => {
         log.debug(`[SignUpScreen]: onSubmit formValues = ${JSON.stringify(formValues)}`)
         props.signUp(formValues)
     };
-
-    useBackButton()
 
     log.info(`[SignUpScreen]: Rendering SignUpScreen Component`)
     return (

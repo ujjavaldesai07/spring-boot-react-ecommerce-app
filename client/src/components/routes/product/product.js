@@ -14,7 +14,6 @@ import BottomNavBar from "./bottomNavBar";
 import history from "../../../history";
 import BreadcrumbsSection from "../../ui/breadcrumbs";
 import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
-import {useBackButton} from "../../../hooks/backButtonHook";
 import {useDispatch} from "react-redux";
 import {SAVE_QUERY_STATUS} from "../../../actions/types";
 
@@ -52,8 +51,6 @@ function Product() {
 
         }
     }, [])
-
-    useBackButton()
 
     if (history.location.pathname.localeCompare('/products') !== 0
         || !history.location.search.startsWith('?q=')) {

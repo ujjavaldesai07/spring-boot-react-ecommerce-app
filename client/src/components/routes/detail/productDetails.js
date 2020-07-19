@@ -18,7 +18,6 @@ import {makeStyles} from "@material-ui/core/styles";
 import Spinner from "../../ui/spinner";
 import {InternalServerError} from "../../ui/error/internalServerError";
 import {BadRequest} from "../../ui/error/badRequest";
-import {useBackButton} from "../../../hooks/backButtonHook";
 
 export const useButtonStyles = makeStyles(() => ({
     buttonStartIcon: {
@@ -36,8 +35,6 @@ function ProductDetails(props) {
     const dispatch = useDispatch()
     const addToCart = useSelector(state => state.addToCartReducer)
     const [productQuantity, setProductQuantity] = useState(1)
-
-    useBackButton()
 
     useEffect(() => {
         log.info(`[Product Detail] Component did mount selectProductDetail = ${JSON.stringify(selectProductDetail)}`)
