@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import history from "../history";
 import {Router, Route} from 'react-router-dom';
 import log from "loglevel"
@@ -14,6 +14,7 @@ import ShoppingBag from "./routes/shoppingBag";
 
 const App = () => {
     log.info(`[App]: Rendering App Component window`)
+
     return (
         <Router history={history}>
             <Route path="/" component={NavBar}/>

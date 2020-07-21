@@ -41,8 +41,16 @@ function Product() {
     useEffect(() => {
         log.info(`[Product] Component did mount...`)
 
+        const reloadPage = () => {
+            window.location.reload()
+        }
+
+        window.addEventListener("popstate", reloadPage);
+
         return () => {
             log.info(`[Product] Component will unmount...`)
+
+            window.removeEventListener("popstate", reloadPage);
 
             dispatch({
                 type: SAVE_QUERY_STATUS,
