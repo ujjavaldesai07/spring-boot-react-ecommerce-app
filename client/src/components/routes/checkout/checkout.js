@@ -8,6 +8,7 @@ import {withStyles} from '@material-ui/core/styles';
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
+import {useSelector} from "react-redux";
 
 const checkoutBgColor = "#80808033"
 
@@ -53,9 +54,12 @@ const AccordionDetails = withStyles((theme) => ({
     },
 }))(MuiAccordionDetails);
 
+const shippingAddressPanel = 'shipAddrPanel'
+const shippingOptionPanel = 'shipOptPanel'
 
 function Checkout() {
-    const [expanded, setExpanded] = React.useState('panel1');
+    const shippingAddress = useSelector(state => state.shippingAddressReducer)
+    const [expanded, setExpanded] = React.useState(shippingAddressPanel);
 
     const handleChange = (panel) => (event, newExpanded) => {
         setExpanded(newExpanded ? panel : false);
@@ -81,8 +85,10 @@ function Checkout() {
 
             <Grid item xs={12} sm={11} md={7}>
 
-                <Accordion square expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
-                    <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+                <Accordion square expanded={expanded === shippingAddressPanel}
+                           onChange={handleChange(shippingAddressPanel)}>
+                    <AccordionSummary aria-controls={`${shippingAddressPanel}-content`}
+                                      id={`${shippingAddressPanel}-header`}>
                         {renderTitle("Shipping Address")}
                     </AccordionSummary>
                     <AccordionDetails>
@@ -90,7 +96,8 @@ function Checkout() {
                     </AccordionDetails>
                 </Accordion>
 
-                <Accordion square expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+                <Accordion square expanded={expanded === shippingOptionPanel}
+                           onChange={handleChange(shippingOptionPanel)}>
                     <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
                         {renderTitle("Shipping Options")}
                     </AccordionSummary>

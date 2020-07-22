@@ -2,7 +2,7 @@ import React from 'react';
 import log from 'loglevel';
 import {Button, Grid, Hidden} from "@material-ui/core";
 
-function ContinueButton() {
+function ContinueButton(props) {
 
     const renderContinueDesktopBtn = () => {
         return (
@@ -10,7 +10,7 @@ function ContinueButton() {
                 <Button variant="contained" size="large" style={{
                     backgroundColor: "#e01a2b",
                     width: "27%", height: 50, fontSize: "1rem", fontWeight: "bolder", color: "White"
-                }}>
+                }} type={props.type} disabled={props.action}>
                     CONTINUE
                 </Button>
             </Grid>
@@ -23,7 +23,7 @@ function ContinueButton() {
                 <Button variant="contained" size="large" style={{
                     backgroundColor: "#e01a2b",
                     width: "87%", height: 50, fontSize: "1rem", fontWeight: "bolder", color: "White"
-                }}>
+                }} type={props.type} disabled={props.action}>
                     CONTINUE
                 </Button>
             </Grid>

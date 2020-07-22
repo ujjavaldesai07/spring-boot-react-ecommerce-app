@@ -3,7 +3,7 @@ import {
     LOAD_HOME_PAGE, LOAD_SHOPPING_BAG_PRODUCTS,
     LOAD_FILTER_ATTRIBUTES,
     LOAD_FILTER_PRODUCTS, LOAD_TABS_DATA, REMOVE_FILTER_ATTRIBUTES, SAVE_QUERY_STATUS,
-    SELECT_PRODUCT_DETAIL, CART_TOTAL, SAVE_SORT_LIST
+    SELECT_PRODUCT_DETAIL, CART_TOTAL, SAVE_SORT_LIST, SHIPPING_ADDRESS_CONFIRMED
 } from "../../actions/types";
 import log from "loglevel";
 import {INITIAL_QUERY_STATUS} from "../../constants/constants";
@@ -105,6 +105,16 @@ export const savedSortedListReducer = (state = null, action) => {
                 return {...state, brands: action.payload.brands}
             }
             break
+        default:
+            return state;
+    }
+};
+
+export const shippingAddressReducer = (state
+                                           = {values: null, submitted: false}, action) => {
+    switch (action.type) {
+        case SHIPPING_ADDRESS_CONFIRMED:
+            return action.payload
         default:
             return state;
     }

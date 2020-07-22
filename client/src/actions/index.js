@@ -8,7 +8,7 @@ import {
     LOAD_FILTER_PRODUCTS,
     LOAD_FILTER_ATTRIBUTES,
     INTERNAL_SERVER_ERROR_CODE,
-    BAD_REQUEST_ERROR_CODE, SAVE_QUERY_STATE, SAVE_QUERY_STATUS,
+    BAD_REQUEST_ERROR_CODE, SAVE_QUERY_STATE, SAVE_QUERY_STATUS, SHIPPING_ADDRESS_CONFIRMED,
 } from './types';
 import authApi from "../api/authServiceApi";
 import history from "../history";
@@ -22,6 +22,14 @@ export const setTokenFromCookie = tokenId => {
     return {
         type: HANDLE_SIGN_IN,
         payload: tokenId
+    }
+}
+
+export const setShippingAddress = payload => {
+    log.info(`[ACTION]: setShippingAddress payload = ${JSON.stringify(payload)}`)
+    return {
+        type: SHIPPING_ADDRESS_CONFIRMED,
+        payload: payload
     }
 }
 

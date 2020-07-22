@@ -58,14 +58,15 @@ function ShoppingBag(props) {
 
             if (idList.length > 0) {
                 props.getDataViaAPI(LOAD_SHOPPING_BAG_PRODUCTS, PRODUCT_BY_ID_DATA_API + idList.toString())
-            } else {
-                dispatch({
-                    type: LOAD_SHOPPING_BAG_PRODUCTS,
-                    payload: {isLoading: false, data: {}}
-                })
+                return
             }
 
         }
+
+        dispatch({
+            type: LOAD_SHOPPING_BAG_PRODUCTS,
+            payload: {isLoading: false, data: {}}
+        })
 
         log.info(`[ShoppingBag] load ShoppingBag products idList = ${JSON.stringify(idList)}`)
 
