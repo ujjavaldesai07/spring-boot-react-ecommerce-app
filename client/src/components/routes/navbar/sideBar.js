@@ -3,7 +3,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import AccordionSection from "./accordionSection";
 import Drawer from "@material-ui/core/Drawer";
 import log from 'loglevel';
-import {useClickAway} from "../../../hooks/clickAwayHook";
+import {useClickAway} from "../../../hooks/useClickAway";
 
 export const useSideBarStyles = makeStyles((theme) => ({
     root: {

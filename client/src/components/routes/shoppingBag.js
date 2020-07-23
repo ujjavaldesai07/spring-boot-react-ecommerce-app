@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import log from 'loglevel';
 import BreadcrumbsSection from "../ui/breadcrumbs";
 import {HOME_ROUTE, MAX_PRODUCTS_PER_PAGE} from "../../constants/constants";
@@ -8,12 +8,10 @@ import {useDispatch, useSelector} from "react-redux";
 import Cookies from "js-cookie";
 import {
     ADD_TO_CART, CART_TOTAL,
-    LOAD_SHOPPING_BAG_PRODUCTS,
-    PRODUCT_BY_ID_DATA_API,
     SHOPPERS_PRODUCT_ID
 } from "../../actions/types";
 import DropdownSection from "../ui/dropDown";
-import {Button, Divider, Grid} from "@material-ui/core";
+import {Button, Divider, Grid, Paper} from "@material-ui/core";
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import {connect} from "react-redux";
 import {getDataViaAPI} from '../../actions';
@@ -25,6 +23,7 @@ import PriceDetails from "./priceDetails";
 import Modal from "../../components/ui/modal";
 import _ from 'lodash';
 import Hidden from "@material-ui/core/Hidden";
+import {useAddProductsToShoppingBag} from "../../hooks/useAddProductsToShoppingBag";
 
 const modalWidth = 430
 
@@ -35,43 +34,7 @@ function ShoppingBag(props) {
     const [itemRemovalModalState, setItemRemovalModalState] = useState({active: false, productId: null})
     let cartTotal = 0
 
-    const extractIdsFromObject = object => {
-        log.info("[ShoppingBag] extractIdsFromObject object = " + JSON.stringify(object))
-        let idList = []
-        for (const [id] of Object.entries(object)) {
-            idList.push(parseInt(id))
-        }
-        return idList
-    }
-
-    useEffect(() => {
-        log.info("[ShoppingBag] Component will mount... addToCart = " + JSON.stringify(addToCart))
-
-        let idList = []
-
-        if (addToCart.hasOwnProperty("productQty")) {
-            log.info(`[ShoppingBag] load ShoppingBag products` +
-                ` from addToCartQuantity = ${JSON.stringify(addToCart)}`)
-
-            idList = extractIdsFromObject(addToCart["productQty"])
-
-
-            if (idList.length > 0) {
-                props.getDataViaAPI(LOAD_SHOPPING_BAG_PRODUCTS, PRODUCT_BY_ID_DATA_API + idList.toString())
-                return
-            }
-
-        }
-
-        dispatch({
-            type: LOAD_SHOPPING_BAG_PRODUCTS,
-            payload: {isLoading: false, data: {}}
-        })
-
-        log.info(`[ShoppingBag] load ShoppingBag products idList = ${JSON.stringify(idList)}`)
-
-        // eslint-disable-next-line
-    }, [addToCart])
+    useAddProductsToShoppingBag(props.getDataViaAPI)
 
     if (history.location.pathname.localeCompare('/shopping-bag') !== 0 &&
         history.location.pathname.localeCompare('/products/details/shopping-bag') !== 0) {
@@ -350,10 +313,10 @@ function ShoppingBag(props) {
                     </Grid>
                 </Hidden>
 
-                <Grid item sm={8} md={4}>
-                    <Box pt={2}>
+                <Grid item sm={8} md={3}>
+                    <Paper square style={{width: "inherit", position: "sticky", top: 80}}>
                         <PriceDetails buttonName="Proceed To Checkout" onBtnClickHandler={continueBtnClickHandler}/>
-                    </Box>
+                    </Paper>
                 </Grid>
             </Grid>
 

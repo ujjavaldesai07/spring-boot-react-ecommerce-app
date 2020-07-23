@@ -59,17 +59,14 @@ const shippingOptionPanel = 'shipOptPanel'
 
 function Checkout() {
     const shippingAddress = useSelector(state => state.shippingAddressReducer)
-    const [expanded, setExpanded] = React.useState(shippingAddressPanel);
-
-    const handleChange = (panel) => (event, newExpanded) => {
-        setExpanded(newExpanded ? panel : false);
-    };
 
     const renderTitle = title => {
         return (
             <Grid item
-                  style={{fontSize: "1.8rem", fontWeight: "bolder",
-                  paddingLeft: "1rem"}}>
+                  style={{
+                      fontSize: "1.8rem", fontWeight: "bolder",
+                      paddingLeft: "1rem"
+                  }}>
                 {title}
             </Grid>
         )
@@ -85,8 +82,7 @@ function Checkout() {
 
             <Grid item xs={12} sm={11} md={7}>
 
-                <Accordion square expanded={expanded === shippingAddressPanel}
-                           onChange={handleChange(shippingAddressPanel)}>
+                <Accordion square expanded>
                     <AccordionSummary aria-controls={`${shippingAddressPanel}-content`}
                                       id={`${shippingAddressPanel}-header`}>
                         {renderTitle("Shipping Address")}
@@ -96,9 +92,9 @@ function Checkout() {
                     </AccordionDetails>
                 </Accordion>
 
-                <Accordion square expanded={expanded === shippingOptionPanel}
-                           onChange={handleChange(shippingOptionPanel)}>
-                    <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
+                <Accordion square expanded={shippingAddress.submitted}>
+                    <AccordionSummary aria-controls={`${shippingOptionPanel}-content`}
+                                      id={`${shippingOptionPanel}-header`}>
                         {renderTitle("Shipping Options")}
                     </AccordionSummary>
                     <AccordionDetails>
@@ -112,11 +108,21 @@ function Checkout() {
                 <Grid item style={{paddingRight: 20}}/>
             </Hidden>
 
-            <Grid item sm={11} md={4} style={{height: 300, marginTop: "1rem"}}>
-                <Paper square style={{width: "inherit"}}>
-                    <PriceDetails buttonName="PLACE ORDER"/>
-                </Paper>
-            </Grid>
+            <Hidden smUp>
+                <Grid item sm={11} md={4} style={{height: 300, marginTop: "1rem"}}>
+                    <Paper square style={{width: "inherit"}}>
+                        <PriceDetails buttonName="PLACE ORDER"/>
+                    </Paper>
+                </Grid>
+            </Hidden>
+
+            <Hidden xsDown>
+                <Grid item sm={11} md={3} style={{height: "fit-content", marginTop: "1rem", position: "sticky", top: 80}}>
+                    <Paper square style={{width: "inherit"}}>
+                        <PriceDetails buttonName="PLACE ORDER"/>
+                    </Paper>
+                </Grid>
+            </Hidden>
 
         </Grid>
     )

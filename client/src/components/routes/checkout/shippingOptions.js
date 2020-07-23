@@ -7,6 +7,10 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import ContinueButton from "./continueButton";
+import {connect, useSelector} from "react-redux";
+import CircularProgress from '@material-ui/core/CircularProgress';
+import {useAddProductsToShoppingBag} from "../../../hooks/useAddProductsToShoppingBag";
+import {getDataViaAPI} from "../../../actions";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -19,10 +23,12 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function ShippingOptions() {
+function ShippingOptions(props) {
     const classes = useStyles();
+    const shoppingBagProducts = useSelector(state => state.shoppingBagProductReducer)
+    const [value, setValue] = React.useState('free');
 
-    const [value, setValue] = React.useState('female');
+    useAddProductsToShoppingBag(props.getDataViaAPI)
 
     const handleRadioBtnChange = (event) => {
         setValue(event.target.value);
@@ -49,31 +55,50 @@ function ShippingOptions() {
         )
     }
 
+    const renderImages = () => {
+        log.info(`shoppingBagProducts.hasOwnProperty("data") = ${shoppingBagProducts.hasOwnProperty("data")}`)
+        if (!shoppingBagProducts.hasOwnProperty("data") || Object.keys(shoppingBagProducts.data).length === 0) {
+            return <CircularProgress color="secondary"/>
+        }
+
+        log.info(`shoppingBagProducts.data = ${JSON.stringify(shoppingBagProducts.data)}`)
+        let imageList = []
+
+        for (const [id, product] of Object.entries(shoppingBagProducts.data)) {
+            imageList.push(
+                <Grid key={id} item sm={1} style={{margin: "1rem 1.5rem 0 0"}}>
+                    <img key={product.id} src={product.imageName}
+                         alt={product.imageName} width="inherit" height={80}/>
+                </Grid>
+            )
+        }
+
+        return imageList
+    }
+
     log.info("[ShippingOptions] Rendering ShippingOptions Component.")
 
     return (
-        <Grid item style={{width: "100%", height: 400}}>
-            <Grid item container sm={10} wrap="wrap" spacing={1}
-                  style={{padding: "25px 0 0 30px", height: 80}}>
-                <Grid item sm={2}>
-                    <img src=".." alt="image" width={65} height={80}/>
-                </Grid>
+        <Grid item style={{width: "100%", height: "fit-content"}}>
+            <Grid item container sm={10} wrap="wrap"
+                  style={{padding: "25px 0 0 30px", height: "fit-content"}}>
+                {renderImages()}
             </Grid>
             <Grid item container sm={12} justify="center">
                 <FormControl component="fieldset" style={{width: "inherit"}}>
-                    <RadioGroup aria-label="gender" name="gender1" value={value}
+                    <RadioGroup aria-label="delivery-option" name="delivery-option" value={value}
                                 onChange={handleRadioBtnChange} style={{width: "inherit"}}>
-                        <FormControlLabel value="female" control={<Radio style={{marginLeft: 15}}/>}
+                        <FormControlLabel value="free" control={<Radio style={{marginLeft: 15}}/>}
                                           style={{width: "inherit", margin: "inherit"}}
                                           classes={{label: classes.formControlLabel}}
                                           label={renderRadioBtnLabel("Everyday Free Shipping",
                                               "Transit time: 3-6 business days", "Free")}/>
-                        <FormControlLabel value="male" control={<Radio style={{marginLeft: 15}}/>}
+                        <FormControlLabel value="premium" control={<Radio style={{marginLeft: 15}}/>}
                                           style={{width: "inherit", margin: "inherit"}}
                                           classes={{label: classes.formControlLabel}}
                                           label={renderRadioBtnLabel("Premium",
                                               "Transit time: 2-3 business days", "$10.00")}/>
-                        <FormControlLabel value="other" control={<Radio style={{marginLeft: 15}}/>}
+                        <FormControlLabel value="express" control={<Radio style={{marginLeft: 15}}/>}
                                           style={{width: "inherit", margin: "inherit"}}
                                           classes={{label: classes.formControlLabel}}
                                           label={renderRadioBtnLabel("Express",
@@ -91,4 +116,4 @@ function ShippingOptions() {
     )
 }
 
-export default ShippingOptions;
+export default connect(null, {getDataViaAPI})(ShippingOptions);

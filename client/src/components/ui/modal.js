@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
     paper: {
         backgroundColor: theme.palette.background.paper,
         boxShadow: theme.shadows[6],
-        height: 165,
+        height: "fit-content",
         borderRadius: 4
     },
 }));
@@ -42,7 +42,6 @@ export default function ModalSection(props) {
                 BackdropProps={{
                     timeout: 300,
                 }}>
-                {/*{props.content}*/}
                 <Fade in={open}>
                     <div className={classes.paper} style={{width: props.modalWidth}}>
                         {props.renderWarningComponent}

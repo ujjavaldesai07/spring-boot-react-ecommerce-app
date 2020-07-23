@@ -2,14 +2,21 @@ import React from 'react';
 import log from 'loglevel';
 import {Button, Grid, Hidden} from "@material-ui/core";
 
+const continueButtonStyle = {
+    backgroundColor: "#e01a2b",
+    height: 50,
+    fontSize: "1rem",
+    fontWeight: "bolder",
+    color: "White"
+}
+
 function ContinueButton(props) {
 
     const renderContinueDesktopBtn = () => {
         return (
-            <Grid item container justify="flex-end" style={{padding: "30px 40px 0 0"}}>
+            <Grid item container justify="flex-end" style={{padding: "30px 40px 30px 0"}}>
                 <Button variant="contained" size="large" style={{
-                    backgroundColor: "#e01a2b",
-                    width: "27%", height: 50, fontSize: "1rem", fontWeight: "bolder", color: "White"
+                    ...continueButtonStyle, width: "27%"
                 }} type={props.type} disabled={props.action}>
                     CONTINUE
                 </Button>
@@ -19,10 +26,9 @@ function ContinueButton(props) {
 
     const renderContinueMobileBtn = () => {
         return (
-            <Grid container justify="center" style={{paddingTop: 30}}>
+            <Grid item container justify="center" style={{paddingTop: 30, margin: 0}}>
                 <Button variant="contained" size="large" style={{
-                    backgroundColor: "#e01a2b",
-                    width: "87%", height: 50, fontSize: "1rem", fontWeight: "bolder", color: "White"
+                    ...continueButtonStyle, width: "85%"
                 }} type={props.type} disabled={props.action}>
                     CONTINUE
                 </Button>

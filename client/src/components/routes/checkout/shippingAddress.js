@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import log from 'loglevel';
-import {MenuItem, Grid, Card, CardContent} from "@material-ui/core";
+import {MenuItem, Grid, Card, CardContent, Divider} from "@material-ui/core";
 import ContinueButton from "./continueButton";
 import {withStyles} from "@material-ui/core/styles";
 import {Field, reduxForm} from "redux-form";
@@ -10,6 +10,8 @@ import {stateCodes} from "../../../constants/stateCodes";
 import DeleteIcon from '@material-ui/icons/Delete';
 import Button from '@material-ui/core/Button';
 import {setShippingAddress} from "../../../actions"
+import IconButton from '@material-ui/core/IconButton';
+import Modal from "../../ui/modal";
 
 const styles = theme => ({
     root: {
@@ -45,14 +47,20 @@ class ShippingAddressForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            values: null,
+            addressRemovalConfirmation: false,
         }
     }
 
     onSubmitHandler = () => {
         log.info(`[ShippingAddress] values = ${JSON.stringify(this.props.shippingAddressFormStore)}`)
-        this.setState({values: this.props.shippingAddressFormStore.values})
-        this.props.setShippingAddress({values: this.props.shippingAddressFormStore.values, submitted: true})
+        let formValues = this.props.shippingAddressFormStore.values
+
+        let id = `${formValues.firstName}-${formValues.lastName}-${Math.floor(Date.now() / 1000)}`
+
+        this.props.setShippingAddress({
+            values: {...this.props.shippingAddressFormStore.values, "id": id},
+            submitted: true
+        })
     }
 
     render() {
@@ -61,17 +69,17 @@ class ShippingAddressForm extends Component {
 
         log.info(`[ShippingAddress] Rendering ShippingAddress Component. firstName = ${firstName}`)
 
-        const handleChange = (event) => {
-            log.info(`event.target.value = ${event.target.value}`)
-        };
+        const handleEditBtnClick = () => {
+            this.props.setShippingAddress({submitted: false})
+        }
 
-        const onEditBtnClick = () => {
-
+        const handleDeleteAddressClick = (formValues) => () => {
+            this.setState({addressRemovalConfirmation: true})
         }
 
         const renderTextField = (label, name, validationRules) => {
             return (
-                <Grid item container lg={8}>
+                <Grid item container xs={11} sm={8}>
                     <Field
                         name={name}
                         label={label}
@@ -102,7 +110,7 @@ class ShippingAddressForm extends Component {
         const renderShippingForm = () => {
             return (
                 <Grid item style={{width: "100%", height: 670}}>
-                    <Grid item xs={11} sm={8} lg={12}>
+                    <Grid item xs={12} sm={12}>
                         <form onSubmit={handleSubmit(submitHandler)} className={classes.root}
                               style={{width: "inherit"}}>
                             {renderTextField("First Name", "firstName", requiredRule)}
@@ -111,7 +119,7 @@ class ShippingAddressForm extends Component {
                                 [requiredRule, addressLine1Rule])}
                             {renderTextField("Address Line 2 (optional)", "addressLine2", null)}
 
-                            <Grid item container lg={8}>
+                            <Grid item container xs={11} sm={8}>
                                 <Grid item container xs={6} style={{paddingRight: 15}}>
                                     <Field
                                         name="zipCode"
@@ -132,7 +140,6 @@ class ShippingAddressForm extends Component {
                                         component={TextField}
                                         variant="outlined"
                                         select
-                                        onChange={handleChange}
                                         fullWidth
                                         size="medium"
                                         style={textFieldStyles}
@@ -156,10 +163,11 @@ class ShippingAddressForm extends Component {
         }
 
         const renderShippingSummaryAddress = (values) => {
+
             return (
-                <Grid item lg={5} style={{margin: "2rem 2rem 0 2rem"}}>
-                    <Card style={{height: 200, fontSize: "1.1rem"}}>
-                        <CardContent style={{height: 160}}>
+                <Grid item lg={4} style={{margin: "2rem"}}>
+                    <Card style={{height: "fit-content", fontSize: "1.1rem"}}>
+                        <CardContent style={{height: "fit-content"}}>
 
                             <Grid item style={{marginBottom: "0.5rem"}}>
                                 {`${values.firstName} ${values.lastName}`}
@@ -185,19 +193,24 @@ class ShippingAddressForm extends Component {
 
                         </CardContent>
 
-                        <Grid container justify="flex-end" style={{paddingRight: "0.5rem", paddingBottom: "1rem"}}>
-                            <DeleteIcon fontSize="large"/>
+                        <Grid container style={{padding: "0 0.8rem 1rem 1rem"}}>
+                            <Grid item xs={6} style={{alignSelf: "center"}}>
+                                <Button variant="outlined" color="default" fullWidth style={{
+                                    height: "3rem",
+                                    fontSize: "1rem"
+                                }} onClick={handleEditBtnClick}>
+                                    Edit
+                                </Button>
+                            </Grid>
+
+                            <Grid item container xs={6} justify={"flex-end"}>
+                                <IconButton onClick={handleDeleteAddressClick(values)}>
+                                    <DeleteIcon fontSize="large"/>
+                                </IconButton>
+                            </Grid>
+
                         </Grid>
                     </Card>
-
-                    <Grid container justify="center" style={{padding: "2rem 3rem 1rem 3rem"}}>
-                        <Button variant="contained" color="secondary" fullWidth style={{
-                            height: "3rem",
-                            fontSize: "1.2rem"
-                        }} onClick={onEditBtnClick}>
-                            Edit
-                        </Button>
-                    </Grid>
                 </Grid>
             )
         }
@@ -205,14 +218,61 @@ class ShippingAddressForm extends Component {
         const renderShippingSummaryAddresses = () => {
             return (
                 <Grid container justify="flex-start" style={{height: "fit-content", backgroundColor: "#80808033"}}>
-                    {renderShippingSummaryAddress(this.state.values)}
+                    {renderShippingSummaryAddress(this.props.shippingAddress.values)}
                 </Grid>
             )
         }
 
+        const renderAddressRemovalConfirmation = () => {
+            return (
+                <Grid container direction="column">
+                    <Grid item container direction="column" style={{margin: "1rem"}}>
+                        <Grid item
+                              style={{color: "#3e4152", fontSize: 14, fontWeight: "bolder", paddingBottom: "1rem"}}>
+                            Remove Address
+                        </Grid>
+                        <Grid item style={{color: "#696b79", fontSize: 14, fontWeight: 200}}>
+                            Are you sure you want to remove selected address?
+                        </Grid>
+                    </Grid>
+                    <Grid item>
+                        <Divider style={{width: 300, height: 1}}/>
+                    </Grid>
+                    <Grid item container alignItems="center" style={{textAlignLast: "center"}}>
+                        <Grid item xs={6} onClick={removeModalClickHandler} style={{
+                            color: "red", fontWeight: "bold", cursor: "pointer"
+                        }}>
+                            REMOVE
+                        </Grid>
+                        <Divider orientation="vertical" style={{width: 0, height: 45}}/>
+                        <Grid item xs={5} onClick={closeModalClickHandler}
+                              style={{fontWeight: "bold", cursor: "pointer", paddingLeft: "1.3rem"}}>
+                            CANCEL
+                        </Grid>
+                    </Grid>
+                </Grid>
+            )
+        }
+
+        const closeModalClickHandler = () => {
+            this.setState({addressRemovalConfirmation: false})
+        }
+
+        const removeModalClickHandler = () => {
+            this.props.reset('shippingAddressForm')
+            this.props.setShippingAddress({values: null, submitted: false})
+            this.setState({addressRemovalConfirmation: false})
+        }
+
+        log.info(`this.state.addressRemovalConfirmation = ${this.state.addressRemovalConfirmation}`)
         return (
             <>
-                {this.state.values ? renderShippingSummaryAddresses() : renderShippingForm()}
+                {this.props.shippingAddress.submitted
+                    ? renderShippingSummaryAddresses() : renderShippingForm()}
+                {this.state.addressRemovalConfirmation ?
+                    <Modal renderWarningComponent={renderAddressRemovalConfirmation()}
+                           modalWidth="300px"
+                           closeHandler={closeModalClickHandler}/> : null}
             </>
         )
     }
@@ -221,7 +281,9 @@ class ShippingAddressForm extends Component {
 const mapStateToProps = (state) => {
     return ({
         shippingAddressFormStore: state.form.shippingAddressForm ?
-            state.form.shippingAddressForm : null
+            state.form.shippingAddressForm : null,
+        shippingAddress: state.shippingAddressReducer
+
     })
 }
 
