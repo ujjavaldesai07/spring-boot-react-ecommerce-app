@@ -1,9 +1,19 @@
 import {
-    ADD_TO_CART, DELETE_FILTER_QUERY,
-    LOAD_HOME_PAGE, LOAD_SHOPPING_BAG_PRODUCTS,
+    ADD_TO_CART,
+    DELETE_FILTER_QUERY,
+    LOAD_HOME_PAGE,
+    LOAD_SHOPPING_BAG_PRODUCTS,
     LOAD_FILTER_ATTRIBUTES,
-    LOAD_FILTER_PRODUCTS, LOAD_TABS_DATA, REMOVE_FILTER_ATTRIBUTES, SAVE_QUERY_STATUS,
-    SELECT_PRODUCT_DETAIL, CART_TOTAL, SAVE_SORT_LIST, SHIPPING_ADDRESS_CONFIRMED
+    LOAD_FILTER_PRODUCTS,
+    LOAD_TABS_DATA,
+    REMOVE_FILTER_ATTRIBUTES,
+    SAVE_QUERY_STATUS,
+    SELECT_PRODUCT_DETAIL,
+    CART_TOTAL,
+    SAVE_SORT_LIST,
+    SHIPPING_ADDRESS_CONFIRMED,
+    PAYMENT_INFO_CONFIRMED,
+    SHIPPING_OPTION_CONFIRMED
 } from "../../actions/types";
 import log from "loglevel";
 import {INITIAL_QUERY_STATUS} from "../../constants/constants";
@@ -114,6 +124,26 @@ export const shippingAddressReducer = (state
                                            = {values: null, submitted: false}, action) => {
     switch (action.type) {
         case SHIPPING_ADDRESS_CONFIRMED:
+            return action.payload
+        default:
+            return state;
+    }
+};
+
+export const paymentInfoReducer = (state
+                                           = {values: null, submitted: false}, action) => {
+    switch (action.type) {
+        case PAYMENT_INFO_CONFIRMED:
+            return action.payload
+        default:
+            return state;
+    }
+};
+
+export const shippingOptionReducer = (state
+                                           = {selectedOption: null, submitted: false}, action) => {
+    switch (action.type) {
+        case SHIPPING_OPTION_CONFIRMED:
             return action.payload
         default:
             return state;

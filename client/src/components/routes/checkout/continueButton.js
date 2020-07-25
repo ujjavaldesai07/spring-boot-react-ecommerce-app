@@ -17,7 +17,7 @@ function ContinueButton(props) {
             <Grid item container justify="flex-end" style={{padding: "30px 40px 30px 0"}}>
                 <Button variant="contained" size="large" style={{
                     ...continueButtonStyle, width: "27%"
-                }} type={props.type} disabled={props.action}>
+                }} type={props.type} disabled={props.action} onClick={props.buttonHandler}>
                     CONTINUE
                 </Button>
             </Grid>
@@ -29,7 +29,7 @@ function ContinueButton(props) {
             <Grid item container justify="center" style={{paddingTop: 30, margin: 0}}>
                 <Button variant="contained" size="large" style={{
                     ...continueButtonStyle, width: "85%"
-                }} type={props.type} disabled={props.action}>
+                }} type={props.type} disabled={props.action} onClick={props.buttonHandler}>
                     CONTINUE
                 </Button>
             </Grid>

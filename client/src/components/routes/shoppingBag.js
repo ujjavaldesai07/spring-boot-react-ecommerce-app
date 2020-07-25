@@ -316,6 +316,20 @@ function ShoppingBag(props) {
                 <Grid item sm={8} md={3}>
                     <Paper square style={{width: "inherit", position: "sticky", top: 80}}>
                         <PriceDetails buttonName="Proceed To Checkout" onBtnClickHandler={continueBtnClickHandler}/>
+
+                        <Grid item container xs={12} sm={12} justify="center"
+                              style={{fontColor: "#535766", fontWeight: "bolder", fontSize: "1.2rem", padding: "20px 0"}}>
+                            <Button variant="contained" size="medium"
+                                    onClick={continueBtnClickHandler}
+                                    style={{
+                                        width: '70%', height: 50, color: 'white',
+                                        fontWeight: "bold", backgroundColor: "#e01a2b",
+                                        fontSize: "1rem"
+                                    }}>
+                                Proceed To Checkout
+                            </Button>
+                        </Grid>
+
                     </Paper>
                 </Grid>
             </Grid>

@@ -7,10 +7,11 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import ContinueButton from "./continueButton";
-import {connect, useSelector} from "react-redux";
+import {connect, useDispatch, useSelector} from "react-redux";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {useAddProductsToShoppingBag} from "../../../hooks/useAddProductsToShoppingBag";
 import {getDataViaAPI} from "../../../actions";
+import {SHIPPING_OPTION_CONFIRMED} from "../../../actions/types";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -26,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
 function ShippingOptions(props) {
     const classes = useStyles();
     const shoppingBagProducts = useSelector(state => state.shoppingBagProductReducer)
+    const dispatch = useDispatch()
     const [value, setValue] = React.useState('free');
 
     useAddProductsToShoppingBag(props.getDataViaAPI)
@@ -33,6 +35,16 @@ function ShippingOptions(props) {
     const handleRadioBtnChange = (event) => {
         setValue(event.target.value);
     };
+
+    const submitHandler = () => {
+        dispatch({
+            type: SHIPPING_OPTION_CONFIRMED,
+            payload: {
+                selectedOption: value,
+                submitted: true
+            }
+        })
+    }
 
     const renderRadioBtnLabel = (lblText, helperText, price) => {
         return (
@@ -66,7 +78,7 @@ function ShippingOptions(props) {
 
         for (const [id, product] of Object.entries(shoppingBagProducts.data)) {
             imageList.push(
-                <Grid key={id} item sm={1} style={{margin: "1rem 1.5rem 0 0"}}>
+                <Grid key={id} item sm={2} style={{alignSelf: "center", paddingBottom: "1rem"}}>
                     <img key={product.id} src={product.imageName}
                          alt={product.imageName} width="inherit" height={80}/>
                 </Grid>
@@ -111,7 +123,7 @@ function ShippingOptions(props) {
                 <Divider style={{height: 1, width: "inherit"}}/>
             </Grid>
 
-            <ContinueButton/>
+            <ContinueButton buttonHandler={submitHandler}/>
         </Grid>
     )
 }

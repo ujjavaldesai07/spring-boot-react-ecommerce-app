@@ -8,14 +8,17 @@ import {
     LOAD_FILTER_PRODUCTS,
     LOAD_FILTER_ATTRIBUTES,
     INTERNAL_SERVER_ERROR_CODE,
-    BAD_REQUEST_ERROR_CODE, SAVE_QUERY_STATE, SAVE_QUERY_STATUS, SHIPPING_ADDRESS_CONFIRMED,
+    BAD_REQUEST_ERROR_CODE,
+    SAVE_QUERY_STATUS,
+    SHIPPING_ADDRESS_CONFIRMED,
+    PAYMENT_INFO_CONFIRMED,
 } from './types';
-import authApi from "../api/authServiceApi";
 import history from "../history";
 import {Base64} from 'js-base64';
 import Cookies from 'js-cookie';
-import commonServiceApi from "../api/commonServiceApi";
 import log from "loglevel";
+import {commonServiceAPI, authServiceAPI, paymentServiceAPI} from "../api/service_api";
+import axios from 'axios';
 
 export const setTokenFromCookie = tokenId => {
     log.info(`[ACTION]: setTokenFromCookie tokenId = ${tokenId}`)
@@ -33,13 +36,21 @@ export const setShippingAddress = payload => {
     }
 }
 
+export const setPaymentInfo = payload => {
+    log.info(`[ACTION]: setPaymentInfo payload = ${JSON.stringify(payload)}`)
+    return {
+        type: PAYMENT_INFO_CONFIRMED,
+        payload: payload
+    }
+}
+
 export const signIn = formValues => async (dispatch) => {
     log.info(`[ACTION]: signIn API is invoked formValues = ${formValues}`)
 
     const hash = Base64.encode(`${formValues.Username}:${formValues.Password}`);
-    authApi.defaults.headers.common['Authorization'] = `Basic ${hash}`
-    authApi.defaults.timeout = 5000;
-    const response = await authApi.post('/authenticate').catch(err => {
+    authServiceAPI.defaults.headers.common['Authorization'] = `Basic ${hash}`
+    authServiceAPI.defaults.timeout = 5000;
+    const response = await authServiceAPI.post('/authenticate').catch(err => {
         log.info(`[ACTION]: dispatch HANDLE_SIGN_IN_ERROR err.message = ${err.message}`)
         dispatch({type: HANDLE_SIGN_IN_ERROR, payload: err.message});
     });
@@ -67,8 +78,8 @@ export const signOut = () => {
 
 export const signUp = formValues => async (dispatch) => {
     log.info(`[ACTION]: signUp API = ${JSON.stringify(formValues)}.`)
-    authApi.defaults.timeout = 15000;
-    const response = await authApi.post('/signup', {
+    authServiceAPI.defaults.timeout = 15000;
+    const response = await authServiceAPI.post('/signup', {
         'username': formValues.Username,
         'password': formValues.Password,
         'firstname': formValues.FirstName,
@@ -92,14 +103,42 @@ export const signUp = formValues => async (dispatch) => {
     }
 }
 
+export const sendPaymentToken = (token) => async dispatch => {
+    log.info(`Token = ${JSON.stringify(token)}`)
+    let config = {
+        method: 'post',
+        url: 'http://localhost:9050/payment',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data : JSON.stringify(token)
+    };
+
+    axios(config)
+        .then(function (response) {
+            console.log(JSON.stringify(response.data));
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+
+    // const response = await paymentServiceAPI.get("/payment", config).catch(err => {
+    //     log.info(`[ACTION]: unable to fetch response for API = ${err}`)
+    //     // dispatch({type: type, payload: {isLoading: false, statusCode: INTERNAL_SERVER_ERROR_CODE}});
+    //     // responseError = true
+    // });
+    // log.info(`response = ${JSON.stringify(response)}`)
+}
+
+
 export const getDataViaAPI = (type, uri) => async dispatch => {
     log.info(`[ACTION]: invokeAndDispatchAPIData Calling API = ${uri}.`)
 
     if (uri) {
-        commonServiceApi.defaults.timeout = 15000;
+        commonServiceAPI.defaults.timeout = 15000;
         uri = uri.replace(/\s/g, '')
         let responseError = false
-        const response = await commonServiceApi.get(uri)
+        const response = await commonServiceAPI.get(uri)
             .catch(err => {
                 log.info(`[ACTION]: unable to fetch response for API = ${uri}`)
                 dispatch({type: type, payload: {isLoading: false, statusCode: INTERNAL_SERVER_ERROR_CODE}});
@@ -133,7 +172,7 @@ export const loadFilterAttributes = filterQuery => async dispatch => {
     if (filterQuery) {
         let removedSpacesFromFilterQuery = filterQuery.replace(/\s/g, '')
         let uri = `/filter${removedSpacesFromFilterQuery}`
-        const response = await commonServiceApi.get(uri);
+        const response = await commonServiceAPI.get(uri);
         if (response != null) {
             log.trace(`[ACTION]: Filter = ${JSON.stringify(response.data)}`)
 

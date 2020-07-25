@@ -5,6 +5,7 @@ import {useSelector} from "react-redux";
 import {PageNotFound} from "../ui/error/pageNotFound";
 import Cookies from "js-cookie";
 import {CART_TOTAL} from "../../actions/types";
+import PaymentButton from "./checkout/paymentButton";
 
 const paymentStyles = {
     header: {
@@ -18,7 +19,7 @@ const paymentStyles = {
     fontSize: "1.1rem",
 }
 
-function PriceDetails(props) {
+function PriceDetails() {
     let cartTotal = useSelector(state => state.cartTotalReducer);
 
     if (!cartTotal) {
@@ -66,19 +67,6 @@ function PriceDetails(props) {
             {renderGridData("Order Total", `$${cartTotal}`,
                 {...paymentStyles.header})}
 
-            <Grid item container xs={12} sm={9} justify="center"
-                  style={{...paymentStyles.header, padding: "30px 0 30px 0"}}
-            >
-                <Button variant="contained" size="medium"
-                        onClick={props.onBtnClickHandler}
-                        style={{
-                            width: '87%', height: 50, color: 'white',
-                            fontWeight: "bold", backgroundColor: "#e01a2b",
-                            fontSize: "1rem"
-                        }}>
-                    {props.buttonName}
-                </Button>
-            </Grid>
         </Grid>
     )
 }
