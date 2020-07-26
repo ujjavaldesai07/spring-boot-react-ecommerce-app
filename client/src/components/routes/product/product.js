@@ -16,6 +16,7 @@ import BreadcrumbsSection from "../../ui/breadcrumbs";
 import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
 import {useDispatch} from "react-redux";
 import {SAVE_QUERY_STATUS} from "../../../actions/types";
+import {BadRequest} from "../../ui/error/badRequest";
 
 export const stickyBoxStyle = {
     position: 'sticky',
@@ -62,7 +63,7 @@ function Product() {
 
     if (history.location.pathname.localeCompare('/products') !== 0
         || !history.location.search.startsWith('?q=')) {
-        return <SearchMatchesNotFound/>
+        return <BadRequest/>
     }
 
     log.info("[Product] Rendering Product Component.")

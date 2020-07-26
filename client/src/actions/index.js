@@ -11,7 +11,7 @@ import {
     BAD_REQUEST_ERROR_CODE,
     SAVE_QUERY_STATUS,
     SHIPPING_ADDRESS_CONFIRMED,
-    PAYMENT_INFO_CONFIRMED,
+    PAYMENT_INFO_CONFIRMED, PAYMENT_RESPONSE,
 } from './types';
 import history from "../history";
 import {Base64} from 'js-base64';
@@ -117,17 +117,22 @@ export const sendPaymentToken = (token) => async dispatch => {
     axios(config)
         .then(function (response) {
             console.log(JSON.stringify(response.data));
+            dispatch({
+                type: PAYMENT_RESPONSE,
+                payload: JSON.stringify(response.data)
+            })
+
+            if(response.data.paymentFailed) {
+                history.push('/checkout/cancel-payment')
+            } else {
+                history.push(`/checkout/success-payment/${response.data.charge_id}`)
+            }
+
         })
         .catch(function (error) {
+            history.push('/checkout/cancel-payment')
             console.log(error);
         });
-
-    // const response = await paymentServiceAPI.get("/payment", config).catch(err => {
-    //     log.info(`[ACTION]: unable to fetch response for API = ${err}`)
-    //     // dispatch({type: type, payload: {isLoading: false, statusCode: INTERNAL_SERVER_ERROR_CODE}});
-    //     // responseError = true
-    // });
-    // log.info(`response = ${JSON.stringify(response)}`)
 }
 
 

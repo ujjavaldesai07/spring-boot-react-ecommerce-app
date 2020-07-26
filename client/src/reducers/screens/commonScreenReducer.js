@@ -13,7 +13,7 @@ import {
     SAVE_SORT_LIST,
     SHIPPING_ADDRESS_CONFIRMED,
     PAYMENT_INFO_CONFIRMED,
-    SHIPPING_OPTION_CONFIRMED
+    SHIPPING_OPTION_CONFIRMED, PAYMENT_RESPONSE
 } from "../../actions/types";
 import log from "loglevel";
 import {INITIAL_QUERY_STATUS} from "../../constants/constants";
@@ -109,12 +109,7 @@ export const cartTotalReducer = (state = null, action) => {
 export const savedSortedListReducer = (state = null, action) => {
     switch (action.type) {
         case SAVE_SORT_LIST:
-            if (action.payload.apparels) {
-                return {...state, apparels: action.payload.apparels}
-            } else if (action.payload.brands) {
-                return {...state, brands: action.payload.brands}
-            }
-            break
+            return action.payload
         default:
             return state;
     }
@@ -144,6 +139,15 @@ export const shippingOptionReducer = (state
                                            = {selectedOption: null, submitted: false}, action) => {
     switch (action.type) {
         case SHIPPING_OPTION_CONFIRMED:
+            return action.payload
+        default:
+            return state;
+    }
+};
+
+export const paymentResponseReducer = (state = null, action) => {
+    switch (action.type) {
+        case PAYMENT_RESPONSE:
             return action.payload
         default:
             return state;

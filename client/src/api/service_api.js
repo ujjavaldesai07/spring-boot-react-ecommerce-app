@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const paymentServiceAPI = axios.create({
-    baseURL: 'http://localhost:6000'
+    baseURL: 'http://localhost:9050'
 })
 
 export const authServiceAPI = axios.create({

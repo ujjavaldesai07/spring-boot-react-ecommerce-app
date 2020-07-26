@@ -1,19 +1,39 @@
 import React, {Component} from 'react';
 import log from 'loglevel';
-import {MenuItem, Grid} from "@material-ui/core";
+import {MenuItem, Grid, TextField} from "@material-ui/core";
 import ContinueButton from "./continueButton";
 import {withStyles} from "@material-ui/core/styles";
 import {Field, reduxForm} from "redux-form";
 import {connect} from "react-redux";
-import {TextField} from "redux-form-material-ui"
 import {stateCodes} from "../../../constants/stateCodes";
 import {setShippingAddress} from "../../../actions"
 import {ModalConfirmation} from "../../ui/modalConfirmation";
 import {SummaryCard} from "./summaryCard";
-import {FormTextField} from "./formTextField";
-import {emailRule, phoneNoRule, requiredRule, zipCodeRule} from "../../../constants/formValidationRules";
 import {textFieldStyles} from "../../../styles/js/formStyles";
 import {checkoutFormStyles} from "../../../styles/materialUI/checkoutFormStyles";
+
+const renderTextField = (
+    {placeholder, shrink, selectField, input, label, meta: { touched, error }, ...custom },
+) => {
+    let errorExist = touched && error && error !== "";
+
+    return (
+        <TextField
+            label={label}
+            variant="outlined"
+            fullWidth
+            size="medium"
+            select={selectField}
+            style={textFieldStyles}
+            placeholder={placeholder}
+            InputLabelProps={{shrink: shrink}}
+            error={errorExist}
+            helperText={errorExist? error : null}
+            {...input}
+            {...custom}
+        />
+    );
+}
 
 class ShippingAddressForm extends Component {
 
@@ -23,7 +43,6 @@ class ShippingAddressForm extends Component {
             addressRemovalConfirmation: false,
         }
     }
-
 
     closeModalHandler = () => {
         this.setState({addressRemovalConfirmation: false})
@@ -35,10 +54,10 @@ class ShippingAddressForm extends Component {
         this.setState({addressRemovalConfirmation: false})
     }
 
-    onSubmitHandler = () => {
+    handleSubmit = () => {
         log.info(`[ShippingAddress] values = ${JSON.stringify(this.props.shippingAddressFormStore)}`)
-        let formValues = this.props.shippingAddressFormStore.values
-        let id = `${formValues.firstName}-${formValues.lastName}-${Math.floor(Date.now() / 1000)}`
+        // let formValues = this.props.shippingAddressFormStore.values
+        // let id = `${formValues.firstName}-${formValues.lastName}-${Math.floor(Date.now() / 1000)}`
 
         this.props.setShippingAddress({submitted: true})
     }
@@ -52,8 +71,7 @@ class ShippingAddressForm extends Component {
     }
 
     render() {
-        const {classes, handleSubmit, submitting, pristine} = this.props;
-        const submitHandler = this.onSubmitHandler.bind(this);
+        const {classes, submitting, pristine} = this.props;
 
         log.info(`[ShippingAddress] Rendering ShippingAddress Component...`)
 
@@ -95,11 +113,14 @@ class ShippingAddressForm extends Component {
             return stateCodeList
         }
 
-        const renderFormTextField = (label, name, validationRules) => {
+        const renderFormTextField = (label, name) => {
             return (
                 <Grid item container xs={11} sm={8}>
-                    <FormTextField label={label} name={name}
-                                   validationRules={validationRules}/>
+                    <Field
+                        name={name}
+                        component={renderTextField}
+                        label={label}
+                    />
                 </Grid>
             )
         }
@@ -108,38 +129,38 @@ class ShippingAddressForm extends Component {
             return (
                 <Grid item style={{width: "100%", height: "fit-content"}}>
                     <Grid item xs={12} sm={12}>
-                        <form onSubmit={handleSubmit(submitHandler)} className={classes.root}
+                        <form onSubmit={this.handleSubmit} className={classes.root}
                               style={{width: "inherit"}}>
 
-                            {renderFormTextField("First Name", "firstName", requiredRule)}
-                            {renderFormTextField("Last Name", "lastName", requiredRule)}
-                            {renderFormTextField("Email", "email",
-                                [requiredRule, emailRule])}
-                            {renderFormTextField("Address Line 1", "addressLine1", requiredRule)}
+                            {renderFormTextField("First Name", "firstName")}
+                            {renderFormTextField("Last Name", "lastName")}
+                            {renderFormTextField("Email", "email")}
+                            {renderFormTextField("Address Line 1", "addressLine1")}
 
                             <Grid item container xs={11} sm={8}>
-                                <FormTextField fixedLabel name="addressLine2" label="Address Line 2 (optional)"
-                                               placeholder="Apt, Suite, Bldg, Floor, etc"/>
+                                <Field
+                                    name="addressLine2"
+                                    component={renderTextField}
+                                    label="Address Line 2 (optional)"
+                                    props={{placeholder: "Apt, Suite, Bldg, Floor, etc", shrink: true}}
+                                />
                             </Grid>
 
                             <Grid item container xs={11} sm={8}>
                                 <Grid item container xs={6} style={{paddingRight: 15}}>
-                                    <FormTextField label="Zip Code" name="zipCode"
-                                                   validationRules={[requiredRule, zipCodeRule]}/>
+                                    <Field
+                                        name="zipCode"
+                                        component={renderTextField}
+                                        label="Zip Code"
+                                    />
                                 </Grid>
 
                                 <Grid item container xs={6}>
                                     <Field
                                         name="stateCode"
                                         label="State"
-                                        component={TextField}
-                                        variant="outlined"
-                                        select
-                                        fullWidth
-                                        size="medium"
-                                        style={textFieldStyles}
-                                        validate={requiredRule}
-                                        required
+                                        component={renderTextField}
+                                        props={{selectField: true}}
                                     >
                                         {renderStateCodes()}
                                     </Field>
@@ -147,12 +168,15 @@ class ShippingAddressForm extends Component {
 
                             </Grid>
 
-                            {renderFormTextField("City", "city", requiredRule)}
+                            {renderFormTextField("City", "city")}
 
                             <Grid item container xs={11} sm={8}>
-                                <FormTextField fixedLabel name="phoneNumber" label="Phone Number"
-                                               placeholder="123-123-1234"
-                                               validationRules={[requiredRule, phoneNoRule]}/>
+                                <Field
+                                    name="phoneNumber"
+                                    component={renderTextField}
+                                    label="Phone Number"
+                                    props={{placeholder: "123-123-1234", shrink: true}}
+                                />
                             </Grid>
 
                             <ContinueButton type="submit" action={submitting || pristine}/>
@@ -178,6 +202,41 @@ class ShippingAddressForm extends Component {
     }
 }
 
+const validate = (formValues) => {
+    const errors = {};
+    const requiredFields = [
+        'firstName',
+        'lastName',
+        'email',
+        'addressLine1',
+        'zipCode',
+        'stateCode',
+        'city',
+        'phoneNumber'
+    ];
+    requiredFields.forEach(field => {
+        if (!formValues[field]) {
+            errors[field] = 'Required';
+        }
+    });
+
+    if (formValues.email &&
+        !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(formValues.email)) {
+        errors.email = 'Invalid email address';
+    }
+
+    if (formValues.zipCode &&
+        !/(^\d{5}$)|(^\d{5}-\d{4}$)/.test(formValues.zipCode)) {
+        errors.zipCode = 'Invalid Zip Code';
+    }
+
+    if (formValues.phoneNumber &&
+        !/^\(?([0-9]{3})\)?[-]?([0-9]{3})[-]?([0-9]{4})$/.test(formValues.phoneNumber)) {
+        errors.phoneNumber = 'Invalid Phone Number';
+    }
+    return errors;
+}
+
 const mapStateToProps = (state) => {
     return ({
         shippingAddressFormStore: state.form.shippingAddressForm ?
@@ -189,7 +248,7 @@ const mapStateToProps = (state) => {
 
 const reduxWrapperForm = reduxForm({
     form: 'shippingAddressForm',
-    destroyOnUnmount: false
+    validate,
 })(ShippingAddressForm);
 
 const connectWrapperForm = connect(mapStateToProps, {setShippingAddress})(reduxWrapperForm);

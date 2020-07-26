@@ -36,12 +36,6 @@ function ShoppingBag(props) {
 
     useAddProductsToShoppingBag(props.getDataViaAPI)
 
-    if (history.location.pathname.localeCompare('/shopping-bag') !== 0 &&
-        history.location.pathname.localeCompare('/products/details/shopping-bag') !== 0) {
-        log.info(`[ShoppingBag] corrupted url.`)
-        return <PageNotFound/>
-    }
-
     const getStringBeforeLastDelimiter = (str, delimiter) => {
         return str.substring(0, str.lastIndexOf(delimiter))
     }

@@ -1,4 +1,3 @@
-
 export const MAX_PRODUCTS_PER_PAGE = 16;
 
 export const TAB_CONFIG = [
@@ -31,3 +30,6 @@ export const FILTER_ATTRIBUTES = ["genders", "apparels", "brands", "prices"]
 export const HOME_ROUTE = '/'
 export const PRODUCTS_ROUTE = '/products'
 export const DETAILS_ROUTE = '/products/details'
+
+export const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+    'August', 'September', 'October', 'November', 'December'];

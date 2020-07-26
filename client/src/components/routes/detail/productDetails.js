@@ -51,7 +51,7 @@ function ProductDetails(props) {
     if (history.location.pathname.localeCompare('/products/details') !== 0 ||
         history.location.search.search('product_id=') === -1
         || !history.location.search.startsWith('?q=')) {
-        return <SearchMatchesNotFound/>
+        return <BadRequest/>
     }
 
     const getStringBeforeLastDelimiter = (str, delimiter) => {

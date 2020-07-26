@@ -52,7 +52,6 @@ export default function BrandCheckBox() {
                                searchListHandler={handleSearchListChange}
             />
             <CheckboxList attrList={getActiveBrandList()}
-                          fontSize="0.9rem"
                           title="Brand"
                           maxItems={6}
                           selectedAttrList={selectedBrands}
@@ -60,6 +59,7 @@ export default function BrandCheckBox() {
             <CheckboxMoreButton title={TITLE}
                                 propName={propName}
                                 checkboxList={brandList}
+                                size={9}
                                 selectedCheckboxList={selectedBrands}
                                 checkboxChangeHandler={handleCheckBoxChange}/>
         </>

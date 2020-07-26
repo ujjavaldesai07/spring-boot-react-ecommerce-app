@@ -52,7 +52,6 @@ export default function ApparelCheckBox() {
                                searchListHandler={handleSearchListChange}
             />
             <CheckboxList attrList={getActiveApparelList()}
-                          fontSize="0.9rem"
                           title={TITLE}
                           maxItems={6}
                           selectedAttrList={selectedApparels}
@@ -60,6 +59,7 @@ export default function ApparelCheckBox() {
             <CheckboxMoreButton title={TITLE}
                                 checkboxList={apparelList}
                                 propName={propName}
+                                size={6}
                                 selectedCheckboxList={selectedApparels}
                                 checkboxChangeHandler={handleCheckBoxChange}/>
 

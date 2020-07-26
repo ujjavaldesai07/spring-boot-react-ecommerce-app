@@ -12,6 +12,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import {useAddProductsToShoppingBag} from "../../../hooks/useAddProductsToShoppingBag";
 import {getDataViaAPI} from "../../../actions";
 import {SHIPPING_OPTION_CONFIRMED} from "../../../actions/types";
+import {MONTHS} from "../../../constants/constants";
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -24,42 +26,108 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+const shippingOptionsData = {
+    "free": {
+        price: "Free",
+        label: "Everyday Free Shipping",
+        transitLabel: "Transit time: 3-6 business days",
+        estimatedDays: [3, 6]
+    },
+    "premium": {
+        price: "$10.00",
+        label: "Premium",
+        transitLabel: "Transit time: 2-3 business days",
+        estimatedDays: [2, 3]
+    },
+    "express": {
+        price: "$15.00",
+        label: "Express",
+        transitLabel: "Transit time: 1-2 business days",
+        estimatedDays: [1, 2]
+    },
+}
+
 function ShippingOptions(props) {
     const classes = useStyles();
     const shoppingBagProducts = useSelector(state => state.shoppingBagProductReducer)
     const dispatch = useDispatch()
-    const [value, setValue] = React.useState('free');
+    const [shippingOptionState, setShippingOptionState] = React.useState({value: 'free', submitted: false});
 
     useAddProductsToShoppingBag(props.getDataViaAPI)
 
     const handleRadioBtnChange = (event) => {
-        setValue(event.target.value);
+        setShippingOptionState({value: event.target.value, submitted: false});
     };
 
     const submitHandler = () => {
+        setShippingOptionState({value: shippingOptionState.value, submitted: true});
+
         dispatch({
             type: SHIPPING_OPTION_CONFIRMED,
             payload: {
-                selectedOption: value,
+                estimatedDate: getEstimatedDeliveryDate(shippingOptionsData[shippingOptionState.value].estimatedDays),
+                price: shippingOptionsData[shippingOptionState.value].price,
                 submitted: true
             }
         })
     }
 
-    const renderRadioBtnLabel = (lblText, helperText, price) => {
+    const editBtnHandler = () => {
+
+    }
+
+    const getEstimatedDeliveryDate = (estimatedDays) => {
+        let startDate = new Date();
+        let endDate = new Date();
+        startDate.setDate(endDate.getDate() + estimatedDays[0]);
+        endDate.setDate(endDate.getDate() + estimatedDays[1]);
+        return `${startDate.getDate()} ${MONTHS[startDate.getMonth()]} &`
+            + ` ${endDate.getDate()} ${MONTHS[endDate.getMonth()]}`
+    }
+
+    const renderEditButton = () => {
+        return (
+            <Grid item xs={3} style={{padding: "1rem 0 1rem 2rem"}}>
+                <Button variant="outlined" color="inherit" fullWidth style={{
+                    height: "3rem",
+                    fontSize: "1rem"
+                }} onClick={editBtnHandler}>
+                    Edit
+                </Button>
+            </Grid>
+        )
+    }
+
+    const renderSelectedOption = () => {
+        return (
+            <Grid item container xs={11}>
+                {
+                    renderRadioBtnLabel(shippingOptionsData[shippingOptionState.value].label,
+                shippingOptionsData[shippingOptionState.value].transitLabel,
+                shippingOptionsData[shippingOptionState.value].price,
+                shippingOptionsData[shippingOptionState.value].estimatedDays)
+                }
+            </Grid>
+        )
+    }
+
+    const renderRadioBtnLabel = (lblText, helperText, price, estimatedDays) => {
         return (
             <Grid item container xs={12} sm={12} style={{width: "inherit", paddingTop: 20}}>
 
-                <Grid item sm={5}>
+                <Grid item xs={7}>
                     <Grid item style={{fontWeight: "bolder", fontSize: "1.1rem"}}>
                         {lblText}
                     </Grid>
                     <Grid item>
                         {helperText}
                     </Grid>
+                    <Grid item style={{fontWeight: "bold"}}>
+                        {`Delivered between ${getEstimatedDeliveryDate(estimatedDays)}`}
+                    </Grid>
                 </Grid>
 
-                <Grid item container justify="flex-end" xs={4} sm={6}
+                <Grid item container justify="flex-end" xs={4} sm={4}
                       style={{fontWeight: "bolder", fontSize: "1.2rem"}}>
                     {price}
                 </Grid>
@@ -88,6 +156,37 @@ function ShippingOptions(props) {
         return imageList
     }
 
+    const renderShippingRadioButtons = () => {
+        return (
+            <FormControl component="fieldset" style={{width: "inherit"}}>
+                <RadioGroup aria-label="delivery-option" name="delivery-option" value={shippingOptionState.value}
+                            onChange={handleRadioBtnChange} style={{width: "inherit"}}>
+                    <FormControlLabel value="free" control={<Radio style={{marginLeft: 15}}/>}
+                                      style={{width: "inherit", margin: "inherit"}}
+                                      classes={{label: classes.formControlLabel}}
+                                      label={renderRadioBtnLabel(shippingOptionsData.free.label,
+                                          shippingOptionsData.free.transitLabel,
+                                          shippingOptionsData.free.price,
+                                          shippingOptionsData.free.estimatedDays)}/>
+                    <FormControlLabel value="premium" control={<Radio style={{marginLeft: 15}}/>}
+                                      style={{width: "inherit", margin: "inherit"}}
+                                      classes={{label: classes.formControlLabel}}
+                                      label={renderRadioBtnLabel(shippingOptionsData.premium.label,
+                                          shippingOptionsData.premium.transitLabel,
+                                          shippingOptionsData.premium.price,
+                                          shippingOptionsData.premium.estimatedDays)}/>
+                    <FormControlLabel value="express" control={<Radio style={{marginLeft: 15}}/>}
+                                      style={{width: "inherit", margin: "inherit"}}
+                                      classes={{label: classes.formControlLabel}}
+                                      label={renderRadioBtnLabel(shippingOptionsData.express.label,
+                                          shippingOptionsData.express.transitLabel,
+                                          shippingOptionsData.express.price,
+                                          shippingOptionsData.express.estimatedDays)}/>
+                </RadioGroup>
+            </FormControl>
+        )
+    }
+
     log.info("[ShippingOptions] Rendering ShippingOptions Component.")
 
     return (
@@ -97,33 +196,15 @@ function ShippingOptions(props) {
                 {renderImages()}
             </Grid>
             <Grid item container sm={12} justify="center">
-                <FormControl component="fieldset" style={{width: "inherit"}}>
-                    <RadioGroup aria-label="delivery-option" name="delivery-option" value={value}
-                                onChange={handleRadioBtnChange} style={{width: "inherit"}}>
-                        <FormControlLabel value="free" control={<Radio style={{marginLeft: 15}}/>}
-                                          style={{width: "inherit", margin: "inherit"}}
-                                          classes={{label: classes.formControlLabel}}
-                                          label={renderRadioBtnLabel("Everyday Free Shipping",
-                                              "Transit time: 3-6 business days", "Free")}/>
-                        <FormControlLabel value="premium" control={<Radio style={{marginLeft: 15}}/>}
-                                          style={{width: "inherit", margin: "inherit"}}
-                                          classes={{label: classes.formControlLabel}}
-                                          label={renderRadioBtnLabel("Premium",
-                                              "Transit time: 2-3 business days", "$10.00")}/>
-                        <FormControlLabel value="express" control={<Radio style={{marginLeft: 15}}/>}
-                                          style={{width: "inherit", margin: "inherit"}}
-                                          classes={{label: classes.formControlLabel}}
-                                          label={renderRadioBtnLabel("Express",
-                                              "Transit time: 1-2 business days", "$15.00")}/>
-                    </RadioGroup>
-                </FormControl>
+                {shippingOptionState.submitted ?
+                    renderSelectedOption() : renderShippingRadioButtons()}
             </Grid>
             <Grid item container justify="center" sm={12}
                   style={{paddingTop: 20}}>
                 <Divider style={{height: 1, width: "inherit"}}/>
             </Grid>
 
-            <ContinueButton buttonHandler={submitHandler}/>
+            {shippingOptionState.submitted ? renderEditButton() : <ContinueButton buttonHandler={submitHandler}/>}
         </Grid>
     )
 }

@@ -32,8 +32,8 @@ export default function CheckboxMoreButton(props) {
         return (
             <Paper elevation={3} variant="outlined" square
                    style={{backgroundColor: "inherit", width: "200vh", height: "70vh"}}>
-                <Grid container direction="row" style={{
-                    height: '70vh', zIndex: 1300, overflow: "auto", left: 0, width: "60%",
+                <Grid item container xs={props.size} direction="row" style={{
+                    height: '70vh', zIndex: 1300, overflow: "auto", left: 0, width: "inherit",
                     position: "fixed", top: 150, backgroundColor: "white", border: "1px solid #eaeaec",
                     boxShadow: "0 1px 8px rgba(0,0,0,.1)"
                 }}>

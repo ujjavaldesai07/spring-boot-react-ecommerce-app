@@ -29,7 +29,7 @@ export default function SortedCheckboxList(props) {
         state.savedSortedListReducer.hasOwnProperty(props.propName) ? state.savedSortedListReducer[props.propName] : null)
 
     if (!props.attrList) {
-        log.debug(`[CheckboxList] props.attrList is null`)
+        log.debug(`[SortedCheckboxList] props.attrList is null`)
         return null
     }
 
@@ -39,13 +39,13 @@ export default function SortedCheckboxList(props) {
     }
 
     const handleToggle = id => () => {
-        log.debug(`[CheckboxList] handleToggle for CheckboxList value = ${id}`)
+        log.debug(`[SortedCheckboxList] handleToggle for CheckboxList value = ${id}`)
 
         let value
         for (let i = 0; i < props.attrList.length; i++) {
             if (id === props.attrList[i].id) {
                 value = props.attrList[i].value
-                log.debug(`[CheckboxList] handleToggle for CheckboxList value = ${value}`)
+                log.debug(`[SortedCheckboxList] handleToggle for CheckboxList value = ${value}`)
             }
         }
 
@@ -53,8 +53,7 @@ export default function SortedCheckboxList(props) {
     };
 
     const renderCheckBoxList = () => {
-        log.debug(`[CheckboxList] renderCheckBoxList props.selectedAttributes = ${JSON.stringify(props.values)}`)
-
+        log.debug(`[SortedCheckboxList] renderCheckBoxList props.selectedAttributes = ${JSON.stringify(props.values)}`)
 
         let selectedIdList = []
         if (props.selectedAttrList.length > 0) {
@@ -112,8 +111,7 @@ export default function SortedCheckboxList(props) {
         })
     }
 
-    log.trace(`[CheckboxList] props.attrList = ${JSON.stringify(props.attrList)}`)
-    log.debug(`[CheckboxList] Rendering CheckboxList Component`)
+    log.debug(`[SortedCheckboxList] Rendering CheckboxList Component`)
     return (
         <Box display="flex" style={{
             height: "70vh",

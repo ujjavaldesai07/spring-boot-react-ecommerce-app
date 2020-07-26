@@ -1,16 +1,6 @@
-import React, {Component} from 'react';
+import React from 'react';
 import log from 'loglevel';
-import {MenuItem, Grid, Card, CardContent, Divider} from "@material-ui/core";
-import ContinueButton from "../routes/checkout/continueButton";
-import {withStyles} from "@material-ui/core/styles";
-import {Field, reduxForm} from "redux-form";
-import {connect} from "react-redux";
-import {TextField} from "redux-form-material-ui"
-import {stateCodes} from "../../constants/stateCodes";
-import DeleteIcon from '@material-ui/icons/Delete';
-import Button from '@material-ui/core/Button';
-import {setShippingAddress} from "../../actions"
-import IconButton from '@material-ui/core/IconButton';
+import {Grid, Divider} from "@material-ui/core";
 import Modal from "./modal";
 
 export const ModalConfirmation = (props) => {

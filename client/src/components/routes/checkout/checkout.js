@@ -71,7 +71,7 @@ const useGridStyles = makeStyles((theme) => ({
 const shippingAddressPanel = 'shipAddrPanel'
 const shippingOptionPanel = 'shipOptPanel'
 const paymentPanel = "paymentPanel"
-const stripePromise = loadStripe("pk_test_51H805OJVXUotWOgTatoPJeLPXI2ZehJ0s4QSQK0WjEJKx1PNH3mJxeUkAQOSjRpusTVcxyh5bDuulBildNrp3MWn005xEkAdJ4")
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISH_KEY)
 
 function Checkout() {
     const shippingAddress = useSelector(state => state.shippingAddressReducer)
@@ -152,9 +152,9 @@ function Checkout() {
                       style={{height: "fit-content", marginTop: "1rem", position: "sticky", top: 80}}>
                     <Paper square style={{width: "inherit"}}>
                         <PriceDetails buttonName="PLACE ORDER"
-                                      disabled={!shippingOption.submitted}
+
                         />
-                        <PaymentButton/>
+                        <PaymentButton disabled={!shippingOption.submitted}/>
                     </Paper>
                 </Grid>
             </Hidden>

@@ -82,7 +82,7 @@ export default function CheckboxList(props) {
                     </ListItemIcon>
                     <Box display="flex" flexDirection="row">
                         <Box>
-                            <ListItemText id={id} primary={value} style={{fontSize: props.fontSize}}
+                            <ListItemText id={id} primary={value} style={{fontSize: "0.9rem"}}
                                           disableTypography/>
                         </Box>
                         <Box alignSelf="center" pl={0.5}  css={{color: "#94969f", fontSize: "0.8rem"}}>

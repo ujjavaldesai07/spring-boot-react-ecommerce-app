@@ -22,7 +22,6 @@ import {
     ADD_SELECTED_CATEGORY,
     SAVE_QUERY_STATUS, SAVE_SORT_LIST, SELECT_PRODUCT_PAGE,
 } from "../../../../actions/types";
-import {sortByObjValues} from "./helper/helper";
 
 function FilterNavBar(props) {
     const classes = useFilterNavBarStyles();
@@ -173,6 +172,13 @@ function FilterNavBar(props) {
                 })
             }
         }
+    }
+
+    const sortByObjValues = (list) => {
+        let cloneList = JSON.parse(JSON.stringify(list));
+
+        return cloneList.sort((a, b) =>
+            (a.value.charAt(0).toUpperCase() > b.value.charAt(0).toUpperCase()) ? 1 : -1)
     }
 
     const dispatchSortList = (filterAttr) => {
