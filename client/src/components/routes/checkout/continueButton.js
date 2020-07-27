@@ -51,4 +51,10 @@ function ContinueButton(props) {
     )
 }
 
-export default ContinueButton;
+function continueButtonPropsAreEqual(prevProps, nextProps) {
+    return prevProps.action === nextProps.action;
+}
+
+const continueButtonMemoWrapper = React.memo(ContinueButton, continueButtonPropsAreEqual);
+
+export default continueButtonMemoWrapper;

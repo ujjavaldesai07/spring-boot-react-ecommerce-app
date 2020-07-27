@@ -1,11 +1,10 @@
 import React from 'react';
 import log from 'loglevel';
-import {Button, Divider, Grid} from "@material-ui/core";
+import {Divider, Grid} from "@material-ui/core";
 import {useSelector} from "react-redux";
 import {PageNotFound} from "../ui/error/pageNotFound";
 import Cookies from "js-cookie";
 import {CART_TOTAL} from "../../actions/types";
-import PaymentButton from "./checkout/paymentButton";
 
 const paymentStyles = {
     header: {
@@ -21,15 +20,8 @@ const paymentStyles = {
 
 function PriceDetails() {
     let cartTotal = useSelector(state => state.cartTotalReducer);
-
-    if (!cartTotal) {
-        cartTotal = Cookies.get(CART_TOTAL)
-        if (cartTotal) {
-            cartTotal = JSON.parse(cartTotal)
-        } else {
-            return <PageNotFound/>
-        }
-    }
+    const shippingOption = useSelector(state => state.shippingOptionReducer)
+    const deliveryCharges = useSelector(state => state.deliveryChargesReducer)
 
     const renderGridData = (label, value, styles) => {
         return (
@@ -58,13 +50,13 @@ function PriceDetails() {
             </Grid>
 
             {renderGridData("Bag Total", `$${cartTotal}`, {...paymentStyles, paddingTop: 10})}
-            {renderGridData("Shipping", "FREE", {...paymentStyles, paddingTop: 10})}
+            {renderGridData("Shipping", `$${deliveryCharges}`, {...paymentStyles, paddingTop: 10})}
 
             <Grid item container sm={10} style={{paddingTop: 17}}>
                 <Divider style={{width: "100%", height: 1}}/>
             </Grid>
 
-            {renderGridData("Order Total", `$${cartTotal}`,
+            {renderGridData("Order Total", `$${cartTotal + deliveryCharges}`,
                 {...paymentStyles.header})}
 
         </Grid>

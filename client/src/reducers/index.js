@@ -9,7 +9,7 @@ import {
     filterQueryReducer, tabsDataReducer,
     cartTotalReducer, savedSortedListReducer,
     shippingAddressReducer, paymentInfoReducer,
-    shippingOptionReducer
+    shippingOptionReducer, deliveryChargesReducer
 } from "./screens/commonScreenReducer";
 
 import {tabHoverEventReducer} from "./events/eventReducer";
@@ -38,5 +38,6 @@ export default combineReducers({
     savedSortedListReducer,
     shippingAddressReducer,
     paymentInfoReducer,
-    shippingOptionReducer
+    shippingOptionReducer,
+    deliveryChargesReducer
 });

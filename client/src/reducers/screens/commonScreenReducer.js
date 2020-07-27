@@ -13,7 +13,7 @@ import {
     SAVE_SORT_LIST,
     SHIPPING_ADDRESS_CONFIRMED,
     PAYMENT_INFO_CONFIRMED,
-    SHIPPING_OPTION_CONFIRMED, PAYMENT_RESPONSE
+    SHIPPING_OPTION_CONFIRMED, PAYMENT_RESPONSE, DELIVERY_CHARGES
 } from "../../actions/types";
 import log from "loglevel";
 import {INITIAL_QUERY_STATUS} from "../../constants/constants";
@@ -38,7 +38,8 @@ export const tabsDataReducer = (state = {isLoading: true}, action) => {
     }
 };
 
-export const addToCartReducer = (state = {}, action) => {
+export const addToCartReducer = (state =
+                                     {totalQuantity: 0, productQty: {}}, action) => {
     switch (action.type) {
         case ADD_TO_CART:
             return {
@@ -97,9 +98,18 @@ export const filterQueryReducer = (state = null, action) => {
     }
 };
 
-export const cartTotalReducer = (state = null, action) => {
+export const cartTotalReducer = (state = 0, action) => {
     switch (action.type) {
         case CART_TOTAL:
+            return action.payload
+        default:
+            return state;
+    }
+};
+
+export const deliveryChargesReducer = (state = 0, action) => {
+    switch (action.type) {
+        case DELIVERY_CHARGES:
             return action.payload
         default:
             return state;
@@ -136,7 +146,7 @@ export const paymentInfoReducer = (state
 };
 
 export const shippingOptionReducer = (state
-                                           = {selectedOption: null, submitted: false}, action) => {
+                                           = {price: "Free", submitted: false}, action) => {
     switch (action.type) {
         case SHIPPING_OPTION_CONFIRMED:
             return action.payload

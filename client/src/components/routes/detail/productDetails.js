@@ -18,6 +18,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import Spinner from "../../ui/spinner";
 import {InternalServerError} from "../../ui/error/internalServerError";
 import {BadRequest} from "../../ui/error/badRequest";
+import _ from "lodash";
 
 export const useButtonStyles = makeStyles(() => ({
     buttonStartIcon: {
@@ -40,8 +41,7 @@ function ProductDetails(props) {
         log.info(`[Product Detail] Component did mount selectProductDetail = ${JSON.stringify(selectProductDetail)}`)
         log.info(`[Product Detail] Component did mount selectedProduct = ${JSON.stringify(selectedProduct)}`)
 
-        if (selectedProduct && addToCart.hasOwnProperty("productQty") &&
-            addToCart["productQty"].hasOwnProperty(selectedProduct.id)) {
+        if (selectedProduct && !_.isEmpty(addToCart.productQty)) {
             log.info(`[Product Detail] addToCart = ${JSON.stringify(addToCart)}`)
             log.info(`[Product Detail] setProductQuantity = ${addToCart.productQty[selectedProduct.id]}`)
             setProductQuantity(addToCart.productQty[selectedProduct.id])

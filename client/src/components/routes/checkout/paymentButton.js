@@ -1,45 +1,47 @@
-import React from 'react'
+import React, {Component, useEffect, useState} from 'react'
 import StripeCheckout from 'react-stripe-checkout';
 import {Button, Grid} from "@material-ui/core";
 import {connect} from "react-redux";
 import {sendPaymentToken} from "../../../actions"
-import Cookies from "js-cookie";
-import {CART_TOTAL} from "../../../actions/types";
-import {PageNotFound} from "../../ui/error/pageNotFound";
+import log from 'loglevel';
 
-class PaymentButton extends React.Component {
+class PaymentButton extends Component {
+
+    _GrandTotal = 0
+
     constructor(props) {
         super(props);
         this.state = {
-            cartTotal: this.props.cartTotal,
+            grandTotal: null,
             paymentBtnClicked: false
         }
     }
 
-    componentDidMount() {
-        if (!this.state.cartTotal) {
-            let cartTotal = Cookies.get(CART_TOTAL)
-            if (cartTotal) {
-                this.setState({cartTotal: parseInt(cartTotal) * 100})
-            } else {
-                return <PageNotFound/>
-            }
-        }
+    getGrandTotal = () => {
+        this._GrandTotal = (this.props.cartTotal + this.props.deliveryCharges) * 100
+        return this._GrandTotal
     }
 
     onToken = (token) => {
-        this.props.sendPaymentToken({...token, "amount": this.state.cartTotal, currency: "USD"})
-    }
 
-    paymentBtnClickHandler = () => {
         this.setState({paymentBtnClicked: true})
+
+        this.props.sendPaymentToken({
+            ...token,
+            amount: this._GrandTotal,
+            currency: "USD",
+            address: this.props.shippingAddressForm.values,
+            addToCart: this.props.addToCart,
+            shippingOption: this.props.shippingOption
+        })
     }
 
     renderButton = () => {
+        log.info(`[PaymentButton] renderButton....`)
         return (
             <Grid container justify="center" style={{padding: "2rem 0 2rem 0"}}>
                 <Grid item lg={9}>
-                    <Button variant="contained" size="medium" onClick={this.paymentBtnClickHandler}
+                    <Button variant="contained" size="medium"
                             disabled={this.state.paymentBtnClicked || this.props.disabled}
                             style={{
                                 width: '100%', height: 50, color: 'white',
@@ -59,12 +61,12 @@ class PaymentButton extends React.Component {
         return (
             <>
                 {this.state.paymentBtnClicked || this.props.disabled ?
-                    this.renderButton()
-                    : <StripeCheckout
+                    this.renderButton():
+                    <StripeCheckout
                         token={this.onToken}
                         stripeKey={process.env.REACT_APP_STRIPE_PUBLISH_KEY}
                         name="Shoppers Buy"
-                        amount={this.state.cartTotal} // cents
+                        amount={this.getGrandTotal()} // cents
                         currency="USD">
                         {this.renderButton()}
                     </StripeCheckout>}
@@ -75,8 +77,19 @@ class PaymentButton extends React.Component {
 
 const mapStateToProps = (state) => {
     return ({
-        cartTotal: state.cartTotalReducer
+        cartTotal: state.cartTotalReducer,
+        shippingAddressForm: state.form.shippingAddressForm ?
+            state.form.shippingAddressForm : null,
+        shippingOption: state.shippingOptionReducer,
+        addToCart: state.addToCartReducer,
+        deliveryCharges: state.deliveryChargesReducer
     })
 }
 
-export default connect(mapStateToProps, {sendPaymentToken})(PaymentButton)
+function paymentButtonPropsAreEqual(prevProps, nextProps) {
+    return prevProps.disabled === nextProps.disabled;
+}
+
+const wrapperMemo = React.memo(PaymentButton, paymentButtonPropsAreEqual);
+
+export default connect(mapStateToProps, {sendPaymentToken})(wrapperMemo)

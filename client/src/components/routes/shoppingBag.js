@@ -17,7 +17,6 @@ import {connect} from "react-redux";
 import {getDataViaAPI} from '../../actions';
 import Spinner from "../ui/spinner";
 import {EmptyShoppingBag} from "../ui/error/emptyShoppingBag";
-import {PageNotFound} from "../ui/error/pageNotFound";
 import {HTTPError} from "../ui/error/httpError";
 import PriceDetails from "./priceDetails";
 import Modal from "../../components/ui/modal";
@@ -74,7 +73,8 @@ function ShoppingBag(props) {
 
     const getCartTotal = () => {
         log.info(`[ShoppingBag] ShoppingBag = ${JSON.stringify(shoppingBagProducts)}`)
-        if (shoppingBagProducts.data && addToCart.hasOwnProperty("productQty")) {
+        log.info(`[ShoppingBag] addToCart = ${JSON.stringify(addToCart)}`)
+        if (shoppingBagProducts.data && Object.keys(addToCart.productQty).length > 0) {
             for (const [id, qty] of Object.entries(addToCart.productQty)) {
                 if (shoppingBagProducts.data.hasOwnProperty(id)) {
                     cartTotal += qty * shoppingBagProducts.data[id].price
@@ -201,6 +201,10 @@ function ShoppingBag(props) {
 
     const renderShoppingBagProducts = () => {
         log.trace(`[ShoppingBag] ShoppingBag = ${JSON.stringify(shoppingBagProducts)}`)
+
+        if(Object.keys(addToCart.productQty).length === 0) {
+            return null
+        }
 
         let shoppingBagProductsList = []
 

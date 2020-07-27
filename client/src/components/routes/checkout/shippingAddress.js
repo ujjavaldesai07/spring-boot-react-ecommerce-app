@@ -73,23 +73,17 @@ class ShippingAddressForm extends Component {
     render() {
         const {classes, submitting, pristine} = this.props;
 
-        log.info(`[ShippingAddress] Rendering ShippingAddress Component...`)
-
         const renderShippingSummaryAddresses = () => {
             let formValues = this.props.shippingAddressFormStore.values
-            let contentList = []
-
-            contentList.push(`${formValues.firstName} ${formValues.lastName}`)
-            contentList.push(formValues.addressLine1)
-
-            if (formValues.addressLine2) {
-                contentList.push(formValues.addressLine2)
-            }
-
-            contentList.push(`${formValues.city}, ${formValues.stateCode} ${formValues.zipCode}`)
-            contentList.push(formValues.email)
-            contentList.push(`(${formValues.phoneNumber.slice(0, 3)}) ` +
-                `${formValues.phoneNumber.slice(3, 6)}-${formValues.phoneNumber.slice(6, 10)}`)
+            let contentList = [
+                `${formValues.firstName} ${formValues.lastName}`,
+                formValues.addressLine1,
+                formValues.addressLine2,
+                `${formValues.city}, ${formValues.stateCode} ${formValues.zipCode}`,
+                formValues.email,
+                `(${formValues.phoneNumber.slice(0, 3)}) ` +
+                `${formValues.phoneNumber.slice(3, 6)}-${formValues.phoneNumber.slice(6, 10)}`
+            ]
 
             return (
                 <Grid container justify="flex-start" style={{height: "fit-content", backgroundColor: "#80808033"}}>
@@ -186,7 +180,7 @@ class ShippingAddressForm extends Component {
             )
         }
 
-        log.info(`[ShippingAddress] Rendering Payment Component...`)
+        log.info(`[ShippingAddress] Rendering ShippingAddress Component...`)
 
         return (
             <>
@@ -242,12 +236,12 @@ const mapStateToProps = (state) => {
         shippingAddressFormStore: state.form.shippingAddressForm ?
             state.form.shippingAddressForm : null,
         shippingAddress: state.shippingAddressReducer
-
     })
 }
 
 const reduxWrapperForm = reduxForm({
     form: 'shippingAddressForm',
+    destroyOnUnmount: false,
     validate,
 })(ShippingAddressForm);
 

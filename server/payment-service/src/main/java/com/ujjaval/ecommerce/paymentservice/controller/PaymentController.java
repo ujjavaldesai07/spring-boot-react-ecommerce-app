@@ -6,6 +6,7 @@ import com.stripe.model.Charge;
 import com.stripe.model.Token;
 import com.stripe.param.ChargeCreateParams;
 import com.ujjaval.ecommerce.paymentservice.dto.CardToken;
+import com.ujjaval.ecommerce.paymentservice.dto.PaymentStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +21,13 @@ public class PaymentController {
     private Environment env;
 
     @PostMapping(value = "/payment")
-    public ResponseEntity<?> chargeCustomer(@RequestBody CardToken cardToken) throws UnknownHostException, StripeException {
+    public ResponseEntity<PaymentStatus> chargeCustomer(@RequestBody CardToken cardToken) throws UnknownHostException, StripeException {
 
         Stripe.apiKey = env.getProperty("STRIPE_SECRET_KEY");
+        Stripe.setMaxNetworkRetries(2);
+
+        Charge charge = null;
+        PaymentStatus paymentStatus = null;
 
         try {
             ChargeCreateParams params =
@@ -33,11 +38,21 @@ public class PaymentController {
                             .setSource(cardToken.getId())
                             .build();
 
-            Charge.create(params);
+            charge = Charge.create(params);
+            System.out.println("Charge = " + charge);
+
+            paymentStatus = new PaymentStatus(false,
+                    charge.getId(),
+                    charge.getBalanceTransaction(),
+                    charge.getReceiptUrl()
+                    );
+
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Token does not exist.");
+            paymentStatus = new PaymentStatus();
+            paymentStatus.setPaymentFailed(true);
+            return ResponseEntity.badRequest().body(paymentStatus);
         }
 
-        return ResponseEntity.ok("Success");
+        return ResponseEntity.ok(paymentStatus);
     }
 }

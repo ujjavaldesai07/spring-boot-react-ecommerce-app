@@ -9,7 +9,7 @@ export default function BagButton() {
 
     log.info(`[BagButton]: Rendering BagButton Component`)
     return (
-        <Badge badgeContent={addToCart.hasOwnProperty("totalQuantity")? addToCart.totalQuantity: 0}
+        <Badge badgeContent={addToCart.totalQuantity}
                color="secondary">
             <LocalMallIcon style={{color: "black"}}/>
         </Badge>

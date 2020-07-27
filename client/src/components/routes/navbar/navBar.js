@@ -60,7 +60,7 @@ const NavBar = props => {
             }
             savedProductsFromCookie.totalQuantity = totalQuantity
 
-            log.info(`[BagButton] savedProductsFromCookie = ${savedProductsFromCookie}`)
+            log.info(`[BagButton] savedProductsFromCookie = ${JSON.stringify(savedProductsFromCookie)}`)
 
             dispatch({
                 type: ADD_TO_CART,

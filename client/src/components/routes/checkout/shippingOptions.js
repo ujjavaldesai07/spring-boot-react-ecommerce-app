@@ -7,11 +7,9 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import ContinueButton from "./continueButton";
-import {connect, useDispatch, useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import CircularProgress from '@material-ui/core/CircularProgress';
-import {useAddProductsToShoppingBag} from "../../../hooks/useAddProductsToShoppingBag";
-import {getDataViaAPI} from "../../../actions";
-import {SHIPPING_OPTION_CONFIRMED} from "../../../actions/types";
+import {DELIVERY_CHARGES, SHIPPING_OPTION_CONFIRMED} from "../../../actions/types";
 import {MONTHS} from "../../../constants/constants";
 import Button from "@material-ui/core/Button";
 
@@ -26,6 +24,12 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+const deliveryPrices = {
+    "free": 0,
+    "premium": 10,
+    "express": 15
+}
+
 const shippingOptionsData = {
     "free": {
         price: "Free",
@@ -34,29 +38,50 @@ const shippingOptionsData = {
         estimatedDays: [3, 6]
     },
     "premium": {
-        price: "$10.00",
+        price: `$${deliveryPrices.premium}.00`,
         label: "Premium",
         transitLabel: "Transit time: 2-3 business days",
         estimatedDays: [2, 3]
     },
     "express": {
-        price: "$15.00",
+        price: `$${deliveryPrices.express}.00`,
         label: "Express",
         transitLabel: "Transit time: 1-2 business days",
         estimatedDays: [1, 2]
     },
 }
 
-function ShippingOptions(props) {
+export function ShippingOptions() {
     const classes = useStyles();
     const shoppingBagProducts = useSelector(state => state.shoppingBagProductReducer)
     const dispatch = useDispatch()
     const [shippingOptionState, setShippingOptionState] = React.useState({value: 'free', submitted: false});
 
-    useAddProductsToShoppingBag(props.getDataViaAPI)
-
     const handleRadioBtnChange = (event) => {
         setShippingOptionState({value: event.target.value, submitted: false});
+
+        let deliveryPrice = null
+
+        switch (event.target.value) {
+            case "free":
+                deliveryPrice = deliveryPrices.free
+                break
+            case "premium":
+                deliveryPrice = deliveryPrices.premium
+                break
+            case "express":
+                deliveryPrice = deliveryPrices.express
+                break
+            default:
+                log.error(`[ShippingOptions] Unexpected ShippingOptions value = ${event.target.value}`)
+                return null
+        }
+
+        dispatch({
+            type: DELIVERY_CHARGES,
+            payload: deliveryPrice
+        })
+
     };
 
     const submitHandler = () => {
@@ -67,13 +92,14 @@ function ShippingOptions(props) {
             payload: {
                 estimatedDate: getEstimatedDeliveryDate(shippingOptionsData[shippingOptionState.value].estimatedDays),
                 price: shippingOptionsData[shippingOptionState.value].price,
+                deliveryType: shippingOptionsData[shippingOptionState.value].label,
                 submitted: true
             }
         })
     }
 
     const editBtnHandler = () => {
-
+        setShippingOptionState({value: shippingOptionState.value, submitted: false})
     }
 
     const getEstimatedDeliveryDate = (estimatedDays) => {
@@ -103,9 +129,9 @@ function ShippingOptions(props) {
             <Grid item container xs={11}>
                 {
                     renderRadioBtnLabel(shippingOptionsData[shippingOptionState.value].label,
-                shippingOptionsData[shippingOptionState.value].transitLabel,
-                shippingOptionsData[shippingOptionState.value].price,
-                shippingOptionsData[shippingOptionState.value].estimatedDays)
+                        shippingOptionsData[shippingOptionState.value].transitLabel,
+                        shippingOptionsData[shippingOptionState.value].price,
+                        shippingOptionsData[shippingOptionState.value].estimatedDays)
                 }
             </Grid>
         )
@@ -136,12 +162,10 @@ function ShippingOptions(props) {
     }
 
     const renderImages = () => {
-        log.info(`shoppingBagProducts.hasOwnProperty("data") = ${shoppingBagProducts.hasOwnProperty("data")}`)
         if (!shoppingBagProducts.hasOwnProperty("data") || Object.keys(shoppingBagProducts.data).length === 0) {
             return <CircularProgress color="secondary"/>
         }
 
-        log.info(`shoppingBagProducts.data = ${JSON.stringify(shoppingBagProducts.data)}`)
         let imageList = []
 
         for (const [id, product] of Object.entries(shoppingBagProducts.data)) {
@@ -208,5 +232,3 @@ function ShippingOptions(props) {
         </Grid>
     )
 }
-
-export default connect(null, {getDataViaAPI})(ShippingOptions);

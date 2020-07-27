@@ -3,16 +3,19 @@ import log from 'loglevel';
 import {Paper, Grid, Hidden} from "@material-ui/core";
 import PriceDetails from "../priceDetails";
 import ShippingAddress from "./shippingAddress";
-import ShippingOptions from "./shippingOptions";
+import {ShippingOptions} from "./shippingOptions";
 import {makeStyles, withStyles} from '@material-ui/core/styles';
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
-import {useSelector} from "react-redux";
-import {Elements, ElementsConsumer} from "@stripe/react-stripe-js";
+import {connect, useSelector} from "react-redux";
 import {loadStripe} from "@stripe/stripe-js/pure";
-import Payment from "./payment"
 import PaymentButton from "./paymentButton";
+import {useAddProductsToShoppingBag} from "../../../hooks/useAddProductsToShoppingBag";
+import {getDataViaAPI} from "../../../actions";
+import {useCartTotal} from "../../../hooks/useCartTotal";
+// import {Elements, ElementsConsumer} from "@stripe/react-stripe-js";
+// import Payment from "./payment"
 
 const checkoutBgColor = "#80808033"
 
@@ -73,10 +76,13 @@ const shippingOptionPanel = 'shipOptPanel'
 const paymentPanel = "paymentPanel"
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISH_KEY)
 
-function Checkout() {
+function Checkout(props) {
     const shippingAddress = useSelector(state => state.shippingAddressReducer)
     const shippingOption = useSelector(state => state.shippingOptionReducer)
     const classes = useGridStyles();
+
+    useCartTotal()
+    useAddProductsToShoppingBag(props.getDataViaAPI)
 
     const renderTitle = title => {
         return (
@@ -151,9 +157,7 @@ function Checkout() {
                 <Grid item sm={11} md={3}
                       style={{height: "fit-content", marginTop: "1rem", position: "sticky", top: 80}}>
                     <Paper square style={{width: "inherit"}}>
-                        <PriceDetails buttonName="PLACE ORDER"
-
-                        />
+                        <PriceDetails buttonName="PLACE ORDER"/>
                         <PaymentButton disabled={!shippingOption.submitted}/>
                     </Paper>
                 </Grid>
@@ -163,4 +167,4 @@ function Checkout() {
     )
 }
 
-export default Checkout;
+export default connect(null, {getDataViaAPI})(Checkout);

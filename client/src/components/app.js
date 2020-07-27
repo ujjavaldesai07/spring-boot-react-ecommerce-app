@@ -32,7 +32,7 @@ const App = () => {
                 <Route path="/products/:details" exact component={ProductDetail}/>
                 <Route path="/products" exact component={Product}/>
                 <Route path="/checkout/success-payment/:id" exact component={SuccessPayment}/>
-                <Route path="/checkout/cancel-payment" exact component={CancelPayment}/>
+                <Route path="/checkout/cancel-payment/:id" exact component={CancelPayment}/>
                 <Route path="*" exact component={BadRequest}/>
             </Switch>
         </Router>

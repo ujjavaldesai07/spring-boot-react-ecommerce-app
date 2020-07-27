@@ -123,14 +123,13 @@ export const sendPaymentToken = (token) => async dispatch => {
             })
 
             if(response.data.paymentFailed) {
-                history.push('/checkout/cancel-payment')
+                history.push(`/checkout/cancel-payment/${response.data.charge_id}`)
             } else {
                 history.push(`/checkout/success-payment/${response.data.charge_id}`)
             }
 
         })
         .catch(function (error) {
-            history.push('/checkout/cancel-payment')
             console.log(error);
         });
 }
