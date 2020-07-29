@@ -97,11 +97,6 @@ public class CommonDataServiceImpl implements CommonDataService {
         return productInfo;
     }
 
-    public String getCurrentHostUrl() throws UnknownHostException {
-        return String.format("%s:%s", InetAddress.getLocalHost().getHostAddress(),
-                environment.getProperty("local.server.port"));
-    }
-
     public void save() {
 //        AddressInfo addressInfo1 = new AddressInfo("2600 bay area blvd.", "Apt. 304", "77058", "Tx", "USA");
 //        ContactInfo contactInfo = new ContactInfo("jmiller@gmail.com", "534636453", "345345353", null);
@@ -132,8 +127,7 @@ public class CommonDataServiceImpl implements CommonDataService {
     }
 
     public String appendHostUrl(String path) throws UnknownHostException {
-        String currentHostUrl = getCurrentHostUrl();
-        return String.format("http://%s/web-images/%s", currentHostUrl, path);
+        return String.format("http://localhost:%s/web-images/%s", environment.getProperty("local.server.port"), path);
     }
 
     public MainScreenResponse getHomeScreenData() throws UnknownHostException {

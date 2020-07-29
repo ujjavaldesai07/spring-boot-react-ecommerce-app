@@ -4,21 +4,16 @@ import {Link} from "react-router-dom";
 import log from 'loglevel';
 import {MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
 import {useSelector} from "react-redux";
-import {BadRequest} from "../../ui/error/badRequest";
 
 const HomeMenuIcons = () => {
     const homeAPIData = useSelector(state => state.homePageDataReducer)
 
     const renderImageList = (imageList) => {
 
-        if(!imageList) {
-            log.info(`[HomeMenuIcons]: imageList is null`)
-            return <BadRequest/>
-        }
-
         // filter out images which are related to home icons.
         imageList = imageList.filter(image => image.filePath.search("icon") !== -1)
 
+        // map the image path and link
         return imageList.map(info => {
             return (
                 <Grid key={info.id} item sm={2}>

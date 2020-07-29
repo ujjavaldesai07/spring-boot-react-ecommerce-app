@@ -27,24 +27,30 @@ const Home = props => {
         // eslint-disable-next-line
     }, [homePageDataReducer]);
 
+    // we will be showing spinner till we get the data via API
     if (homeAPIData.isLoading) {
         log.info("[Home]: loading")
         return <Spinner/>
     } else {
-        if (homeAPIData.hasOwnProperty("data")) {
-            if (Object.entries(homeAPIData.data).length !== HOME_PAGE_API_OBJECT_LEN) {
 
-                log.info(`[Home]: homeAPIData.data length didn't matched` +
-                    `actual length = ${Object.entries(homeAPIData.data).length},` +
-                    `expected length = ${HOME_PAGE_API_OBJECT_LEN}`)
+        // check if we got the data from the API
+        if (homeAPIData.hasOwnProperty("data")
+            && Object.entries(homeAPIData.data).length !== HOME_PAGE_API_OBJECT_LEN) {
 
-                return <BadRequest/>
-            }
-        } else {
-            if (homeAPIData.hasOwnProperty('statusCode')) {
-                log.info(`[Home]: homeAPIData.statusCode = ${homeAPIData.statusCode}`)
-                return <HTTPError statusCode={homeAPIData.statusCode}/>
-            }
+            log.info(`[Home]: homeAPIData.data length didn't matched` +
+                `actual length = ${Object.entries(homeAPIData.data).length},` +
+                `expected length = ${HOME_PAGE_API_OBJECT_LEN}`)
+
+            // if we can't get the data then the front end
+            // didn't use the API correctly.
+            return <BadRequest/>
+
+            // if statusCode exist in the object then
+            // we are sure that something went wrong at server side while
+            // fetching the API
+        } else if (homeAPIData.hasOwnProperty('statusCode')) {
+            log.info(`[Home]: homeAPIData.statusCode = ${homeAPIData.statusCode}`)
+            return <HTTPError statusCode={homeAPIData.statusCode}/>
         }
     }
 

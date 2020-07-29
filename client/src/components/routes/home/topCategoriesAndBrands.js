@@ -1,11 +1,9 @@
 import React from 'react';
-import {Grid, Box, Typography} from "@material-ui/core";
+import {Grid} from "@material-ui/core";
 import {Link} from "react-router-dom";
 import log from 'loglevel';
 import {MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
 import {useSelector} from "react-redux";
-import Hidden from "@material-ui/core/Hidden";
-import {BadRequest} from "../../ui/error/badRequest";
 
 const queryType = {
     brand: 1,
@@ -16,10 +14,6 @@ const TopCategoriesAndBrands = () => {
     const homeAPIData = useSelector(state => state.homePageDataReducer)
 
     const renderImageList = (imageList, filterQueryType) => {
-        if(!imageList) {
-            log.info(`[TopCategoriesAndBrands]: imageList is null`)
-            return <BadRequest/>
-        }
 
         return imageList.map(info => {
 

@@ -1,4 +1,4 @@
-import React, {Component, useEffect, useState} from 'react'
+import React, {Component} from 'react'
 import StripeCheckout from 'react-stripe-checkout';
 import {Button, Grid} from "@material-ui/core";
 import {connect} from "react-redux";
@@ -12,7 +12,6 @@ class PaymentButton extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            grandTotal: null,
             paymentBtnClicked: false
         }
     }
