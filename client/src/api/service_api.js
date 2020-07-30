@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+const {REACT_APP_COMMON_DATA_SERVICE_IP, REACT_APP_COMMON_DATA_SERVICE_PORT} = process.env
+
 export const paymentServiceAPI = axios.create({
     baseURL: 'http://localhost:9050'
 })
@@ -9,5 +11,5 @@ export const authServiceAPI = axios.create({
 })
 
 export const commonServiceAPI = axios.create({
-    baseURL: 'http://localhost:9000'
+    baseURL: `http://${REACT_APP_COMMON_DATA_SERVICE_IP}:${REACT_APP_COMMON_DATA_SERVICE_PORT}`
 })

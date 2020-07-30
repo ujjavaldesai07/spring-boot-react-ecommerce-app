@@ -1,0 +1,69 @@
+version: '3'
+
+services:
+  mysql-db:
+    image: mysql:8
+    container_name: mysql-db-container
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+        - ./mysql-db/user.sql:/docker-entrypoint-initdb.d/user.sql
+    ports:
+      - 3312:3306
+    networks:
+      - spring-cloud-microservices
+
+  common-data-service:
+    build:
+      context: .
+      dockerfile: ./server/common-data-service/Dockerfile
+    container_name: common-data-service-container
+    restart: always
+    depends_on:
+      - mysql-db
+      - react-ui
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_SCHEMA=${DB_SCHEMA}
+      - ACTIVE_PROFILE=${ACTIVE_PROFILE}
+      - COMMON_DATA_SERVICE_PORT=${COMMON_DATA_SERVICE_PORT}
+    links:
+      - mysql-db:mysql
+    expose:
+      - ${COMMON_DATA_SERVICE_PORT}
+    ports:
+      - ${COMMON_DATA_SERVICE_PORT}:${COMMON_DATA_SERVICE_PORT}
+    networks:
+      - spring-cloud-microservices
+
+  react-ui:
+    build:
+      context: .
+      dockerfile: ./client/Dockerfile
+    container_name: react-service-container
+    stdin_open: true
+    restart: always
+    expose:
+      - ${REACTT_APP_PORT}
+    ports:
+      - ${REACTT_APP_PORT}:${REACTT_APP_PORT}
+    environment:
+      - REACT_APP_STRIPE_PUBLISH_KEY=${REACT_APP_STRIPE_PUBLISH_KEY}
+      - REACT_APP_COMMON_DATA_SERVICE_IP=${REACT_APP_COMMON_DATA_SERVICE_IP}
+      - REACT_APP_COMMON_DATA_SERVICE_PORT=${COMMON_DATA_SERVICE_PORT}
+    volumes:
+      - ./client:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - mysql-db
+    networks:
+      - spring-cloud-microservices
+networks:
+  spring-cloud-microservices:
+    external: true

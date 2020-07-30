@@ -16,7 +16,7 @@ import {CancelPayment} from "./routes/cancelPayment";
 import {BadRequest} from "./ui/error/badRequest";
 
 const App = () => {
-    log.info(`[App]: Rendering App Component window`)
+    log.info(`[App]: Rendering App Component`)
 
     return (
         <Router history={history}>

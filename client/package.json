@@ -34,8 +34,10 @@
     "swiper": "^5.4.2"
   },
   "scripts": {
-    "start": "env-cmd -f .env react-scripts start",
-    "build": "env-cmd -f .env react-scripts build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "start_dev": "./node_modules/.bin/env-cmd -f .env react-scripts start",
+    "build_dev": "./node_modules/.bin/env-cmd -f .env react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
