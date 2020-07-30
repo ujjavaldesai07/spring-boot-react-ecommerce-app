@@ -6,7 +6,7 @@ import {BadRequest} from "../ui/error/badRequest";
 import {
     ADD_TO_CART,
     DELIVERY_CHARGES,
-    LOAD_SHOPPING_BAG_PRODUCTS,
+    LOAD_SHOPPING_BAG_PRODUCTS, PAYMENT_RESPONSE,
     SAVE_QUERY_STATUS, SHIPPING_ADDRESS_CONFIRMED,
     SHIPPING_OPTION_CONFIRMED
 } from "../../actions/types";
@@ -33,14 +33,17 @@ export const SuccessPayment = () => {
             log.info("[SuccessPayment] Component will unmount.")
             dispatch({
                 type: ADD_TO_CART,
-                payload: INITIAL_ADD_TO_CART_STATE
+                payload: {
+                    totalQuantity: 0,
+                    productQty: {}
+                }
             })
 
             dispatch({
                 type: LOAD_SHOPPING_BAG_PRODUCTS,
                 payload: {isLoading: false, data: {}}
             })
-            
+
             dispatch({
                 type: DELIVERY_CHARGES,
                 payload: 0
@@ -54,6 +57,11 @@ export const SuccessPayment = () => {
             dispatch({
                 type: SHIPPING_ADDRESS_CONFIRMED,
                 payload: INITIAL_SHIPPING_ADDRESS_STATE
+            })
+
+            dispatch({
+                type: PAYMENT_RESPONSE,
+                payload: null
             })
 
         }
@@ -94,7 +102,7 @@ export const SuccessPayment = () => {
 
             products.push(<Grid key={id} container spacing={2} style={{paddingTop: "2rem"}}>
                 <Grid item>
-                    <img src={product.imageName}
+                    <img src={product.imageURL}
                          alt={product.name} style={{height: 100, width: 80}}/>
                 </Grid>
 

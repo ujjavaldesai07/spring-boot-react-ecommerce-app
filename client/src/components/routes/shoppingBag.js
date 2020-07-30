@@ -212,7 +212,8 @@ function ShoppingBag(props) {
             shoppingBagProductsList.push(
                 <Grid item container key={product.id} style={{border: '1px solid #eaeaec', margin: "1rem 0"}}>
                     <Grid item container justify="center" xs={5} sm={3}>
-                        <img src={product.imageName} style={{height: "90%", width: "80%", paddingTop: "1rem"}}/>
+                        <img src={product.imageURL} alt={product.name}
+                             style={{height: "90%", width: "80%", paddingTop: "1rem"}}/>
                     </Grid>
 
                     <Grid item container xs={7} sm={9}>

@@ -23,8 +23,11 @@ const Home = props => {
 
     // Main screen API is loaded during Component Did mount
     useEffect(() => {
-        log.info("[Home]: component did mount and home API is called.")
-        props.getDataViaAPI(LOAD_HOME_PAGE, HOME_PAGE_DATA_API);
+        log.info("[Home]: component did mount.")
+
+        if(!homeAPIData.hasOwnProperty("data")) {
+            props.getDataViaAPI(LOAD_HOME_PAGE, HOME_PAGE_DATA_API);
+        }
 
         // eslint-disable-next-line
     }, [homePageDataReducer]);

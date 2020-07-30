@@ -1,5 +1,7 @@
 package com.ujjaval.ecommerce.commondataservice.service;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.ujjaval.ecommerce.commondataservice.dao.sql.categories.*;
 import com.ujjaval.ecommerce.commondataservice.dao.sql.images.BrandImagesRepository;
 import com.ujjaval.ecommerce.commondataservice.dao.sql.images.CarouselImagesRepository;
@@ -75,8 +77,11 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
     @Autowired
     private PriceRangeCategoryRepository priceRangeCategoryRepository;
 
-    private String removeSpaces(String str) {
-        return str.replaceAll("\\s", "");
+    @Autowired
+    private Environment env;
+
+    private String replaceSpacesWithUnderscore(String str) {
+        return str.replaceAll("\\s", "_");
     }
 
     private int generateRandomInt(int max, int min) {
@@ -113,23 +118,16 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
             for (String line; (line = reader.readLine()) != null; ) {
                 String[] separatedData = line.split("\\|");
                 String type = separatedData[0];
-                String filePath = separatedData[1];
-                String title = separatedData.length > 2 ? separatedData[2] : null;
-                String gender = separatedData.length > 3 ? separatedData[3] : null;
+                String imageLocalPath = separatedData[1];
+                String imageURL = separatedData[2];
+                String title = separatedData.length > 3 ? separatedData[3] : null;
+                String gender = separatedData.length > 4 ? separatedData[4] : null;
 
 //                System.out.println(String.format("filePath = %s, title = %s",filePath, title));
 
-                InputStream inputStream2 = getClass()
-                        .getClassLoader().getResourceAsStream("static/images/" + filePath);
-
-                if (inputStream2 == null) {
-                    System.out.println("Unable to find path......" + filePath);
-                    return false;
-                }
-
                 switch (type) {
                     case "brand":
-                        BrandImages brandImages = new BrandImages(title, filePath);
+                        BrandImages brandImages = new BrandImages(title, imageLocalPath, imageURL);
                         ProductBrandCategory productBrandCategory = productBrandCategoryRepository.findByType(title);
                         if (productBrandCategory != null) {
                             brandImages.setProductBrandCategory(productBrandCategory);
@@ -137,7 +135,7 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                         }
                         break;
                     case "category":
-                        ApparelImages apparelImages = new ApparelImages(title, filePath);
+                        ApparelImages apparelImages = new ApparelImages(title, imageLocalPath, imageURL);
                         ApparelCategory apparelCategory =
                                 apparelCategoryRepository.findByType(title);
 
@@ -150,17 +148,18 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                         break;
                     case "carousel":
                         StringBuilder link = null;
-                        if(title != null) {
+                        if (title != null) {
                             title += ",";
                             String[] categories = title.split(",");
                             link = new StringBuilder("genders=");
-                            for(String category: categories) {
+                            for (String category : categories) {
                                 genderCategory = genderCategoryRepository.findByType(category);
                                 link.append(genderCategory.getId()).append(",");
                             }
                         }
 
-                        CarouselImages carouselImages = new CarouselImages(link !=null? link.toString(): null, filePath);
+                        CarouselImages carouselImages = new CarouselImages(link != null ? link.toString() : null,
+                                imageLocalPath, imageURL);
                         carouselImagesRepository.save(carouselImages);
                         break;
                     default:
@@ -232,15 +231,15 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
 
     private Optional<PriceRangeCategory> findPriceRangeCategory(int price) {
 
-        if(price <= 50) {
+        if (price <= 50) {
             return priceRangeCategoryRepository.findById(1);
-        } else if(price <= 100) {
+        } else if (price <= 100) {
             return priceRangeCategoryRepository.findById(2);
-        } else if(price <= 200) {
+        } else if (price <= 200) {
             return priceRangeCategoryRepository.findById(3);
-        } else if(price <= 300) {
+        } else if (price <= 300) {
             return priceRangeCategoryRepository.findById(4);
-        } else if(price <= 400) {
+        } else if (price <= 400) {
             return priceRangeCategoryRepository.findById(5);
         } else {
             return priceRangeCategoryRepository.findById(6);
@@ -249,6 +248,11 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
 
     public boolean loadTestData() {
         System.out.println("Loading test data in to database...");
+
+//        Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
+//                "cloud_name", env.getProperty("CLOUDINARY_CLOUD_NAME"),
+//                "api_key", env.getProperty("CLOUDINARY_API_KEY"),
+//                "api_secret", env.getProperty("CLOUDINARY_API_SECRET")));
 
         if (!loadFixedPatternData(String.format("%s/%s", DATA_DIRECTORY, SORT_BY_DATA), FileNameType.SORT_BY)) {
             return false;
@@ -259,6 +263,15 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
         }
 
         try {
+
+//            File myObj = new File("filename.txt");
+//            if (myObj.createNewFile()) {
+//                System.out.println("File created: " + myObj.getName());
+//            } else {
+//                System.out.println("File already exists.");
+//            }
+//            PrintWriter writer = new PrintWriter(myObj, StandardCharsets.UTF_8);
+
             InputStream inputStream = getClass()
                     .getClassLoader().getResourceAsStream(String.format("%s/%s", DATA_DIRECTORY, WEB_DATA));
 
@@ -277,19 +290,28 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                 String productName = result[4];
                 String price = result[5];
                 String fileName = result[6];
-                String filePath = String.format("%s/%s/%s", removeSpaces(gender), removeSpaces(apparel), removeSpaces(fileName));
+                String imageURL = result[7];
+                String imageLocalPath = replaceSpacesWithUnderscore(String.format("%s/%s/%s", gender, apparel, fileName));
 
 //                System.out.println("MainCategory = " + gender + ", SubCategory = " + subCategory
 //                        + ", + BrandName = " + brandName + ", ProductName = " + productName + ", Price = "
 //                        + price + ", filePath = " + filePath);
 
-                InputStream inputStream2 = getClass()
-                        .getClassLoader().getResourceAsStream("static/images/" + filePath);
+//                File file = ResourceUtils.getFile("classpath:static/images_2/" + filePath);
+//
+//                if (!file.isFile()) {
+//                    System.out.println("filePath " + filePath + " does not exist.....");
+//                    return false;
+//                }
+//
+//                Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+//
+//                if (uploadResult.isEmpty()) {
+//                    System.out.println(file + ": unable to get response");
+//                }
+//
+//                writer.println(line + "|" + uploadResult.get("url"));
 
-                if (inputStream2 == null) {
-                    System.out.println("Unable to find path......" + filePath);
-                    return false;
-                }
 
                 GenderCategory genderCategory = genderCategoryRepository.findByType(gender);
                 ApparelCategory apparelCategory = apparelCategoryRepository.findByType(apparel);
@@ -335,17 +357,18 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                 }
 
                 Optional<PriceRangeCategory> priceRangeCategory = findPriceRangeCategory(Integer.parseInt(price));
-                System.out.println("Starting Now..... ");
                 System.out.println("Price == " + priceRangeCategory.get().getType());
 
-                ProductInfo productInfo = new ProductInfo(1, productName, generateRandomDate(), productBrandCategory,
-                        genderCategory, apparelCategory, priceRangeCategory.get(), Integer.parseInt(price),
-                        generateRandomInt(1, 10), generateRandomInt(2, 5),
-                        generateRandomFloat(0, 5, 1), true, filePath);
+                ProductInfo productInfo = new ProductInfo(1, productName, generateRandomDate(),
+                        productBrandCategory, genderCategory, apparelCategory, priceRangeCategory.get(),
+                        Integer.parseInt(price), generateRandomInt(1, 10),
+                        generateRandomInt(2, 5), generateRandomFloat(0, 5, 1),
+                        true, imageLocalPath, imageURL);
 
                 productInfoRepository.save(productInfo);
             }
             reader.close();
+//            writer.close();
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();

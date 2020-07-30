@@ -13,7 +13,9 @@ public class ApparelImagesDTO {
 
     private String title;
 
-    private String filePath;
+    private String imageLocalPath;
+
+    private String imageURL;
 
     private ApparelDTO apparelInfo;
 

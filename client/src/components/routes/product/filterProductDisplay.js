@@ -91,7 +91,7 @@ const FilterProductDisplay = props => {
                         <Grid item>
                             <Link to={`${DETAILS_ROUTE}${history.location.search}::product_id=${info.id}`}
                                   onClick={handleImageClick(info)}>
-                                <img src={info.imageName} alt={info.name}
+                                <img src={info.imageURL} alt={info.name}
                                      style={{height: "100%", width: "100%"}}
                                      title={info.name}/>
                             </Link>

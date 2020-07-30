@@ -81,7 +81,9 @@ const NavBar = props => {
                 props.setTokenFromCookie(tokenIdFromCookie)
             }
         }
-        props.getDataViaAPI(LOAD_TABS_DATA, TABS_DATA_API)
+        if(!tabsAPIData.hasOwnProperty("data")) {
+            props.getDataViaAPI(LOAD_TABS_DATA, TABS_DATA_API)
+        }
 
         setAddToCartValuesFromCookie()
 

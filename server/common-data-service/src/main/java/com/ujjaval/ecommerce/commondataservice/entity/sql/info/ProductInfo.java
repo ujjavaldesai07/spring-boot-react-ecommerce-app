@@ -62,17 +62,19 @@ public class ProductInfo {
 
     private boolean verificationStatus;
 
-    private String imageName;
+    private String imageLocalPath;
 
     @OneToMany(mappedBy = "orderInfo")
     @JsonIgnore
     private List<OrderInfo> orders;
 
+    private String imageURL;
+
     public ProductInfo(int sellerId, String name, Date publicationDate, ProductBrandCategory productBrandCategory,
                        GenderCategory genderCategory, ApparelCategory apparelCategory,
                        PriceRangeCategory priceRangeCategory,
                        double price, int availableQuantity, int deliveryTime, float ratings,
-                       boolean verificationStatus, String imageName) {
+                       boolean verificationStatus, String imageLocalPath, String imageURL) {
         this.sellerId = sellerId;
         this.name = name;
         this.publicationDate = publicationDate;
@@ -85,6 +87,7 @@ public class ProductInfo {
         this.deliveryTime = deliveryTime;
         this.ratings = ratings;
         this.verificationStatus = verificationStatus;
-        this.imageName = imageName;
+        this.imageLocalPath = imageLocalPath;
+        this.imageURL = imageURL;
     }
 }

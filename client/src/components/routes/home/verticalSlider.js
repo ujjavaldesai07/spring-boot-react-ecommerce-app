@@ -32,13 +32,13 @@ const VerticalSlider = () => {
         }
 
         // filter out images which are not for carousels.
-        imageList = imageList.filter(image => image.filePath.search("icon") === -1)
+        imageList = imageList.filter(image => image.imageLocalPath.search("icon") === -1)
 
         log.trace("[VerticalSlider]: Rendering renderImageList imageList = " + JSON.stringify(imageList))
-        return imageList.map(({id, filePath}) => {
-            log.trace(`[VerticalSlider]: Rendering renderImageList imageList filePath = ${filePath}`)
+        return imageList.map(({id, imageLocalPath, imageURL}) => {
+            log.trace(`[VerticalSlider]: Rendering renderImageList imageList filePath = ${imageLocalPath}`)
             return (
-                <img key={id} src={filePath} alt={filePath}/>
+                <img key={id} src={imageURL} alt={imageLocalPath}/>
             )
         });
     };

@@ -20,14 +20,17 @@ public class BrandImages {
 
     private String title;
 
-    private String filePath;
+    private String imageLocalPath;
+
+    private String imageURL;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id", referencedColumnName = "id")
     private ProductBrandCategory productBrandCategory;
 
-    public BrandImages(String title, String filePath) {
+    public BrandImages(String title, String imageLocalPath, String imageURL) {
         this.title = title;
-        this.filePath = filePath;
+        this.imageLocalPath = imageLocalPath;
+        this.imageURL = imageURL;
     }
 }

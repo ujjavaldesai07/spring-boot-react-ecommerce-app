@@ -175,8 +175,8 @@ export function ShippingOptions() {
         for (const [id, product] of Object.entries(shoppingBagProducts.data)) {
             imageList.push(
                 <Grid key={id} item sm={2} style={{alignSelf: "center", paddingBottom: "1rem"}}>
-                    <img key={product.id} src={product.imageName}
-                         alt={product.imageName} width="inherit" height={80}/>
+                    <img key={product.id} src={product.imageURL}
+                         alt={product.name} width="inherit" height={80}/>
                 </Grid>
             )
         }

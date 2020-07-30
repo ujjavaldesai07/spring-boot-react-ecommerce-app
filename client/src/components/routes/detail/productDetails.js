@@ -155,7 +155,7 @@ function ProductDetails(props) {
             <Grid container>
 
                 <Grid item container justify="center" sm={6} md={5} lg={4}>
-                    <img src={selectedProduct.imageName} alt={selectedProduct.name}
+                    <img src={selectedProduct.imageURL} alt={selectedProduct.name}
                          style={{height: "100%", width: "90%", paddingBottom: "2rem"}}
                          title={selectedProduct.name}/>
                 </Grid>

@@ -22,7 +22,9 @@ public class ApparelImages {
 
     private String title;
 
-    private String filePath;
+    private String imageLocalPath;
+
+    private String imageURL;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "apparel_id", referencedColumnName = "id")
@@ -34,8 +36,9 @@ public class ApparelImages {
     @JsonIgnore
     private GenderCategory genderCategory;
 
-    public ApparelImages(String title, String filePath) {
+    public ApparelImages(String title, String imageLocalPath, String imageURL) {
         this.title = title;
-        this.filePath = filePath;
+        this.imageLocalPath = imageLocalPath;
+        this.imageURL = imageURL;
     }
 }

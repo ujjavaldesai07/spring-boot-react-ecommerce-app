@@ -27,7 +27,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
 
@@ -126,9 +125,9 @@ public class CommonDataServiceImpl implements CommonDataService {
 
     }
 
-    public String appendHostUrl(String path) throws UnknownHostException {
-        return String.format("http://localhost:%s/web-images/%s", environment.getProperty("local.server.port"), path);
-    }
+//    public String appendHostUrl(String path) throws UnknownHostException {
+//        return String.format("http://localhost:%s/web-images/%s", environment.getProperty("local.server.port"), path);
+//    }
 
     public MainScreenResponse getHomeScreenData() throws UnknownHostException {
 
@@ -136,22 +135,22 @@ public class CommonDataServiceImpl implements CommonDataService {
         Type listType = new TypeToken<List<BrandImagesDTO>>() {
         }.getType();
         List<BrandImagesDTO> brandDTOList = modelMapper.map(brandList, listType);
-        for (BrandImagesDTO info : brandDTOList) {
-            info.setFilePath(appendHostUrl(info.getFilePath()));
-        }
+//        for (BrandImagesDTO info : brandDTOList) {
+//            info.setFilePath(appendHostUrl(info.getFilePath()));
+//        }
 
         List<ApparelImages> apparelList = apparelImagesRepository.getAllData();
         listType = new TypeToken<List<ApparelImagesDTO>>() {
         }.getType();
         List<ApparelImagesDTO> apparelDTOList = modelMapper.map(apparelList, listType);
-        for (ApparelImagesDTO info : apparelDTOList) {
-            info.setFilePath(appendHostUrl(info.getFilePath()));
-        }
+//        for (ApparelImagesDTO info : apparelDTOList) {
+//            info.setFilePath(appendHostUrl(info.getFilePath()));
+//        }
 
         List<CarouselImages> carouselList = carouselImagesRepository.getAllData();
-        for (CarouselImages info : carouselList) {
-            info.setFilePath(appendHostUrl(info.getFilePath()));
-        }
+//        for (CarouselImages info : carouselList) {
+//            info.setFilePath(appendHostUrl(info.getFilePath()));
+//        }
 
         return new MainScreenResponse(brandDTOList, apparelDTOList, carouselList);
     }
@@ -164,14 +163,13 @@ public class CommonDataServiceImpl implements CommonDataService {
 
     public Pair<Long, List<ProductInfo>> getProductsByCategories(HashMap<String, String> conditionMap)
             throws UnknownHostException {
-        Pair<Long, List<ProductInfo>> result = productInfoRepository.getProductsByCategories(conditionMap);
 
-        if (result != null) {
-            for (ProductInfo info : result.getValue1()) {
-                info.setImageName(appendHostUrl(info.getImageName()));
-            }
-        }
-        return result;
+//        if (result != null) {
+//            for (ProductInfo info : result.getValue1()) {
+//                info.setImageName(appendHostUrl(info.getImageName()));
+//            }
+//        }
+        return productInfoRepository.getProductsByCategories(conditionMap);
     }
 
     public HashMap<Integer, ProductInfo> getProductsById(String[] productIds) throws UnknownHostException {
@@ -182,7 +180,7 @@ public class CommonDataServiceImpl implements CommonDataService {
         if (result != null) {
             resultMap = new HashMap<>();
             for (ProductInfo info : result) {
-                info.setImageName(appendHostUrl(info.getImageName()));
+//                info.setImageName(appendHostUrl(info.getImageName()));
                 resultMap.put(info.getId(), info);
             }
         }

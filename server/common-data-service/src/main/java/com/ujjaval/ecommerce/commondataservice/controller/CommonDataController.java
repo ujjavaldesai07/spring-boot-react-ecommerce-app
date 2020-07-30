@@ -1,5 +1,7 @@
 package com.ujjaval.ecommerce.commondataservice.controller;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.ujjaval.ecommerce.commondataservice.dto.ProductInfoDTO;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
 import com.ujjaval.ecommerce.commondataservice.model.FilterAttributesResponse;
@@ -15,15 +17,22 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
+import java.io.*;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 public class CommonDataController {
@@ -90,10 +99,10 @@ public class CommonDataController {
 
     @GetMapping(value = "/products", params = "product_id")
     public ResponseEntity<?> getProductsById(@RequestParam("product_id") String queryParams) throws UnknownHostException {
-            String[] productIds = queryParams.split(",");
+        String[] productIds = queryParams.split(",");
 
-            if(productIds.length > 0) {
-                HashMap<Integer, ProductInfo> resultMap = commonDataService.getProductsById(productIds);
+        if (productIds.length > 0) {
+            HashMap<Integer, ProductInfo> resultMap = commonDataService.getProductsById(productIds);
 
             if (resultMap == null) {
                 return new ResponseEntity<>(

@@ -22,10 +22,13 @@ public class CarouselImages {
 
     private String link;
 
-    private String filePath;
+    private String imageLocalPath;
 
-    public CarouselImages(String link, String filePath) {
+    private String imageURL;
+
+    public CarouselImages(String link, String imageLocalPath, String imageURL) {
         this.link = link;
-        this.filePath = filePath;
+        this.imageLocalPath = imageLocalPath;
+        this.imageURL = imageURL;
     }
 }
