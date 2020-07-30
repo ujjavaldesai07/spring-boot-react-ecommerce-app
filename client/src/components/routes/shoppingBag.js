@@ -1,15 +1,12 @@
 import React, {useState} from 'react';
 import log from 'loglevel';
 import BreadcrumbsSection from "../ui/breadcrumbs";
-import {HOME_ROUTE, MAX_PRODUCTS_PER_PAGE} from "../../constants/constants";
+import {MAX_PRODUCTS_PER_PAGE} from "../../constants/constants";
 import history from "../../history";
 import Box from "@material-ui/core/Box";
 import {useDispatch, useSelector} from "react-redux";
 import Cookies from "js-cookie";
-import {
-    ADD_TO_CART, CART_TOTAL,
-    SHOPPERS_PRODUCT_ID
-} from "../../actions/types";
+import {ADD_TO_CART, CART_TOTAL} from "../../actions/types";
 import DropdownSection from "../ui/dropDown";
 import {Button, Divider, Grid, Paper} from "@material-ui/core";
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
@@ -23,6 +20,8 @@ import Modal from "../../components/ui/modal";
 import _ from 'lodash';
 import Hidden from "@material-ui/core/Hidden";
 import {useAddProductsToShoppingBag} from "../../hooks/useAddProductsToShoppingBag";
+import {CART_TOTAL_COOKIE, SHOPPERS_PRODUCT_INFO_COOKIE} from "../../constants/cookies";
+import {HOME_ROUTE} from "../../constants/react_routes";
 
 const modalWidth = 430
 
@@ -82,7 +81,7 @@ function ShoppingBag(props) {
             }
         }
 
-        Cookies.set(CART_TOTAL, cartTotal, {expires: 7});
+        Cookies.set(CART_TOTAL_COOKIE, cartTotal, {expires: 7});
 
         dispatch({
             type: CART_TOTAL,
@@ -97,7 +96,7 @@ function ShoppingBag(props) {
         let newAddToCart = addToCart
         newAddToCart.productQty[id] = value
 
-        Cookies.set(SHOPPERS_PRODUCT_ID, newAddToCart, {expires: 7});
+        Cookies.set(SHOPPERS_PRODUCT_INFO_COOKIE, newAddToCart, {expires: 7});
         dispatch({
             type: ADD_TO_CART,
             payload: newAddToCart
@@ -150,7 +149,7 @@ function ShoppingBag(props) {
             let newAddToCart = addToCart
             newAddToCart.totalQuantity -= newAddToCart.productQty[itemRemovalModalState.productId]
             newAddToCart.productQty = _.omit(newAddToCart.productQty, itemRemovalModalState.productId)
-            Cookies.set(SHOPPERS_PRODUCT_ID, newAddToCart, {expires: 7});
+            Cookies.set(SHOPPERS_PRODUCT_INFO_COOKIE, newAddToCart, {expires: 7});
             dispatch({
                 type: ADD_TO_CART,
                 payload: newAddToCart

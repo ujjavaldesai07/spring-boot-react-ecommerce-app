@@ -2,9 +2,6 @@ import React from 'react';
 import log from 'loglevel';
 import {Divider, Grid} from "@material-ui/core";
 import {useSelector} from "react-redux";
-import {PageNotFound} from "../ui/error/pageNotFound";
-import Cookies from "js-cookie";
-import {CART_TOTAL} from "../../actions/types";
 
 const paymentStyles = {
     header: {
@@ -20,7 +17,6 @@ const paymentStyles = {
 
 function PriceDetails() {
     let cartTotal = useSelector(state => state.cartTotalReducer);
-    const shippingOption = useSelector(state => state.shippingOptionReducer)
     const deliveryCharges = useSelector(state => state.deliveryChargesReducer)
 
     const renderGridData = (label, value, styles) => {
@@ -39,7 +35,7 @@ function PriceDetails() {
         )
     }
 
-    log.info("[Checkout] Rendering PriceDetails Component.")
+    log.info("[PriceDetails] Rendering PriceDetails Component.")
 
     return (
         <Grid container justify="center">

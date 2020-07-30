@@ -30,21 +30,3 @@ export const SHIPPING_OPTION_CONFIRMED = "SHIPPING_OPTION_CONFIRMED";
 export const PAYMENT_INFO_CONFIRMED = "PAYMENT_INFO_CONFIRMED";
 export const PAYMENT_RESPONSE = "PAYMENT_RESPONSE";
 
-
-// js cookie IDs
-export const HANDLE_TOKEN_ID = "HANDLE_TOKEN_ID";
-export const SHOPPERS_PRODUCT_ID = 'SHOPPERS_PRODUCT_ID';
-
-// http error codes
-export const INTERNAL_SERVER_ERROR_CODE = 500;
-export const BAD_REQUEST_ERROR_CODE = 400;
-
-// API URL
-export const HOME_PAGE_DATA_API = "/home";
-export const TABS_DATA_API = "/tabs";
-export const PRODUCT_BY_ID_DATA_API = "/products?product_id=";
-export const PRODUCT_BY_CATEGORY_DATA_API = "/products?q=";
-
-// attributes length
-export const HOME_PAGE_API_OBJECT_LEN = 3;
-export const TABS_API_OBJECT_LEN = 6;

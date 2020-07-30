@@ -1,6 +1,5 @@
 import {
     ADD_TO_CART,
-    DELETE_FILTER_QUERY,
     LOAD_HOME_PAGE,
     LOAD_SHOPPING_BAG_PRODUCTS,
     LOAD_FILTER_ATTRIBUTES,
@@ -16,7 +15,11 @@ import {
     SHIPPING_OPTION_CONFIRMED, PAYMENT_RESPONSE, DELIVERY_CHARGES
 } from "../../actions/types";
 import log from "loglevel";
-import {INITIAL_QUERY_STATUS} from "../../constants/constants";
+import {
+    INITIAL_ADD_TO_CART_STATE,
+    INITIAL_SHIPPING_ADDRESS_STATE,
+    INITIAL_SHIPPING_OPTION_STATE
+} from "../../constants/constants";
 
 export const homePageDataReducer = (state = {isLoading: true}, action) => {
     log.trace(`[HOME_SCREEN_REDUCER]: action.type = ${action.type}`)
@@ -39,7 +42,7 @@ export const tabsDataReducer = (state = {isLoading: true}, action) => {
 };
 
 export const addToCartReducer = (state =
-                                     {totalQuantity: 0, productQty: {}}, action) => {
+                                     INITIAL_ADD_TO_CART_STATE, action) => {
     switch (action.type) {
         case ADD_TO_CART:
             return {
@@ -126,7 +129,7 @@ export const savedSortedListReducer = (state = null, action) => {
 };
 
 export const shippingAddressReducer = (state
-                                           = {values: null, submitted: false}, action) => {
+                                           = INITIAL_SHIPPING_ADDRESS_STATE, action) => {
     switch (action.type) {
         case SHIPPING_ADDRESS_CONFIRMED:
             return action.payload
@@ -135,8 +138,7 @@ export const shippingAddressReducer = (state
     }
 };
 
-export const paymentInfoReducer = (state
-                                           = {values: null, submitted: false}, action) => {
+export const paymentInfoReducer = (state= {values: null, submitted: false}, action) => {
     switch (action.type) {
         case PAYMENT_INFO_CONFIRMED:
             return action.payload
@@ -145,8 +147,7 @@ export const paymentInfoReducer = (state
     }
 };
 
-export const shippingOptionReducer = (state
-                                           = {price: "Free", submitted: false}, action) => {
+export const shippingOptionReducer = (state= INITIAL_SHIPPING_OPTION_STATE, action) => {
     switch (action.type) {
         case SHIPPING_OPTION_CONFIRMED:
             return action.payload

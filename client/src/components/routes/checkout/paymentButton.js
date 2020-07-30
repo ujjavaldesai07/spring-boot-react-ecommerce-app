@@ -16,6 +16,12 @@ class PaymentButton extends Component {
         }
     }
 
+    componentDidMount() {
+        if(this.props.paymentResponse && this.props.paymentResponse.hasOwnProperty("error")) {
+            this.setState({paymentBtnClicked: true})
+        }
+    }
+
     getGrandTotal = () => {
         this._GrandTotal = (this.props.cartTotal + this.props.deliveryCharges) * 100
         return this._GrandTotal
@@ -81,7 +87,8 @@ const mapStateToProps = (state) => {
             state.form.shippingAddressForm : null,
         shippingOption: state.shippingOptionReducer,
         addToCart: state.addToCartReducer,
-        deliveryCharges: state.deliveryChargesReducer
+        deliveryCharges: state.deliveryChargesReducer,
+        paymentResponse: state.paymentResponseReducer
     })
 }
 

@@ -3,21 +3,21 @@ import {
     HANDLE_SIGN_UP,
     HANDLE_SIGN_UP_ERROR,
     HANDLE_SIGN_OUT,
-    HANDLE_TOKEN_ID,
     HANDLE_SIGN_IN_ERROR,
     LOAD_FILTER_PRODUCTS,
     LOAD_FILTER_ATTRIBUTES,
-    INTERNAL_SERVER_ERROR_CODE,
-    BAD_REQUEST_ERROR_CODE,
     SAVE_QUERY_STATUS,
     SHIPPING_ADDRESS_CONFIRMED,
-    PAYMENT_INFO_CONFIRMED, PAYMENT_RESPONSE,
+    PAYMENT_INFO_CONFIRMED,
+    PAYMENT_RESPONSE, CART_TOTAL, LOAD_SHOPPING_BAG_PRODUCTS
 } from './types';
+import {INTERNAL_SERVER_ERROR_CODE, BAD_REQUEST_ERROR_CODE} from '../constants/http_error_codes'
+import {SHOPPERS_PRODUCT_INFO_COOKIE, CART_TOTAL_COOKIE, TOKEN_ID_COOKIE} from '../constants/cookies'
 import history from "../history";
 import {Base64} from 'js-base64';
 import Cookies from 'js-cookie';
 import log from "loglevel";
-import {commonServiceAPI, authServiceAPI, paymentServiceAPI} from "../api/service_api";
+import {commonServiceAPI, authServiceAPI} from "../api/service_api";
 import axios from 'axios';
 
 export const setTokenFromCookie = tokenId => {
@@ -59,7 +59,7 @@ export const signIn = formValues => async (dispatch) => {
         if (response.data.jwt) {
             log.info(`[ACTION]: dispatch HANDLE_SIGN_IN response.data.jwt = ${response.data.jwt}`)
             dispatch({type: HANDLE_SIGN_IN, payload: response.data.jwt});
-            Cookies.set(HANDLE_TOKEN_ID, response.data.jwt, {expires: 7});
+            Cookies.set(TOKEN_ID_COOKIE, response.data.jwt, {expires: 7});
             history.push('/');
         } else {
             log.info(`[ACTION]: dispatch HANDLE_SIGN_IN_ERROR response.data.error = ${response.data.error}`)
@@ -70,7 +70,7 @@ export const signIn = formValues => async (dispatch) => {
 
 export const signOut = () => {
     log.info(`[ACTION]: signOut Cookie is removed...`)
-    Cookies.remove(HANDLE_TOKEN_ID)
+    Cookies.remove(TOKEN_ID_COOKIE)
     return {
         type: HANDLE_SIGN_OUT
     }
@@ -111,26 +111,41 @@ export const sendPaymentToken = (token) => async dispatch => {
         headers: {
             'Content-Type': 'application/json'
         },
-        data : JSON.stringify(token)
+        data: JSON.stringify(token)
     };
 
     axios(config)
         .then(function (response) {
             console.log(JSON.stringify(response.data));
-            dispatch({
-                type: PAYMENT_RESPONSE,
-                payload: JSON.stringify(response.data)
-            })
+            let paymentResponse = {...response.data,
+                last4: token.card.last4, exp_year: token.card.exp_year,
+                exp_month: token.card.exp_month, brand: token.card.brand}
 
-            if(response.data.paymentFailed) {
+            if (paymentResponse.payment_failed) {
                 history.push(`/checkout/cancel-payment/${response.data.charge_id}`)
             } else {
                 history.push(`/checkout/success-payment/${response.data.charge_id}`)
+                Cookies.remove(CART_TOTAL_COOKIE)
+                Cookies.remove(SHOPPERS_PRODUCT_INFO_COOKIE)
+
+                dispatch({
+                    type: CART_TOTAL,
+                    payload: 0
+                })
             }
+
+            dispatch({
+                type: PAYMENT_RESPONSE,
+                payload: paymentResponse
+            })
 
         })
         .catch(function (error) {
             console.log(error);
+            dispatch({
+                type: PAYMENT_RESPONSE,
+                payload: {error: true}
+            })
         });
 }
 
@@ -160,7 +175,7 @@ export const getDataViaAPI = (type, uri) => async dispatch => {
                     {isLoading: false, data: JSON.parse(JSON.stringify(response.data))}
             });
             if (LOAD_FILTER_PRODUCTS.localeCompare(type) === 0) {
-                if(window.location.search.localeCompare(uri.split("/products")[1]) !== 0) {
+                if (window.location.search.localeCompare(uri.split("/products")[1]) !== 0) {
                     history.push(uri)
                 }
             }
@@ -185,8 +200,10 @@ export const loadFilterAttributes = filterQuery => async dispatch => {
             dispatch({
                 type: LOAD_FILTER_ATTRIBUTES,
                 payload: JSON.parse(JSON.stringify(
-                    {...response.data,
-                    "query": removedSpacesFromFilterQuery.slice(3)}))
+                    {
+                        ...response.data,
+                        "query": removedSpacesFromFilterQuery.slice(3)
+                    }))
             });
 
             dispatch({

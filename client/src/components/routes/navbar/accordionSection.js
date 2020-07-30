@@ -7,8 +7,9 @@ import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {Link} from "react-router-dom";
 import {useSelector} from "react-redux";
-import {PRODUCTS_ROUTE, TAB_CONFIG} from "../../../constants/constants";
+import {TAB_CONFIG} from "../../../constants/constants";
 import log from "loglevel";
+import {PRODUCTS_ROUTE} from "../../../constants/react_routes";
 
 const height = 48
 

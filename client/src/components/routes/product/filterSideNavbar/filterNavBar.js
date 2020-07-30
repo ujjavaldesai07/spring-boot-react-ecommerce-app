@@ -15,13 +15,13 @@ import {Box} from "@material-ui/core";
 import {useFilterNavBarStyles} from "../../../../styles/materialUI/filterNavBarStyles";
 import {
     FILTER_ATTRIBUTES, INITIAL_PAGINATION_STATE,
-    MAX_PRODUCTS_PER_PAGE,
-    PRODUCTS_ROUTE
+    MAX_PRODUCTS_PER_PAGE
 } from "../../../../constants/constants";
 import {
     ADD_SELECTED_CATEGORY,
     SAVE_QUERY_STATUS, SAVE_SORT_LIST, SELECT_PRODUCT_PAGE,
 } from "../../../../actions/types";
+import {PRODUCTS_ROUTE} from "../../../../constants/react_routes";
 
 function FilterNavBar(props) {
     const classes = useFilterNavBarStyles();

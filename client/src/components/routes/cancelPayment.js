@@ -1,6 +1,8 @@
 import React from 'react'
 import log from 'loglevel'
 import {Grid} from "@material-ui/core";
+import {Link} from "react-router-dom";
+import {CHECKOUT_ROUTE, HOME_ROUTE} from "../../constants/react_routes";
 
 export const CancelPayment = () => {
 
@@ -17,9 +19,8 @@ export const CancelPayment = () => {
             </Grid>
 
             <Grid item xs={12} style={{marginTop: "2rem", fontWeight: "bold"}}>
-                Go back to Checkout.
+                Go back to <Link to={CHECKOUT_ROUTE}>Checkout</Link>.
             </Grid>
-
         </Grid>
     )
 }

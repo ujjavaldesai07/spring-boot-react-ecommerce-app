@@ -20,21 +20,23 @@ import useNavBarStyles from "../../../styles/materialUI/navBarStyles";
 import TabList from "./tabList";
 import {Link} from "react-router-dom";
 import {useSelector} from "react-redux";
-import {
-    ADD_TO_CART,
-    HANDLE_TOKEN_ID,
-    LOAD_TABS_DATA,
-    SHOPPERS_PRODUCT_ID, TABS_API_OBJECT_LEN, TABS_DATA_API
-} from "../../../actions/types";
+import {ADD_TO_CART, CART_TOTAL, LOAD_TABS_DATA} from "../../../actions/types";
 import log from "loglevel";
 import Hidden from "@material-ui/core/Hidden";
 import BagButton from "./bagButton";
-import {tabsDataReducer} from "../../../reducers/screens/commonScreenReducer";
+import {
+    cartTotalReducer,
+    shoppingBagProductReducer,
+    tabsDataReducer
+} from "../../../reducers/screens/commonScreenReducer";
 import Spinner from "../../ui/spinner";
 import {HTTPError} from "../../ui/error/httpError";
 import {BadRequest} from "../../ui/error/badRequest";
 import SearchBar from "./searchBar";
 import SideBar from "./sideBar";
+import {SHOPPERS_PRODUCT_INFO_COOKIE, TOKEN_ID_COOKIE} from "../../../constants/cookies";
+import {TABS_DATA_API} from "../../../constants/api_routes";
+import {TABS_API_OBJECT_LEN} from "../../../constants/constants"
 
 const NavBar = props => {
     const classes = useNavBarStyles();
@@ -50,7 +52,7 @@ const NavBar = props => {
     const dispatch = useDispatch()
 
     const setAddToCartValuesFromCookie = () => {
-        let savedProductsFromCookie = Cookies.get(SHOPPERS_PRODUCT_ID)
+        let savedProductsFromCookie = Cookies.get(SHOPPERS_PRODUCT_INFO_COOKIE)
         let totalQuantity = 0
         if (savedProductsFromCookie) {
             savedProductsFromCookie = JSON.parse(savedProductsFromCookie)
@@ -73,13 +75,14 @@ const NavBar = props => {
         log.info(`[NavBar]: Component did update.`)
         if (isSignedIn === null) {
             log.info(`[NavBar]: isSignedIn is null`)
-            let tokenIdFromCookie = Cookies.get(HANDLE_TOKEN_ID)
+            let tokenIdFromCookie = Cookies.get(TOKEN_ID_COOKIE)
             if (tokenIdFromCookie) {
                 log.info(`[NavBar]: Token set from Cookie`)
                 props.setTokenFromCookie(tokenIdFromCookie)
             }
         }
         props.getDataViaAPI(LOAD_TABS_DATA, TABS_DATA_API)
+
         setAddToCartValuesFromCookie()
 
         // eslint-disable-next-line

@@ -25,11 +25,25 @@ export const INITIAL_SELECTED_FILTER_ATTRIBUTE_STATE = {
     prices: [],
 }
 
-export const FILTER_ATTRIBUTES = ["genders", "apparels", "brands", "prices"]
+export const INITIAL_ADD_TO_CART_STATE = {
+    totalQuantity: 0,
+    productQty: {}
+}
 
-export const HOME_ROUTE = '/'
-export const PRODUCTS_ROUTE = '/products'
-export const DETAILS_ROUTE = '/products/details'
+export const INITIAL_SHIPPING_OPTION_STATE = {
+    price: "Free",
+    submitted: false
+}
+
+export const INITIAL_SHIPPING_ADDRESS_STATE = {
+    values: null,
+    submitted: false
+}
+
+export const FILTER_ATTRIBUTES = ["genders", "apparels", "brands", "prices"]
 
 export const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
     'August', 'September', 'October', 'November', 'December'];
+
+export const HOME_PAGE_API_OBJECT_LEN = 3;
+export const TABS_API_OBJECT_LEN = 6;

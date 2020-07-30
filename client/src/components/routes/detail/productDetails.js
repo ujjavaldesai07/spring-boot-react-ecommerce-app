@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Grid, Box, Hidden} from "@material-ui/core";
+import {Button, Grid, Box} from "@material-ui/core";
 import log from 'loglevel';
 import BreadcrumbsSection from "../../ui/breadcrumbs";
-import {HOME_ROUTE} from "../../../constants/constants";
 import history from "../../../history";
 import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
 import {useDispatch, useSelector} from "react-redux";
@@ -11,7 +10,7 @@ import {getDataViaAPI} from '../../../actions'
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import LocalMallIcon from '@material-ui/icons/LocalMall';
 import Cookies from 'js-cookie';
-import {ADD_TO_CART, PRODUCT_BY_ID_DATA_API, SELECT_PRODUCT_DETAIL, SHOPPERS_PRODUCT_ID} from "../../../actions/types";
+import {ADD_TO_CART, SELECT_PRODUCT_DETAIL} from "../../../actions/types";
 import RemoveIcon from '@material-ui/icons/Remove';
 import AddIcon from '@material-ui/icons/Add';
 import {makeStyles} from "@material-ui/core/styles";
@@ -19,6 +18,9 @@ import Spinner from "../../ui/spinner";
 import {InternalServerError} from "../../ui/error/internalServerError";
 import {BadRequest} from "../../ui/error/badRequest";
 import _ from "lodash";
+import {PRODUCT_BY_ID_DATA_API} from "../../../constants/api_routes";
+import {SHOPPERS_PRODUCT_INFO_COOKIE} from "../../../constants/cookies";
+import {HOME_ROUTE} from "../../../constants/react_routes";
 
 export const useButtonStyles = makeStyles(() => ({
     buttonStartIcon: {
@@ -103,7 +105,7 @@ function ProductDetails(props) {
     }
 
     const dispatchAddToCart = newAddToCart => {
-        Cookies.set(SHOPPERS_PRODUCT_ID, newAddToCart, {expires: 7});
+        Cookies.set(SHOPPERS_PRODUCT_INFO_COOKIE, newAddToCart, {expires: 7});
         log.info(`[Product Detail] dispatchAddToCart productQty = ${JSON.stringify(newAddToCart)}`)
         dispatch({
             type: ADD_TO_CART,

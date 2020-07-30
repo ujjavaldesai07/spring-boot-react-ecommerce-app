@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import log from 'loglevel';
 import {Divider, Grid} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
@@ -9,7 +9,10 @@ import FormControl from '@material-ui/core/FormControl';
 import ContinueButton from "./continueButton";
 import {useDispatch, useSelector} from "react-redux";
 import CircularProgress from '@material-ui/core/CircularProgress';
-import {DELIVERY_CHARGES, SHIPPING_OPTION_CONFIRMED} from "../../../actions/types";
+import {
+    DELIVERY_CHARGES,
+    SHIPPING_OPTION_CONFIRMED
+} from "../../../actions/types";
 import {MONTHS} from "../../../constants/constants";
 import Button from "@material-ui/core/Button";
 
@@ -55,10 +58,11 @@ export function ShippingOptions() {
     const classes = useStyles();
     const shoppingBagProducts = useSelector(state => state.shoppingBagProductReducer)
     const dispatch = useDispatch()
-    const [shippingOptionState, setShippingOptionState] = React.useState({value: 'free', submitted: false});
+    const [shippingOptionState, setShippingOptionState] = React.useState( {value: 'free', submitted: false})
 
     const handleRadioBtnChange = (event) => {
-        setShippingOptionState({value: event.target.value, submitted: false});
+        log.info(`event.target.value = ${event.target.value}`)
+        setShippingOptionState({value: event.target.value, submitted: false})
 
         let deliveryPrice = null
 
@@ -81,18 +85,18 @@ export function ShippingOptions() {
             type: DELIVERY_CHARGES,
             payload: deliveryPrice
         })
-
     };
 
     const submitHandler = () => {
-        setShippingOptionState({value: shippingOptionState.value, submitted: true});
+        let selectedOption = shippingOptionState.value
+        setShippingOptionState({value: selectedOption, submitted: true})
 
         dispatch({
             type: SHIPPING_OPTION_CONFIRMED,
             payload: {
-                estimatedDate: getEstimatedDeliveryDate(shippingOptionsData[shippingOptionState.value].estimatedDays),
-                price: shippingOptionsData[shippingOptionState.value].price,
-                deliveryType: shippingOptionsData[shippingOptionState.value].label,
+                estimatedDate: getEstimatedDeliveryDate(shippingOptionsData[selectedOption].estimatedDays),
+                price: shippingOptionsData[selectedOption].price,
+                deliveryType: shippingOptionsData[selectedOption].label,
                 submitted: true
             }
         })
@@ -212,6 +216,7 @@ export function ShippingOptions() {
     }
 
     log.info("[ShippingOptions] Rendering ShippingOptions Component.")
+    log.info(`shippingOptionState-3 = ${JSON.stringify(shippingOptionState)}`)
 
     return (
         <Grid item style={{width: "100%", height: "fit-content"}}>
@@ -228,7 +233,8 @@ export function ShippingOptions() {
                 <Divider style={{height: 1, width: "inherit"}}/>
             </Grid>
 
-            {shippingOptionState.submitted ? renderEditButton() : <ContinueButton buttonHandler={submitHandler}/>}
+            {shippingOptionState.submitted ? renderEditButton() : <ContinueButton
+                buttonHandler={submitHandler}/>}
         </Grid>
     )
 }

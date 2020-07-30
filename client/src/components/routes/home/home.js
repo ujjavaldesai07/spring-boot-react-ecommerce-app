@@ -12,8 +12,10 @@ import HomeMenuIcons from "./homeMenuIcons";
 import Hidden from "@material-ui/core/Hidden";
 import Spinner from "../../ui/spinner";
 import {HTTPError} from "../../ui/error/httpError";
-import {LOAD_HOME_PAGE, HOME_PAGE_DATA_API, HOME_PAGE_API_OBJECT_LEN} from "../../../actions/types";
+import {LOAD_HOME_PAGE} from "../../../actions/types";
 import {BadRequest} from "../../ui/error/badRequest";
+import {HOME_PAGE_DATA_API} from "../../../constants/api_routes";
+import {HOME_PAGE_API_OBJECT_LEN} from "../../../constants/constants"
 
 const Home = props => {
     const {hover} = useSelector(state => state.tabHoverEventReducer)

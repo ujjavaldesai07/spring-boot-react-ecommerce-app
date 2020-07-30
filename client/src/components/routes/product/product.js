@@ -8,7 +8,6 @@ import FilterChips from "./filterChips";
 import {Divider} from "@material-ui/core";
 import FilterDropdown from "./filterDropdown";
 import FilterPagination from "./filterPagination";
-import {HOME_ROUTE} from "../../../constants/constants";
 import Hidden from "@material-ui/core/Hidden";
 import BottomNavBar from "./bottomNavBar";
 import history from "../../../history";
@@ -17,6 +16,7 @@ import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
 import {useDispatch} from "react-redux";
 import {SAVE_QUERY_STATUS} from "../../../actions/types";
 import {BadRequest} from "../../ui/error/badRequest";
+import {HOME_ROUTE} from "../../../constants/react_routes";
 
 export const stickyBoxStyle = {
     position: 'sticky',

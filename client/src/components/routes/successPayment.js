@@ -1,10 +1,23 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import log from 'loglevel'
 import {Grid} from "@material-ui/core";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {BadRequest} from "../ui/error/badRequest";
+import {
+    ADD_TO_CART,
+    DELIVERY_CHARGES,
+    LOAD_SHOPPING_BAG_PRODUCTS,
+    SAVE_QUERY_STATUS, SHIPPING_ADDRESS_CONFIRMED,
+    SHIPPING_OPTION_CONFIRMED
+} from "../../actions/types";
+import {
+    INITIAL_ADD_TO_CART_STATE,
+    INITIAL_SHIPPING_ADDRESS_STATE,
+    INITIAL_SHIPPING_OPTION_STATE
+} from "../../constants/constants";
 
 export const SuccessPayment = () => {
+    const dispatch = useDispatch()
     const shoppingBagProducts = useSelector(state => state.shoppingBagProductReducer)
     let cartTotal = useSelector(state => state.cartTotalReducer)
     const shippingAddressForm = useSelector(state => state.form.shippingAddressForm ?
@@ -12,8 +25,41 @@ export const SuccessPayment = () => {
     const shippingOption = useSelector(state => state.shippingOptionReducer)
     const addToCart = useSelector(state => state.addToCartReducer)
     const deliveryCharges = useSelector(state => state.deliveryChargesReducer)
+    const paymentResponse = useSelector(state => state.paymentResponseReducer)
 
-    if (!shippingAddressForm) {
+    useEffect(() => {
+
+        return () => {
+            log.info("[SuccessPayment] Component will unmount.")
+            dispatch({
+                type: ADD_TO_CART,
+                payload: INITIAL_ADD_TO_CART_STATE
+            })
+
+            dispatch({
+                type: LOAD_SHOPPING_BAG_PRODUCTS,
+                payload: {isLoading: false, data: {}}
+            })
+            
+            dispatch({
+                type: DELIVERY_CHARGES,
+                payload: 0
+            })
+
+            dispatch({
+                type: SHIPPING_OPTION_CONFIRMED,
+                payload: INITIAL_SHIPPING_OPTION_STATE
+            })
+
+            dispatch({
+                type: SHIPPING_ADDRESS_CONFIRMED,
+                payload: INITIAL_SHIPPING_ADDRESS_STATE
+            })
+
+        }
+    }, [])
+
+    if (!shippingAddressForm || !paymentResponse) {
         return <BadRequest/>
     }
 
@@ -80,7 +126,18 @@ export const SuccessPayment = () => {
                 Payment Successful. Thank You For Shopping at Shoppers.
             </Grid>
             <Grid item xs={12} style={{marginTop: "2rem", fontWeight: "bold"}}>
-                Your order is placed successfully. Your order id is 2425645235353.
+                {`Your order is placed successfully. Your order id is ${paymentResponse.order_id}.`}
+            </Grid>
+
+            <Grid item container spacing={2}>
+                <Grid item container justify="flex-end" xs={2}>
+                    Receipt:
+                </Grid>
+                <Grid item container xs={8} direction="column" style={{fontWeight: "bold"}}>
+                    <a href={paymentResponse.receipt_url} target="_blank" rel="noopener noreferrer">
+                        Order-Receipt
+                    </a>
+                </Grid>
             </Grid>
 
             <Grid item container spacing={2}>
@@ -98,10 +155,10 @@ export const SuccessPayment = () => {
                 </Grid>
                 <Grid item container xs={8} direction="column" style={{fontWeight: "bold"}}>
                     <Grid item>
-                        VISA ending in 4242
+                        {`${paymentResponse.brand.toUpperCase()} ending in ${paymentResponse.last4}`}
                     </Grid>
                     <Grid item>
-                        Exp: 3/24
+                        {`Exp: ${paymentResponse.exp_month}/${paymentResponse.exp_year}`}
                     </Grid>
                 </Grid>
             </Grid>

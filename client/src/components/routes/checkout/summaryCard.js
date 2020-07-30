@@ -8,10 +8,11 @@ import IconButton from '@material-ui/core/IconButton';
 export const SummaryCard = (props) => {
 
     const renderCardContent = () => {
-
+        let id = 0
         return props.contentList.map((formValue) => {
+            ++id
             return (
-                <Grid item key={formValue} style={{marginBottom: "0.5rem"}}>
+                <Grid item key={`sc-${id}`} style={{marginBottom: "0.5rem"}}>
                     {formValue}
                 </Grid>
             )

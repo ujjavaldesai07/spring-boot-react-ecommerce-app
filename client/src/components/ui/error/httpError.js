@@ -1,5 +1,5 @@
 import React from 'react';
-import {BAD_REQUEST_ERROR_CODE, INTERNAL_SERVER_ERROR_CODE} from "../../../actions/types";
+import {BAD_REQUEST_ERROR_CODE, INTERNAL_SERVER_ERROR_CODE} from "../../../constants/http_error_codes";
 import {InternalServerError} from "./internalServerError";
 import {BadRequest} from "./badRequest";
 import log from 'loglevel';

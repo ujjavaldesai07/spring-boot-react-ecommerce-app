@@ -5,13 +5,10 @@ import {getDataViaAPI} from "../../../actions";
 import Rating from '@material-ui/lab/Rating';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import log from "loglevel";
-import {DETAILS_ROUTE, PRODUCTS_ROUTE} from "../../../constants/constants";
+import {DETAILS_ROUTE, PRODUCTS_ROUTE} from "../../../constants/react_routes";
 import history from "../../../history";
-import {
-    LOAD_FILTER_PRODUCTS,
-    PRODUCT_BY_CATEGORY_DATA_API,
-    SELECT_PRODUCT_DETAIL
-} from "../../../actions/types";
+import {LOAD_FILTER_PRODUCTS, SELECT_PRODUCT_DETAIL} from "../../../actions/types";
+import {PRODUCT_BY_CATEGORY_DATA_API} from '../../../constants/api_routes';
 import {Box, Grid} from "@material-ui/core";
 import Spinner from "../../ui/spinner";
 import {HTTPError} from "../../ui/error/httpError";

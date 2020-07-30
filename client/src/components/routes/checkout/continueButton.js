@@ -52,7 +52,7 @@ function ContinueButton(props) {
 }
 
 function continueButtonPropsAreEqual(prevProps, nextProps) {
-    return prevProps.action === nextProps.action;
+    return prevProps.action === nextProps.action && !prevProps.buttonHandler;
 }
 
 const continueButtonMemoWrapper = React.memo(ContinueButton, continueButtonPropsAreEqual);
