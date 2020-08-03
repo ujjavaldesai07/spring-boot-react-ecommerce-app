@@ -8,13 +8,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
-public class MainScreenResponse {
+public class MainScreenResponse implements Serializable {
 
     private List<BrandImagesDTO> brands;
     private List<ApparelImagesDTO> apparels;

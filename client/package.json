@@ -31,7 +31,8 @@
     "semantic-ui-css": "^2.4.1",
     "stripe": "^8.78.0",
     "styled-components": "^5.1.1",
-    "swiper": "^5.4.2"
+    "swiper": "^5.4.2",
+    "semantic-ui-react": "^0.88.2"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -57,7 +58,7 @@
     ]
   },
   "devDependencies": {
-    "dotenv": "^8.2.0",
-    "semantic-ui-react": "^0.88.2"
+    "@testing-library/jest-dom": "^5.11.2",
+    "@testing-library/react": "^10.4.7"
   }
 }

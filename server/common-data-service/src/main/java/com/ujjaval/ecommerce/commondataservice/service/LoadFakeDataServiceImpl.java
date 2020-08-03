@@ -1,7 +1,5 @@
 package com.ujjaval.ecommerce.commondataservice.service;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import com.ujjaval.ecommerce.commondataservice.dao.sql.categories.*;
 import com.ujjaval.ecommerce.commondataservice.dao.sql.images.BrandImagesRepository;
 import com.ujjaval.ecommerce.commondataservice.dao.sql.images.CarouselImagesRepository;
@@ -46,9 +44,6 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
     private final String PRICE_RANGE_DATA = "price-range-data.txt";
     private final String SORT_BY_DATA = "sortby-data.txt";
     private final String WEB_DATA = "web-data.txt";
-
-    @Autowired
-    Environment environment;
 
     @Autowired
     private ProductInfoRepository productInfoRepository;

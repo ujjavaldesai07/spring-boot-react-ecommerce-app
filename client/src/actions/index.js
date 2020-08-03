@@ -117,9 +117,11 @@ export const sendPaymentToken = (token) => async dispatch => {
     axios(config)
         .then(function (response) {
             console.log(JSON.stringify(response.data));
-            let paymentResponse = {...response.data,
+            let paymentResponse = {
+                ...response.data,
                 last4: token.card.last4, exp_year: token.card.exp_year,
-                exp_month: token.card.exp_month, brand: token.card.brand}
+                exp_month: token.card.exp_month, brand: token.card.brand
+            }
 
             if (paymentResponse.payment_failed) {
                 history.push(`/checkout/cancel-payment/${response.data.charge_id}`)
@@ -174,10 +176,10 @@ export const getDataViaAPI = (type, uri) => async dispatch => {
                 type: type, payload:
                     {isLoading: false, data: JSON.parse(JSON.stringify(response.data))}
             });
-            if (LOAD_FILTER_PRODUCTS.localeCompare(type) === 0) {
-                if (window.location.search.localeCompare(uri.split("/products")[1]) !== 0) {
-                    history.push(uri)
-                }
+
+            if (LOAD_FILTER_PRODUCTS.localeCompare(type) === 0 &&
+                window.location.search.localeCompare(uri.split("/products")[1]) !== 0) {
+                history.push(uri)
             }
         } else {
             dispatch({type: type, payload: {isLoading: false, statusCode: BAD_REQUEST_ERROR_CODE}});

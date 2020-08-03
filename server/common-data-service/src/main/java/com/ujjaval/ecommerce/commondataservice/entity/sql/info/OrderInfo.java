@@ -6,13 +6,14 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
 @Entity
-public class OrderInfo {
+public class OrderInfo implements Serializable  {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

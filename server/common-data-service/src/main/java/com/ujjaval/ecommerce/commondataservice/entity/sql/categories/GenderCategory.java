@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
@@ -16,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 @Entity
-public class GenderCategory {
+public class GenderCategory implements Serializable {
     @Id
     private int id;
 

@@ -1,22 +1,16 @@
 package com.ujjaval.ecommerce.commondataservice.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
-public class BrandsAndApparelsDTO {
+public class BrandsAndApparelsDTO implements Serializable {
     List<FilterAttributesDTO> brands;
     List<FilterAttributesDTO> apparels;
-
-    public BrandsAndApparelsDTO(List<FilterAttributesDTO> brands, List<FilterAttributesDTO> apparels) {
-        this.brands = brands;
-        this.apparels = apparels;
-    }
 }

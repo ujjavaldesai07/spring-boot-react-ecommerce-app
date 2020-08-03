@@ -5,10 +5,7 @@ import com.ujjaval.ecommerce.commondataservice.dao.sql.images.BrandImagesReposit
 import com.ujjaval.ecommerce.commondataservice.dao.sql.images.CarouselImagesRepository;
 import com.ujjaval.ecommerce.commondataservice.dao.sql.images.ApparelImagesRepository;
 import com.ujjaval.ecommerce.commondataservice.dao.sql.info.*;
-import com.ujjaval.ecommerce.commondataservice.dto.BrandImagesDTO;
-import com.ujjaval.ecommerce.commondataservice.dto.ApparelImagesDTO;
-import com.ujjaval.ecommerce.commondataservice.dto.SearchSuggestionForThreeAttrDTO;
-import com.ujjaval.ecommerce.commondataservice.dto.SearchSuggestionForTwoAttrDTO;
+import com.ujjaval.ecommerce.commondataservice.dto.*;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.GenderCategory;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.images.BrandImages;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.images.CarouselImages;
@@ -23,18 +20,14 @@ import org.javatuples.Pair;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
-import java.net.UnknownHostException;
 import java.util.*;
 
 @Service
 public class CommonDataServiceImpl implements CommonDataService {
-
-    @Autowired
-    Environment environment;
 
     @Autowired
     private ProductInfoRepository productInfoRepository;
@@ -125,71 +118,94 @@ public class CommonDataServiceImpl implements CommonDataService {
 
     }
 
-//    public String appendHostUrl(String path) throws UnknownHostException {
-//        return String.format("http://localhost:%s/web-images/%s", environment.getProperty("local.server.port"), path);
-//    }
+    private HashMap<String, String> getConditionMapFromQuery(String queryParams) {
+        // append :: at the end so that we can split even if there is just one condition
+        // for eg ?q=brand=1::
+        queryParams = queryParams.concat("::");
+        String[] separatedConditions = queryParams.split("::");
 
-    public MainScreenResponse getHomeScreenData() throws UnknownHostException {
+        if (separatedConditions.length > 0) {
+            HashMap<String, String> conditionMap = new HashMap<>();
+            for (String condition : separatedConditions) {
+                String[] categories = condition.split("=");
+                if (categories.length > 1) {
+                    conditionMap.put(categories[0], categories[1]);
+                }
+            }
+            return conditionMap;
+        }
+        return null;
+    }
+
+    @Cacheable(key = "#apiName" , value = "mainScreenResponse")
+    public MainScreenResponse getHomeScreenData(String apiName) {
 
         List<BrandImages> brandList = brandImagesRepository.getAllData();
         Type listType = new TypeToken<List<BrandImagesDTO>>() {
         }.getType();
         List<BrandImagesDTO> brandDTOList = modelMapper.map(brandList, listType);
-//        for (BrandImagesDTO info : brandDTOList) {
-//            info.setFilePath(appendHostUrl(info.getFilePath()));
-//        }
 
         List<ApparelImages> apparelList = apparelImagesRepository.getAllData();
         listType = new TypeToken<List<ApparelImagesDTO>>() {
         }.getType();
         List<ApparelImagesDTO> apparelDTOList = modelMapper.map(apparelList, listType);
-//        for (ApparelImagesDTO info : apparelDTOList) {
-//            info.setFilePath(appendHostUrl(info.getFilePath()));
-//        }
 
         List<CarouselImages> carouselList = carouselImagesRepository.getAllData();
-//        for (CarouselImages info : carouselList) {
-//            info.setFilePath(appendHostUrl(info.getFilePath()));
-//        }
 
         return new MainScreenResponse(brandDTOList, apparelDTOList, carouselList);
     }
 
-    public FilterAttributesResponse getFilterAttributesByProducts(HashMap<String, String> conditionMap) {
-        FilterAttributesResponse filterAttributesResponse = productInfoRepository.getFilterAttributesByProducts(conditionMap);
-        filterAttributesResponse.setSorts(sortByCategoryRepository.getAllData());
-        return filterAttributesResponse;
+    @Cacheable(key = "#queryParams" , value = "filterAttributesResponse")
+    public FilterAttributesResponse getFilterAttributesByProducts(String queryParams) {
+        HashMap<String, String> conditionMap = getConditionMapFromQuery(queryParams);
+
+        if (conditionMap != null && !conditionMap.isEmpty()) {
+            FilterAttributesResponse filterAttributesResponse = productInfoRepository.getFilterAttributesByProducts(conditionMap);
+            filterAttributesResponse.setSorts(sortByCategoryRepository.getAllData());
+            return filterAttributesResponse;
+        }
+        return null;
     }
 
-    public Pair<Long, List<ProductInfo>> getProductsByCategories(HashMap<String, String> conditionMap)
-            throws UnknownHostException {
+    @Cacheable(key = "#queryParams", value = "productInfoDTO")
+    public ProductInfoDTO getProductsByCategories(String queryParams) {
 
-//        if (result != null) {
-//            for (ProductInfo info : result.getValue1()) {
-//                info.setImageName(appendHostUrl(info.getImageName()));
-//            }
-//        }
-        return productInfoRepository.getProductsByCategories(conditionMap);
+        HashMap<String, String> conditionMap = getConditionMapFromQuery(queryParams);
+        ProductInfoDTO productInfoDTO = null;
+
+        if (conditionMap != null && !conditionMap.isEmpty()) {
+            Pair<Long, List<ProductInfo>> result = productInfoRepository.getProductsByCategories(conditionMap);
+            if (result != null) {
+                productInfoDTO = new ProductInfoDTO(result.getValue0(), result.getValue1());
+
+            }
+        }
+        return productInfoDTO;
     }
 
-    public HashMap<Integer, ProductInfo> getProductsById(String[] productIds) throws UnknownHostException {
-        List<ProductInfo> result = productInfoRepository.getProductsById(productIds);
+    @Cacheable(key = "#queryParams", value = "hashMap")
+    public HashMap<Integer, ProductInfo> getProductsById(String queryParams) {
 
+        String[] productIds = queryParams.split(",");
         HashMap<Integer, ProductInfo> resultMap = null;
 
-        if (result != null) {
-            resultMap = new HashMap<>();
-            for (ProductInfo info : result) {
-//                info.setImageName(appendHostUrl(info.getImageName()));
-                resultMap.put(info.getId(), info);
+        if (productIds.length > 0) {
+            List<ProductInfo> result = productInfoRepository.getProductsById(productIds);
+
+            if (result != null) {
+                resultMap = new HashMap<>();
+                for (ProductInfo info : result) {
+                    resultMap.put(info.getId(), info);
+                }
             }
         }
 
         return resultMap;
     }
 
-    public HomeTabsDataResponse getBrandsAndApparelsByGender() {
-        return productInfoRepository.getBrandsAndApparelsByGender();
+    @Cacheable(key = "#apiName" , value = "homeTabsDataResponse")
+    public HomeTabsDataResponse getBrandsAndApparelsByGender(String apiName) {
+       return productInfoRepository.getBrandsAndApparelsByGender();
     }
 
     private void constructAndAppendSearchSuggestion(String attr1_Name, String attr2_Name,
@@ -249,7 +265,6 @@ public class CommonDataServiceImpl implements CommonDataService {
             link.append("::brands=").append(searchSuggestionForThreeAttrDTO.getBrandId());
             searchSuggestionResponseList.add(new SearchSuggestionResponse(title, link));
         }
-
 
 
         return searchSuggestionResponseList;

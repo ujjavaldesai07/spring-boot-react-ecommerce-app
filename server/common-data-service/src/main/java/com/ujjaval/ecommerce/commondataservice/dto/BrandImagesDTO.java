@@ -2,11 +2,13 @@ package com.ujjaval.ecommerce.commondataservice.dto;
 
 import lombok.*;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
-public class BrandImagesDTO {
+public class BrandImagesDTO implements Serializable {
 
     private String title;
 
@@ -22,7 +24,7 @@ public class BrandImagesDTO {
 @Setter
 @NoArgsConstructor
 @ToString
-class BrandCategoryDTO {
+class BrandCategoryDTO implements Serializable {
     private int id;
 }
 
