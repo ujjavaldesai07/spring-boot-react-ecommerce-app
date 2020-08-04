@@ -8,7 +8,7 @@ import CheckboxSearchBar from "./checkboxSearchBar";
 
 export default function BrandCheckBox() {
     const TITLE = "Brand"
-    const propName="brands"
+    const propName = "brands"
     const dispatch = useDispatch()
     const brandList = useSelector(state => state.filterAttributesReducer ?
         state.filterAttributesReducer.brands : null)

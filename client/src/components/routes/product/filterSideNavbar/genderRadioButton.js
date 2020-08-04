@@ -3,7 +3,7 @@ import log from 'loglevel';
 import RadioButtonsGroup from "../../../ui/radioButtonGroup";
 import {useDispatch, useSelector} from "react-redux";
 import {ADD_SELECTED_CATEGORY} from "../../../../actions/types";
-import {Box} from "@material-ui/core";
+import {Box, Grid} from "@material-ui/core";
 import {NavBarHeader} from "../../../ui/headers";
 
 export default function GenderRadioButton() {
@@ -45,14 +45,16 @@ export default function GenderRadioButton() {
     log.info(`[GenderRadioButton] Rendering FilterRadioButtonSection Component = ${JSON.stringify(gender[0])}`)
 
     return (
-        <Box pb={1}>
-            <Box pt={2.5} pb={1}>
+        <>
+            <Grid item style={{padding: "1rem 0"}}>
                 <NavBarHeader title="Gender"/>
-            </Box>
-            <RadioButtonsGroup onChangeHandler={handleRadioButtonChange}
-                               attrList={genderList.filter(obj => obj.id < 5)}
-                               selectedValue={gender.length > 0 ? gender[0].value : false}
-                               title="Gender"/>
-        </Box>
+            </Grid>
+            <Grid item style={{marginLeft: "0.5rem"}}>
+                <RadioButtonsGroup onChangeHandler={handleRadioButtonChange}
+                                   attrList={genderList.filter(obj => obj.id < 5)}
+                                   selectedValue={gender.length > 0 ? gender[0].value : false}
+                                   title="Gender"/>
+            </Grid>
+        </>
     );
 }

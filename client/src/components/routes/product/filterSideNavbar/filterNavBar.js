@@ -11,7 +11,7 @@ import PriceCheckBox from "./priceCheckBox";
 import ClearAllButton from "./clearAllButton";
 import {connect, useDispatch, useSelector} from "react-redux";
 import {loadFilterAttributes} from "../../../../actions";
-import {Box} from "@material-ui/core";
+import {Box, Grid} from "@material-ui/core";
 import {useFilterNavBarStyles} from "../../../../styles/materialUI/filterNavBarStyles";
 import {
     FILTER_ATTRIBUTES, INITIAL_PAGINATION_STATE,
@@ -344,26 +344,34 @@ function FilterNavBar(props) {
     const renderDrawerComponents = (component) => {
         return (
             <>
-                <Box display="flex" flexDirection="column" px={1} pl={3}>
-                    <Box>
-                        {component}
-                    </Box>
-                </Box>
-                <Divider/>
+                <Grid container direction="column" style={{paddingLeft: "1.5rem"}}>
+                    {component}
+                </Grid>
+
+                <div style={{paddingTop: "0.5rem"}}>
+                    <Divider/>
+                </div>
             </>
         )
     }
 
     const drawer = (
         <>
-            <Box display="flex" p={2} style={{
+            <Grid container alignItems="center" style={{
                 position: 'sticky', top: 0, backgroundColor: 'white',
-                fontWeight: "bold", fontSize: "1.2rem", zIndex: 1040
+                fontWeight: "bold", fontSize: "1.2rem", zIndex: 1040,
+                paddingTop: "1rem"
             }}>
-                <Box alignSelf="center" flex="1">FILTERS</Box>
-                <Box alignSelf="center"><ClearAllButton/></Box>
-            </Box>
-            <Divider/>
+                <Grid item sm={6} style={{paddingLeft: "1.5rem"}}>
+                    FILTERS
+                </Grid>
+                <Grid item sm={6} style={{paddingLeft: "3rem"}}>
+                    <ClearAllButton/>
+                </Grid>
+                <Grid item style={{height: "1px", width: "100%", paddingTop: "1rem"}}>
+                    <Divider/>
+                </Grid>
+            </Grid>
 
             {renderDrawerComponents(<GenderRadioButton/>)}
             {renderDrawerComponents(<ApparelCheckBox/>)}

@@ -20,15 +20,11 @@ import useNavBarStyles from "../../../styles/materialUI/navBarStyles";
 import TabList from "./tabList";
 import {Link} from "react-router-dom";
 import {useSelector} from "react-redux";
-import {ADD_TO_CART, CART_TOTAL, LOAD_TABS_DATA} from "../../../actions/types";
+import {ADD_TO_CART, LOAD_TABS_DATA} from "../../../actions/types";
 import log from "loglevel";
 import Hidden from "@material-ui/core/Hidden";
 import BagButton from "./bagButton";
-import {
-    cartTotalReducer,
-    shoppingBagProductReducer,
-    tabsDataReducer
-} from "../../../reducers/screens/commonScreenReducer";
+import {tabsDataReducer} from "../../../reducers/screens/commonScreenReducer";
 import Spinner from "../../ui/spinner";
 import {HTTPError} from "../../ui/error/httpError";
 import {BadRequest} from "../../ui/error/badRequest";
@@ -51,6 +47,9 @@ const NavBar = props => {
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const dispatch = useDispatch()
 
+    /**
+     * set the cart from saved Cookie
+     */
     const setAddToCartValuesFromCookie = () => {
         let savedProductsFromCookie = Cookies.get(SHOPPERS_PRODUCT_INFO_COOKIE)
         let totalQuantity = 0
@@ -71,8 +70,14 @@ const NavBar = props => {
         }
     }
 
+    /**
+     * This will execute only once.
+     */
     useEffect(() => {
         log.info(`[NavBar]: Component did update.`)
+
+        // if user is not signed in then signed it in using
+        // account details from the cookie.
         if (isSignedIn === null) {
             log.info(`[NavBar]: isSignedIn is null`)
             let tokenIdFromCookie = Cookies.get(TOKEN_ID_COOKIE)
@@ -81,10 +86,13 @@ const NavBar = props => {
                 props.setTokenFromCookie(tokenIdFromCookie)
             }
         }
+
+        // tabs data is not loaded then load it.
         if(!tabsAPIData.hasOwnProperty("data")) {
             props.getDataViaAPI(LOAD_TABS_DATA, TABS_DATA_API)
         }
 
+        // set the cart values
         setAddToCartValuesFromCookie()
 
         // eslint-disable-next-line
@@ -271,7 +279,7 @@ const NavBar = props => {
                         <Hidden xsDown>
                             <Box display="flex" justifyContent="center" alignItems="center" css={{width: 90}}>
                                 <Box width="50%" onClick={handleProfileMenuOpen} css={{cursor: 'pointer'}}>
-                                    <Box pl={1}>
+                                    <Box pl={1} pt={0.3}>
                                         <AccountCircle/>
                                     </Box>
                                     <Box style={{color: "black", fontSize: "0.8rem", fontWeight: 'bold'}}>

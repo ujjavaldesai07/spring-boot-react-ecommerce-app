@@ -9,8 +9,13 @@ import {stateCodes} from "../../../constants/stateCodes";
 import {setShippingAddress} from "../../../actions"
 import {ModalConfirmation} from "../../ui/modalConfirmation";
 import {SummaryCard} from "./summaryCard";
-import {textFieldStyles} from "../../../styles/js/formStyles";
 import {checkoutFormStyles} from "../../../styles/materialUI/checkoutFormStyles";
+
+export const textFieldStyles = {
+    width: "inherit",
+    height: "fit-content",
+    margin: "20px 0 0 20px",
+}
 
 const renderTextField = (
     {placeholder, shrink, selectField, input, label, meta: { touched, error }, ...custom },

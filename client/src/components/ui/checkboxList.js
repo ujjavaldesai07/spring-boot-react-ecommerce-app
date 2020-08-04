@@ -6,12 +6,10 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import log from "loglevel";
-import {Box} from "@material-ui/core";
+import {Box, Grid} from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        width: '100%',
-        maxWidth: 360,
         backgroundColor: theme.palette.background.paper,
     },
     listItemIconRoot: {
@@ -86,15 +84,15 @@ export default function CheckboxList(props) {
                             inputProps={{'aria-labelledby': id}}
                         />
                     </ListItemIcon>
-                    <Box display="flex" flexDirection="row">
-                        <Box>
+                    <Grid container alignItems="center">
+                        <Grid item>
                             <ListItemText id={id} primary={value} style={{fontSize: "0.9rem"}}
                                           disableTypography/>
-                        </Box>
-                        <Box alignSelf="center" pl={0.5}  css={{color: "#94969f", fontSize: "0.8rem"}}>
+                        </Grid>
+                        <Grid item style={{color: "#94969f", fontSize: "0.8rem", paddingLeft: "0.3rem"}}>
                             {`(${totalItems})`}
-                        </Box>
-                    </Box>
+                        </Grid>
+                    </Grid>
                 </ListItem>
             );
         })
@@ -103,8 +101,7 @@ export default function CheckboxList(props) {
     log.trace(`[CheckboxList] props.attrList = ${JSON.stringify(props.attrList)}`)
     log.debug(`[CheckboxList] Rendering CheckboxList Component`)
     return (
-        <List
-            className={classes.root}>
+        <List style={{padding: "0 0 0 0.7rem"}}>
             {renderCheckBoxList()}
         </List>
     );

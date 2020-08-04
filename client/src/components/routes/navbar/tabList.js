@@ -15,6 +15,8 @@ export default function TabList() {
     const handleMouseEnter = (event) => {
         log.debug(`[TabList]: dispatching HANDLE_TAB_HOVER_EVENT with
          index = ${parseInt(event.target.id.split('-')[2])} and hover = true`)
+
+        // check if index is number
         let index = parseInt(event.target.id.split('-')[2])
         if (isNaN(index)) {
             return

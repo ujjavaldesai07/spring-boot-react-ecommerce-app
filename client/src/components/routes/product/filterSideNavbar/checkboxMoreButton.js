@@ -80,7 +80,7 @@ export default function CheckboxMoreButton(props) {
     const renderMoreButton = () => {
         if (props.checkboxList.length > 6) {
             return (
-                <Box pl={1.5} pb={1}>
+                <Box pl={1.5}>
                     <Button color="secondary" onClick={handleMoreButton}>
                         {`+ ${props.checkboxList.length - 6} more`}
                     </Button>

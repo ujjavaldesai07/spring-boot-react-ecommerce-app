@@ -23,9 +23,10 @@ export const useFilterNavBarStyles = makeStyles((theme) => ({
     drawerPaper: {
         top: 80,
         width: drawerWidth,
-        position: "fixed",
         height: "calc(100% - 80px)",
-        overflow: 'auto'
+        overflow: "none",
+        overflowY: "auto",
+        display: "block",
     },
     content: {
         flexGrow: 1,
