@@ -114,6 +114,7 @@ const NavBar = props => {
         } else {
             if (tabsAPIData.hasOwnProperty("statusCode")) {
                 log.info(`[NavBar]: tabsAPIData.statusCode = ${tabsAPIData.statusCode}`)
+                props.errorHandler()
                 return <HTTPError statusCode={tabsAPIData.statusCode}/>
             }
         }

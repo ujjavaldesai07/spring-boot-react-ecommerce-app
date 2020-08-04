@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import history from "../history";
 import {Router, Route, Switch} from 'react-router-dom';
 import log from "loglevel"
@@ -17,12 +17,17 @@ import {BadRequest} from "./ui/error/badRequest";
 
 const App = () => {
     log.info(`[App]: Rendering App Component`)
+    const [serverError, setServerError] = useState(false);
+
+    const setServerErrorHandler = () => {
+        setServerError(true)
+    }
 
     return (
         <Router history={history}>
-            <NavBar/>
+            <NavBar errorHandler={setServerErrorHandler}/>
             <TabPanelList/>
-            <Switch>
+            {serverError ? null: <Switch>
                 <Route path="/" exact component={Home}/>
                 <Route path="/login" exact component={Login}/>
                 <Route path="/signup" exact component={SignUp}/>
@@ -34,7 +39,7 @@ const App = () => {
                 <Route path="/checkout/success-payment/:id" exact component={SuccessPayment}/>
                 <Route path="/checkout/cancel-payment/:id" exact component={CancelPayment}/>
                 <Route path="*" exact component={BadRequest}/>
-            </Switch>
+            </Switch>}
         </Router>
     )
 }
