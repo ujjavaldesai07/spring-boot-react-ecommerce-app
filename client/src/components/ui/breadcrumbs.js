@@ -7,6 +7,8 @@ import log from 'loglevel';
 export default function BreadcrumbsSection(props) {
     const renderLinks = () => {
         log.info(`[BreadcrumbsSection] props.linkList = ${props.linkList}`)
+        // we dont need link for the active page breadcrumb
+        // eslint-disable-next-line array-callback-return
         return props.linkList.splice(0, props.linkList.length-1).map(({name, link}) => {
             if(link.length > 0) {
                 return (

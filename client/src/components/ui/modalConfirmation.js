@@ -5,6 +5,7 @@ import Modal from "./modal";
 
 export const ModalConfirmation = (props) => {
 
+    log.info("[ModalConfirmation] Rendering ModalConfirmation Component...")
     const renderAddressRemovalConfirmation = () => {
         return (
             <Grid container direction="column">

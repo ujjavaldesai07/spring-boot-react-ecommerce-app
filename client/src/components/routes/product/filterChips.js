@@ -3,10 +3,7 @@ import {useDispatch, useSelector} from "react-redux";
 import Chip from "@material-ui/core/Chip";
 import Box from '@material-ui/core/Box';
 import log from "loglevel";
-import {
-    ADD_SELECTED_CATEGORY
-
-} from "../../../actions/types";
+import {ADD_SELECTED_CATEGORY} from "../../../actions/types";
 
 const FilterChips = () => {
     const selectedGenders = useSelector(state => state.selectedFilterAttributesReducer.genders)
@@ -15,12 +12,20 @@ const FilterChips = () => {
     const selectedPriceRanges = useSelector(state => state.selectedFilterAttributesReducer.prices)
     const dispatch = useDispatch()
 
+    // check if any filter is selected or not
     if ((selectedGenders.length + selectedApparels.length
         + selectedBrands.length + selectedPriceRanges.length) === 0) {
         log.debug(`[FilterChips] Filter are empty`)
         return null
     }
 
+    /**
+     * construct the chip from selected filter option and assign Id.
+     *
+     * @param selectedAttrList
+     * @param categoryId
+     * @returns {[]}
+     */
     const addChips = (selectedAttrList, categoryId) => {
         let chipBoxList = []
         log.debug(`[FilterChips] addBoxTagToList boxDataList = ${JSON.stringify(selectedAttrList)}`)
@@ -39,6 +44,10 @@ const FilterChips = () => {
         return chipBoxList
     }
 
+    /**
+     * Prepare chip list and render it.
+     * @returns {null|[]}
+     */
     const renderChipBoxes = () => {
         log.debug(`[FilterChips] renderChipBoxes is invoked`)
 
@@ -65,6 +74,13 @@ const FilterChips = () => {
         return null
     }
 
+    /**
+     * Dispatch the chip from selected option list
+     *
+     * @param id
+     * @param selectedAttrList
+     * @param attributeName
+     */
     const findValueAndDispatch = (id, selectedAttrList, attributeName) => {
         log.debug(`[FilterChips] findValueAndDispatch id = ${id}`+
             `, attributeName = ${attributeName}, selectedAttrList = ${JSON.stringify(selectedAttrList)}`)
@@ -86,6 +102,11 @@ const FilterChips = () => {
         }
     }
 
+    /**
+     * Delete the chip
+     * @param id
+     * @returns {function(...[*]=)}
+     */
     const handleDelete = id => () => {
         log.info(`[FilterChips] handleDelete for chip for id = ${id}`)
         const splitId = id.split("-")

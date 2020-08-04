@@ -7,9 +7,29 @@ import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 import SortedCheckboxList from "../../../ui/sortedCheckboxList";
 
+const paperStyles = {
+    backgroundColor: "inherit",
+    width: "200vh",
+    height: "70vh"
+}
+
+const gridStyles = {
+    height: '70vh',
+    zIndex: 1300,
+    overflow: "auto",
+    left: 0,
+    width: "inherit",
+    position: "fixed",
+    top: 150,
+    backgroundColor: "white",
+    border: "1px solid #eaeaec",
+    boxShadow: "0 1px 8px rgba(0,0,0,.1)"
+}
+
 export default function CheckboxMoreButton(props) {
     const [moreButtonState, setMoreButtonState] = useState({active: false, topPosition: 0})
 
+    // No need to render this component if the list is not present
     if (!props.checkboxList) {
         log.debug(`[CheckboxMoreButton] apparelList is null`)
         return null
@@ -31,12 +51,8 @@ export default function CheckboxMoreButton(props) {
     const renderMoreButtonList = () => {
         return (
             <Paper elevation={3} variant="outlined" square
-                   style={{backgroundColor: "inherit", width: "200vh", height: "70vh"}}>
-                <Grid item container xs={props.size} direction="row" style={{
-                    height: '70vh', zIndex: 1300, overflow: "auto", left: 0, width: "inherit",
-                    position: "fixed", top: 150, backgroundColor: "white", border: "1px solid #eaeaec",
-                    boxShadow: "0 1px 8px rgba(0,0,0,.1)"
-                }}>
+                   style={paperStyles}>
+                <Grid item container xs={props.size} direction="row" style={gridStyles}>
                     <Grid item sm={11}>
                     <SortedCheckboxList attrList={props.checkboxList}
                                         title={props.title}
@@ -48,8 +64,7 @@ export default function CheckboxMoreButton(props) {
                         <IconButton size="medium"
                                     color="primary"
                                     onClick={handleMoreListCloseButton}
-                                    style={{position: "fixed"}}
-                        >
+                                    style={{position: "fixed"}}>
                             <CloseIcon/>
                         </IconButton>
                     </Grid>
@@ -58,6 +73,10 @@ export default function CheckboxMoreButton(props) {
         )
     }
 
+    /**
+     * render more button if items are more then six
+     * @returns {null|*}
+     */
     const renderMoreButton = () => {
         if (props.checkboxList.length > 6) {
             return (

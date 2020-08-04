@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import log from 'loglevel';
 import RadioButtonsGroup from "../../../ui/radioButtonGroup";
 import {useDispatch, useSelector} from "react-redux";
@@ -19,6 +19,8 @@ export default function GenderRadioButton() {
 
     const handleRadioButtonChange = value => {
         log.info(`[GenderRadioButton] handleRadioButtonChange value = ${value}`)
+
+        // compare first character only as all the options has unique first character
         for (let i = 0; i < genderList.length; i++) {
             if (value.charAt(0).localeCompare(genderList[i].value.charAt(0)) === 0) {
                 log.info(`[GenderRadioButton] handleRadioButtonChange id = ${genderList[i].id}`)
@@ -35,6 +37,8 @@ export default function GenderRadioButton() {
                 return
             }
         }
+
+        // scroll window to top after selection
         window.scrollTo(0, 80)
     }
 

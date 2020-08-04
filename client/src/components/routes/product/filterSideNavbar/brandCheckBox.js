@@ -15,11 +15,16 @@ export default function BrandCheckBox() {
     const selectedBrands = useSelector(state => state.selectedFilterAttributesReducer.brands)
     const [searchBrandList, setSearchBrandList] = useState(null)
 
+    // return if doesn't got anything from the server
     if (!brandList) {
         log.debug(`[BrandCheckBox] brandList is null`)
         return null
     }
 
+    /**
+     * return the normal list or list based on search keyword
+     * @returns {any}
+     */
     const getActiveBrandList = () => {
         return searchBrandList ? searchBrandList : brandList
     }
@@ -49,8 +54,7 @@ export default function BrandCheckBox() {
             <CheckboxSearchBar title={TITLE}
                                placeholderText="Search for Brands"
                                checkboxList={brandList}
-                               searchListHandler={handleSearchListChange}
-            />
+                               searchListHandler={handleSearchListChange}/>
             <CheckboxList attrList={getActiveBrandList()}
                           title="Brand"
                           maxItems={6}

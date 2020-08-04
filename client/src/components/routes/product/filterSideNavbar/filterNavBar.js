@@ -36,6 +36,13 @@ function FilterNavBar(props) {
     const [filterAttributeFromUrlState, setFilterAttributeFromUrlState] = React.useState(false);
     const dispatch = useDispatch()
 
+    /**
+     * multiple selected options IDs are appended
+     * which will work like OR condition
+     *
+     * @param attrList
+     * @returns {string|null}
+     */
     const appendQueryIds = attrList => {
         let selectedList = []
 
@@ -48,6 +55,11 @@ function FilterNavBar(props) {
         return null
     }
 
+    /**
+     * prepare query from the selected option in redux store
+     *
+     * @returns {string|null}
+     */
     const prepareQuery = () => {
 
         let query = []
@@ -95,8 +107,16 @@ function FilterNavBar(props) {
         return null
     }
 
+    /**
+     * select options from URL and set it in redux store
+     * filterAPI Data will be received from server side
+     *
+     * @param filterAPIData
+     */
     const dispatchFilterAttributesFromURL = (filterAPIData) => {
 
+        // check whether id exist in the filterAPIData list
+        // if found return the object
         const getObjectFromList = (id, list) => {
             for (let i = 0; i < list.length; i++) {
                 if (list[i].id === parseInt(id))
@@ -105,6 +125,7 @@ function FilterNavBar(props) {
             return null
         }
 
+        // check URI
         if (history.location && history.location.pathname.localeCompare(PRODUCTS_ROUTE) === 0) {
             log.info(`[FilterNavBar]: url = ${history.location.search}`)
 
@@ -112,13 +133,22 @@ function FilterNavBar(props) {
             let selectedFilterAttributes = {}
             let filterAttributeIsAdded = false
 
+            // remove genders from filter attributes because we can get
+            // multiple genders from the URL and genders is radio button
+            // component so multiple selection is not allowed
             let modified_filter_attributes = FILTER_ATTRIBUTES.filter((attribute) => attribute !== "genders")
 
             modified_filter_attributes.forEach((attribute) => {
+
+                // split string based on attribute.
+                // for eg /products?q=genders=1::brands=2,3
+                // where genders= and brands= are string to split
+                // this will give start position
                 let queryParameters = query.split(`${attribute}=`)
 
                 log.info(`[FilterNavBar] queryParameters = ${JSON.stringify(queryParameters)}`)
 
+                // check whether we got any ids or not.
                 if (queryParameters.length > 1) {
 
                     // 0th index consist of "?q=" which we are not interested
@@ -126,6 +156,8 @@ function FilterNavBar(props) {
                     for (let pIndex = 1; pIndex < queryParameters.length; ++pIndex) {
                         let values
                         try {
+
+                            // this will give end position
                             values = queryParameters[pIndex].split("::")[0].split(",")
                         } catch (e) {
                             log.error("[FilterNavBar] Corrupted URL. Unable to decode url field")
@@ -141,6 +173,8 @@ function FilterNavBar(props) {
                                 let attrObject = getObjectFromList(id, filterAPIData[attribute])
                                 log.info(`[FilterNavBar] attrObject = ${JSON.stringify(attrObject)}`)
                                 if (attrObject) {
+
+                                    // if found then push object to list
                                     selectedAttrList.push({
                                         id: attrObject.id,
                                         value: attrObject.value
@@ -149,6 +183,7 @@ function FilterNavBar(props) {
                             })
 
                             log.info(`[FilterNavBar] selectedAttrList = ${JSON.stringify(selectedAttrList)}`)
+                            // check if we got any selected attributes from url
                             if (selectedAttrList.length > 0) {
                                 selectedFilterAttributes = {
                                     ...selectedFilterAttributes,
@@ -162,6 +197,8 @@ function FilterNavBar(props) {
                     }
                 }
             })
+
+            // if selected attributes are found then dispatch to redux store
             if (filterAttributeIsAdded) {
                 log.info(`[FilterNavBar] dispatchFilterAttributesFromURL` +
                     `dispatching selectedFilterAttributes=${JSON.stringify(selectedFilterAttributes)}`)
@@ -174,6 +211,11 @@ function FilterNavBar(props) {
         }
     }
 
+    /**
+     * Prepare sorted list for apparels and genders
+     * @param list
+     * @returns {any}
+     */
     const sortByObjValues = (list) => {
         let cloneList = JSON.parse(JSON.stringify(list));
 
@@ -181,6 +223,10 @@ function FilterNavBar(props) {
             (a.value.charAt(0).toUpperCase() > b.value.charAt(0).toUpperCase()) ? 1 : -1)
     }
 
+    /**
+     * Dispatch sorted list for apparels and genders to redux store
+     * @param filterAttr
+     */
     const dispatchSortList = (filterAttr) => {
         let sortListPayload = {}
         sortListPayload.apparels = sortByObjValues(filterAttr.apparels)
@@ -192,10 +238,15 @@ function FilterNavBar(props) {
         })
     }
 
+    /**
+     * Component Did Update for Genders, Apparels, Brands and Prices
+     */
     useEffect(() => {
         log.info("[FilterNavBar] Component did mount for " +
             "selectedApparels, selectedGenders, selectedBrands, selectedPriceRanges.")
 
+        // Get Data for filter Attributes and Products from the server side
+        // based on the URL
         if (!filterAttributes) {
             log.info(`[FilterNavBar] setting selected attributes from URL`)
             let promise = props.loadFilterAttributes(history.location.search);
@@ -215,26 +266,36 @@ function FilterNavBar(props) {
         } else {
             log.info(`[FilterNavBar] prepare query for selectedFilterAttribute`)
 
+            // prepare query using states from redux store
             let query = prepareQuery()
 
             log.info(`[FilterNavBar] newQuery = ${query}, oldQuery = ${selectedFilterAttributes.query}`)
 
             if (filterAttributes.query || filterAttributeFromUrlState === false) {
 
+                // check if we have data for the required query
+                // if matched then we dont need to call the API again.
                 if (filterAttributes.query.localeCompare(query) === 0) {
                     return
                 }
 
                 log.info(`[FilterNavBar] dispatching query to SAVE_FILTER_QUERY query = ${query}`)
 
+                // call filter Attributes API
                 props.loadFilterAttributes(`?q=${query}`);
 
+                // as the filter Attributes are changed we need to update
+                // sorted list for apparels and brands.
                 dispatchSortList(filterAttributes)
             } else {
+
+                // this is required to load the attributes from URL
+                // when user lands on this page for the first time.
                 setFilterAttributeFromUrlState(false)
             }
         }
 
+        // by default first page should be selected.
         if (selectedPage.pageNumber > 1) {
             dispatch({
                 type: SELECT_PRODUCT_PAGE,
@@ -245,14 +306,20 @@ function FilterNavBar(props) {
         // eslint-disable-next-line
     }, [selectedFilterAttributes]);
 
+    /**
+     * Component Did Update for Sort and Page Options
+     */
     useEffect(() => {
         log.info("[FilterNavBar] Component did mount selectedPage, selectedSort.")
 
+        // Just Update the query as we just need Products components to change
+        // by retrieving new data from server
         if (filterAttributes) {
             log.info(`[FilterNavBar] prepare query for selectedPage, selectedSort`)
 
             let query = prepareQuery()
 
+            // check if data already exist for the required query.
             if (filterAttributes.query
                 && filterAttributes.query.localeCompare(query) === 0) {
                 return
@@ -267,6 +334,8 @@ function FilterNavBar(props) {
         // eslint-disable-next-line
     }, [selectedPage, selectedSort]);
 
+    // if no filter attributes then just return no
+    // need to render the component.
     if (!filterAttributes) {
         log.info(`[FilterNavBar] filterAttributes is null.`)
         return null

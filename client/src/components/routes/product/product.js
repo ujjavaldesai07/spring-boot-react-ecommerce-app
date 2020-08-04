@@ -9,10 +9,10 @@ import {Divider} from "@material-ui/core";
 import FilterDropdown from "./filterDropdown";
 import FilterPagination from "./filterPagination";
 import Hidden from "@material-ui/core/Hidden";
-import BottomNavBar from "./bottomNavBar";
+// import BottomNavBar from "./bottomNavBar";
 import history from "../../../history";
 import BreadcrumbsSection from "../../ui/breadcrumbs";
-import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
+// import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
 import {useDispatch} from "react-redux";
 import {SAVE_QUERY_STATUS} from "../../../actions/types";
 import {BadRequest} from "../../ui/error/badRequest";
@@ -28,6 +28,8 @@ export const stickyBoxStyle = {
 
 function Product() {
     const dispatch = useDispatch();
+
+    // define breadcrumbs
     const breadcrumbLinks = [
         {
             name: 'Home',
@@ -42,7 +44,12 @@ function Product() {
     useEffect(() => {
         log.info(`[Product] Component did mount...`)
 
+        /* TODO: Replace this reloadPage option with
+                 setting the right dependency in useEffect*/
         const reloadPage = () => {
+
+            // this is required to reload the page when user
+            // navigates on browser using back or forward button.
             window.location.reload()
         }
 
@@ -53,14 +60,22 @@ function Product() {
 
             window.removeEventListener("popstate", reloadPage);
 
+            // reset the saved query as we will load
+            // next time from the URL.
+            // This required to support the case where user
+            // executes URL directly and we need to construct
+            // fresh states for eg selecting options based on URL
             dispatch({
                 type: SAVE_QUERY_STATUS,
                 payload: null
             })
 
         }
+        // dont need any dependency as we want to update any states
+        // eslint-disable-next-line
     }, [])
 
+    // if we got unexpected uri then just send bad request component.
     if (history.location.pathname.localeCompare('/products') !== 0
         || !history.location.search.startsWith('?q=')) {
         return <BadRequest/>

@@ -66,6 +66,8 @@ export default function SortedCheckboxList(props) {
         let prevAlpha;
         return savedSortedAttrList.map(({id, value, totalItems}) => {
             let newAlpha = null
+
+            // Check we got new first letter if yes then render it.
             curAlpha = value.charAt(0).toUpperCase()
             if (prevAlpha !== curAlpha) {
                 newAlpha = curAlpha

@@ -9,55 +9,57 @@ export default function SearchBar(props) {
     const classes = useNavBarStyles();
 
     const handleClose = () => {
-        props.handleClose();
+        if (props.handleClose) {
+            props.handleClose();
+        }
     }
 
     return (
-            <Autocomplete
-                value={value}
-                autoHighlight
-                onChange={(event, newValue) => {
-                    if (typeof newValue === 'string') {
-                        setValue({
-                            title: newValue,
-                        });
-                    } else if (newValue && newValue.inputValue) {
-                        // Create a new value from the user input
-                        setValue({
-                            title: newValue.inputValue,
-                        });
-                    } else {
-                        setValue(newValue);
-                    }
-                }}
-                selectOnFocus
-                clearOnBlur
-                handleHomeEndKeys
-                closeIcon={<CloseIcon/>}
-                id="free-solo-with-text-demo"
-                options={top100Films}
-                getOptionLabel={(option) => {
-                    // Value selected with enter, right from the input
-                    if (typeof option === 'string') {
-                        return option;
-                    }
-                    // Add "xxx" option created dynamically
-                    if (option.inputValue) {
-                        return option.inputValue;
-                    }
-                    // Regular option
-                    return option.title;
-                }}
-                renderOption={(option) => option.title}
-                freeSolo
-                fullWidth
-                onClose={handleClose}
-                size={props.size}
-                classes={{root: classes.autoCompleteSearchBarRoot}}
-                renderInput={(params) => (
-                    <TextField {...params} label="Search for products, brands and more" variant="outlined"/>
-                )}
-            />
+        <Autocomplete
+            value={value}
+            autoHighlight
+            onChange={(event, newValue) => {
+                if (typeof newValue === 'string') {
+                    setValue({
+                        title: newValue,
+                    });
+                } else if (newValue && newValue.inputValue) {
+                    // Create a new value from the user input
+                    setValue({
+                        title: newValue.inputValue,
+                    });
+                } else {
+                    setValue(newValue);
+                }
+            }}
+            selectOnFocus
+            clearOnBlur
+            handleHomeEndKeys
+            closeIcon={<CloseIcon/>}
+            id="free-solo-with-text-demo"
+            options={top100Films}
+            getOptionLabel={(option) => {
+                // Value selected with enter, right from the input
+                if (typeof option === 'string') {
+                    return option;
+                }
+                // Add "xxx" option created dynamically
+                if (option.inputValue) {
+                    return option.inputValue;
+                }
+                // Regular option
+                return option.title;
+            }}
+            renderOption={(option) => option.title}
+            freeSolo
+            fullWidth
+            onClose={handleClose}
+            size={props.size}
+            classes={{root: classes.autoCompleteSearchBarRoot}}
+            renderInput={(params) => (
+                <TextField {...params} label="Search for products, brands and more" variant="outlined"/>
+            )}
+        />
     );
 }
 

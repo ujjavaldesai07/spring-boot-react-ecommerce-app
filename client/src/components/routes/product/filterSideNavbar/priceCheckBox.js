@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import CheckboxList from "../../../ui/checkboxList";
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
@@ -18,6 +18,11 @@ export default function PriceCheckBox() {
         return null
     }
 
+    /**
+     * select and dispatch the selected option
+     * @param id
+     * @param value
+     */
     const handleCheckBoxChange = (id, value) => {
         log.info(`[PriceCheckBox] handleCheckBoxChange(id) = ${id}`)
 

@@ -8,12 +8,16 @@ function ClearAllButton() {
     const dispatch = useDispatch()
     const selectedFilterAttribute = useSelector(state => state.selectedFilterAttributesReducer)
 
+    // check if any filter is selected or not
     if((selectedFilterAttribute.genders.length + selectedFilterAttribute.apparels.length
         + selectedFilterAttribute.brands.length + selectedFilterAttribute.prices.length) === 0) {
         log.info(`[ClearAllButton] selected attribute are null`)
         return null
     }
 
+    /**
+     * remove all selected filters
+     */
     const handleClearAllClick = () => {
         log.info(`[ClearAllButton] handleClearAllClick(value)`)
         dispatch({type: REMOVE_SELECTED_CATEGORY, payload: history.location.search.slice(3)})

@@ -31,6 +31,11 @@ export default function CheckboxList(props) {
         return null
     }
 
+    /**
+     * toggle the state of the selected attributes
+     * @param id
+     * @returns {function(...[*]=)}
+     */
     const handleToggle = id => () => {
         log.debug(`[CheckboxList] handleToggle for CheckboxList value = ${id}`)
 
@@ -50,6 +55,9 @@ export default function CheckboxList(props) {
 
         log.debug(`[CheckboxList] renderCheckBoxList props.selectedAttributes = ${JSON.stringify(props.values)}`)
 
+        // push the selected attributes ID into list
+        // so that if it is present in the list we
+        // can mark as selected
         let selectedIdList = []
         if (props.selectedAttrList.length > 0) {
             props.selectedAttrList.forEach(({id}) => {
@@ -62,8 +70,6 @@ export default function CheckboxList(props) {
                 return null
             }
             count = count + 1
-
-            // value = `${value} (${totalItems})`
 
             log.debug(`[CheckboxList] renderCheckBoxList id = ${id}, type = ${value}` +
                 `, props.values.includes(id) = ${selectedIdList.includes(id)}`)

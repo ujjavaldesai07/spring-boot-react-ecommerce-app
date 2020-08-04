@@ -15,11 +15,16 @@ export default function ApparelCheckBox() {
     const selectedApparels = useSelector(state => state.selectedFilterAttributesReducer.apparels)
     const [searchApparelList, setSearchApparelList] = useState(null)
 
+    // return if doesn't got anything from the server
     if (!apparelList) {
         log.debug(`[ApparelCheckBox] apparelList is null`)
         return null
     }
 
+    /**
+     * return the normal list or list based on search keyword
+     * @returns {any}
+     */
     const getActiveApparelList = () => {
         return searchApparelList ? searchApparelList : apparelList
     }
@@ -49,8 +54,7 @@ export default function ApparelCheckBox() {
             <CheckboxSearchBar title={TITLE}
                                placeholderText="Search for Apparels"
                                checkboxList={apparelList}
-                               searchListHandler={handleSearchListChange}
-            />
+                               searchListHandler={handleSearchListChange}/>
             <CheckboxList attrList={getActiveApparelList()}
                           title={TITLE}
                           maxItems={6}

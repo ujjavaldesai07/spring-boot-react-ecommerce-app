@@ -24,6 +24,7 @@ const FilterProductDisplay = props => {
             log.info(`[FilterProductDisplay] Component did mount`)
 
             try {
+                // if query is present then call the products API
                 if (queryStatus) {
                     log.info(`[FilterProductDisplay] Getting products from API.....`)
                     props.getDataViaAPI(LOAD_FILTER_PRODUCTS, PRODUCT_BY_CATEGORY_DATA_API + queryStatus)
@@ -32,12 +33,15 @@ const FilterProductDisplay = props => {
                 log.error(`[FilterProductDisplay] Bad URL found in history.location.search`)
             }
 
+            // scroll up after call the API
             window.scrollTo(0, 0)
 
             // eslint-disable-next-line
         }, [queryStatus]);
 
 
+        // initial state is loading and this will change
+        // when we retrieve data
         if (filterProductsReducer.isLoading) {
             log.info(`[FilterProductDisplay] filterProducts is null`)
             return (
@@ -47,6 +51,8 @@ const FilterProductDisplay = props => {
             )
         } else {
             if (filterProductsReducer.hasOwnProperty("data")) {
+                // if does not got anything from the server but we didn't got any
+                // error then we didn't find any matches
                 if (Object.entries(filterProductsReducer.data).length === 0) {
 
                     log.info(`[Home]: homeAPIData.data length =` +
@@ -58,9 +64,13 @@ const FilterProductDisplay = props => {
                         </Box>
                     )
                 }
+
+                // set the products here
                 filterProducts = filterProductsReducer.data.products
 
             } else {
+
+                // if there is any error then status code will be set in action creator.
                 if (filterProductsReducer.hasOwnProperty('statusCode')) {
                     log.info(`[Home]: homeAPIData.statusCode = ${filterProductsReducer.statusCode}`)
                     return <HTTPError statusCode={filterProductsReducer.statusCode}/>

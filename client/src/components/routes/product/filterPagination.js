@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import Grid from "@material-ui/core/Grid";
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
@@ -23,11 +23,13 @@ export default function FilterPagination() {
         })
     }
 
+    // if we got data from the server side
     if(!filterProductsReducer || filterProductsReducer.hasOwnProperty("data") === false ||
         filterProductsReducer.data.hasOwnProperty("totalCount") === false) {
         log.info(`[FilterPagination] totalProducts = ${totalProducts}`)
         return null
     } else {
+        // set the total products used to calculate how many pages require
         totalProducts = filterProductsReducer.data.totalCount
     }
 
