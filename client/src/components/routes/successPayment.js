@@ -7,11 +7,10 @@ import {
     ADD_TO_CART,
     DELIVERY_CHARGES,
     LOAD_SHOPPING_BAG_PRODUCTS, PAYMENT_RESPONSE,
-    SAVE_QUERY_STATUS, SHIPPING_ADDRESS_CONFIRMED,
+    SHIPPING_ADDRESS_CONFIRMED,
     SHIPPING_OPTION_CONFIRMED
 } from "../../actions/types";
 import {
-    INITIAL_ADD_TO_CART_STATE,
     INITIAL_SHIPPING_ADDRESS_STATE,
     INITIAL_SHIPPING_OPTION_STATE
 } from "../../constants/constants";
@@ -65,6 +64,8 @@ export const SuccessPayment = () => {
             })
 
         }
+
+        // eslint-disable-next-line
     }, [])
 
     if (!shippingAddressForm || !paymentResponse) {

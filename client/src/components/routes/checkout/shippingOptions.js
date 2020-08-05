@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import log from 'loglevel';
 import {Divider, Grid} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import log from 'loglevel';
-import {MenuItem, Grid, TextField} from "@material-ui/core";
+import {MenuItem, Grid} from "@material-ui/core";
 import ContinueButton from "./continueButton";
 import {withStyles} from "@material-ui/core/styles";
 import {Field, reduxForm} from "redux-form";
@@ -10,35 +10,7 @@ import {setShippingAddress} from "../../../actions"
 import {ModalConfirmation} from "../../ui/modalConfirmation";
 import {SummaryCard} from "./summaryCard";
 import {checkoutFormStyles} from "../../../styles/materialUI/checkoutFormStyles";
-
-export const textFieldStyles = {
-    width: "inherit",
-    height: "fit-content",
-    margin: "20px 0 0 20px",
-}
-
-const renderTextField = (
-    {placeholder, shrink, selectField, input, label, meta: { touched, error }, ...custom },
-) => {
-    let errorExist = touched && error && error !== "";
-
-    return (
-        <TextField
-            label={label}
-            variant="outlined"
-            fullWidth
-            size="medium"
-            select={selectField}
-            style={textFieldStyles}
-            placeholder={placeholder}
-            InputLabelProps={{shrink: shrink}}
-            error={errorExist}
-            helperText={errorExist? error : null}
-            {...input}
-            {...custom}
-        />
-    );
-}
+import {renderReduxTextField} from "../../ui/reduxTextField";
 
 class ShippingAddressForm extends Component {
 
@@ -61,7 +33,7 @@ class ShippingAddressForm extends Component {
 
     handleSubmit = () => {
         log.info(`[ShippingAddress] values = ${JSON.stringify(this.props.shippingAddressFormStore)}`)
-        // let formValues = this.props.shippingAddressFormStore.values
+        // let formValues = this.props.signUpFormStore.values
         // let id = `${formValues.firstName}-${formValues.lastName}-${Math.floor(Date.now() / 1000)}`
 
         this.props.setShippingAddress({submitted: true})
@@ -117,7 +89,7 @@ class ShippingAddressForm extends Component {
                 <Grid item container xs={11} sm={8}>
                     <Field
                         name={name}
-                        component={renderTextField}
+                        component={renderReduxTextField}
                         label={label}
                     />
                 </Grid>
@@ -139,7 +111,7 @@ class ShippingAddressForm extends Component {
                             <Grid item container xs={11} sm={8}>
                                 <Field
                                     name="addressLine2"
-                                    component={renderTextField}
+                                    component={renderReduxTextField}
                                     label="Address Line 2 (optional)"
                                     props={{placeholder: "Apt, Suite, Bldg, Floor, etc", shrink: true}}
                                 />
@@ -149,7 +121,7 @@ class ShippingAddressForm extends Component {
                                 <Grid item container xs={6} style={{paddingRight: 15}}>
                                     <Field
                                         name="zipCode"
-                                        component={renderTextField}
+                                        component={renderReduxTextField}
                                         label="Zip Code"
                                     />
                                 </Grid>
@@ -158,7 +130,7 @@ class ShippingAddressForm extends Component {
                                     <Field
                                         name="stateCode"
                                         label="State"
-                                        component={renderTextField}
+                                        component={renderReduxTextField}
                                         props={{selectField: true}}
                                     >
                                         {renderStateCodes()}
@@ -172,7 +144,7 @@ class ShippingAddressForm extends Component {
                             <Grid item container xs={11} sm={8}>
                                 <Field
                                     name="phoneNumber"
-                                    component={renderTextField}
+                                    component={renderReduxTextField}
                                     label="Phone Number"
                                     props={{placeholder: "123-123-1234", shrink: true}}
                                 />

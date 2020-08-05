@@ -2,7 +2,7 @@ import React from 'react'
 import log from 'loglevel'
 import {Grid} from "@material-ui/core";
 import {Link} from "react-router-dom";
-import {CHECKOUT_ROUTE, HOME_ROUTE} from "../../constants/react_routes";
+import {CHECKOUT_ROUTE} from "../../constants/react_routes";
 
 export const CancelPayment = () => {
 

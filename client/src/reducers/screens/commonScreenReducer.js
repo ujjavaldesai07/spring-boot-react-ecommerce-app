@@ -12,7 +12,15 @@ import {
     SAVE_SORT_LIST,
     SHIPPING_ADDRESS_CONFIRMED,
     PAYMENT_INFO_CONFIRMED,
-    SHIPPING_OPTION_CONFIRMED, PAYMENT_RESPONSE, DELIVERY_CHARGES
+    SHIPPING_OPTION_CONFIRMED,
+    PAYMENT_RESPONSE,
+    DELIVERY_CHARGES,
+    HANDLE_SIGN_IN,
+    HANDLE_SIGN_IN_ERROR,
+    HANDLE_SIGN_OUT,
+    HANDLE_SIGN_UP_ERROR,
+    HANDLE_SIGN_IN_RESET,
+    HANDLE_SIGN_UP_RESET
 } from "../../actions/types";
 import log from "loglevel";
 import {
@@ -20,6 +28,35 @@ import {
     INITIAL_SHIPPING_ADDRESS_STATE,
     INITIAL_SHIPPING_OPTION_STATE
 } from "../../constants/constants";
+import _ from "lodash";
+
+
+export const signInReducer = (state = {isSignedIn: null}, action) => {
+    switch (action.type) {
+        case HANDLE_SIGN_IN:
+            return {...state, isSignedIn: true, tokenId: action.payload};
+        case HANDLE_SIGN_IN_ERROR:
+            return {...state, isSignedIn: false, errorMsg: action.payload};
+        case HANDLE_SIGN_OUT:
+            return _.omit(state, 'tokenId', 'errorMsg');
+        case HANDLE_SIGN_IN_RESET:
+            return {isSignedIn: null}
+        default:
+            return state;
+    }
+};
+
+export const signUpReducer = (state
+                                  = {errorMsg: null}, action) => {
+    switch (action.type) {
+        case HANDLE_SIGN_UP_ERROR:
+            return {...state, errorMsg: action.payload};
+        case HANDLE_SIGN_UP_RESET: 
+            return {account_status: null, errorMsg: null}
+        default:
+            return state;
+    }
+};
 
 export const homePageDataReducer = (state = {isLoading: true}, action) => {
     log.trace(`[HOME_SCREEN_REDUCER]: action.type = ${action.type}`)

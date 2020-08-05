@@ -1,6 +1,5 @@
 import {combineReducers} from "redux";
 import {reducer as formReducer} from "redux-form";
-import authApiReducer from "./api/authApiReducer";
 
 import {
     homePageDataReducer, addToCartReducer,
@@ -10,7 +9,7 @@ import {
     cartTotalReducer, savedSortedListReducer,
     shippingAddressReducer, paymentInfoReducer,
     shippingOptionReducer, deliveryChargesReducer,
-    paymentResponseReducer
+    paymentResponseReducer, signInReducer, signUpReducer,
 } from "./screens/commonScreenReducer";
 
 import {tabHoverEventReducer} from "./events/eventReducer";
@@ -22,7 +21,8 @@ import {
 
 export default combineReducers({
     form: formReducer,
-    authApiReducer,
+    signInReducer,
+    signUpReducer,
     homePageDataReducer,
     addToCartReducer,
     tabHoverEventReducer,

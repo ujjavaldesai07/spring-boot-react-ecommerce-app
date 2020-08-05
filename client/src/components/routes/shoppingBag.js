@@ -59,7 +59,7 @@ function ShoppingBag(props) {
         },
     ]
 
-    const getQuantityList = id => {
+    const getQuantityList = () => {
         let qtyList = []
         for (let i = 1; i <= 10; ++i) {
             qtyList.push({
@@ -109,6 +109,7 @@ function ShoppingBag(props) {
             <>
                 <Box display="flex" flexDirection="row">
                     <Box mx={2.5} mt={2} mb={1}>
+                        {/* eslint-disable-next-line jsx-a11y/img-redundant-alt */}
                         <img src={shoppingBagProducts.data[itemRemovalModalState.productId].imageName}
                              width={60} height={90} alt="image"/>
                     </Box>

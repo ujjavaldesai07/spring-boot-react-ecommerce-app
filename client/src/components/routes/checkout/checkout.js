@@ -9,7 +9,7 @@ import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
 import {connect, useSelector} from "react-redux";
-import {loadStripe} from "@stripe/stripe-js/pure";
+// import {loadStripe} from "@stripe/stripe-js/pure";
 import PaymentButton from "./paymentButton";
 import {useAddProductsToShoppingBag} from "../../../hooks/useAddProductsToShoppingBag";
 import {getDataViaAPI} from "../../../actions";
@@ -73,8 +73,8 @@ const useGridStyles = makeStyles((theme) => ({
 
 const shippingAddressPanel = 'shipAddrPanel'
 const shippingOptionPanel = 'shipOptPanel'
-const paymentPanel = "paymentPanel"
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISH_KEY)
+// const paymentPanel = "paymentPanel"
+// const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISH_KEY)
 
 function Checkout(props) {
     const shippingAddress = useSelector(state => state.shippingAddressReducer)

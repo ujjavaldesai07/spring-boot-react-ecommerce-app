@@ -3,7 +3,7 @@ import log from 'loglevel';
 import RadioButtonsGroup from "../../../ui/radioButtonGroup";
 import {useDispatch, useSelector} from "react-redux";
 import {ADD_SELECTED_CATEGORY} from "../../../../actions/types";
-import {Box, Grid} from "@material-ui/core";
+import {Grid} from "@material-ui/core";
 import {NavBarHeader} from "../../../ui/headers";
 
 export default function GenderRadioButton() {

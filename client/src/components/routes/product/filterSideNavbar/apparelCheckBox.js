@@ -5,7 +5,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {ADD_SELECTED_CATEGORY} from "../../../../actions/types";
 import CheckboxMoreButton from "./checkboxMoreButton";
 import CheckboxSearchBar from "./checkboxSearchBar";
-import {Grid} from "@material-ui/core";
 
 export default function ApparelCheckBox() {
     const TITLE = "Apparel"

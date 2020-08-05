@@ -1,7 +1,7 @@
 import React from 'react';
 import log from 'loglevel';
 import {NavBarHeader} from "../../../ui/headers";
-import {Box, Grid} from "@material-ui/core";
+import {Grid} from "@material-ui/core";
 import CollapsableSearch from "../../../ui/collapsableSearch";
 
 export default function CheckboxSearchBar(props) {

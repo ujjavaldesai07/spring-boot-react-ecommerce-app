@@ -1,5 +1,5 @@
 import React from "react";
-import WebForm from "../ui/webForm";
+import WebForm from "./signup/signUpForm";
 import {Divider, Grid} from "semantic-ui-react";
 import {connect} from 'react-redux';
 import {signIn} from "../../actions";

@@ -11,7 +11,7 @@ import PriceCheckBox from "./priceCheckBox";
 import ClearAllButton from "./clearAllButton";
 import {connect, useDispatch, useSelector} from "react-redux";
 import {loadFilterAttributes} from "../../../../actions";
-import {Box, Grid} from "@material-ui/core";
+import {Grid} from "@material-ui/core";
 import {useFilterNavBarStyles} from "../../../../styles/materialUI/filterNavBarStyles";
 import {
     FILTER_ATTRIBUTES, INITIAL_PAGINATION_STATE,

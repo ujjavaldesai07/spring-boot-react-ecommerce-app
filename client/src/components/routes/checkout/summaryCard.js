@@ -1,5 +1,4 @@
 import React from 'react';
-import log from 'loglevel';
 import {Grid, Card, CardContent} from "@material-ui/core";
 import DeleteIcon from '@material-ui/icons/Delete';
 import Button from '@material-ui/core/Button';

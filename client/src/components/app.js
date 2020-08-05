@@ -6,7 +6,7 @@ import NavBar from "./routes/navbar/navBar";
 import {TabPanelList} from "./routes/navbar/tabPanelList";
 import Home from "./routes/home/home";
 import Login from "./routes/login";
-import SignUp from "./routes/signUp";
+import SignUp from "./routes/signup/signUp";
 import Product from "./routes/product/product";
 import ProductDetail from "./routes/detail/productDetails";
 import Checkout from "./routes/checkout/checkout";

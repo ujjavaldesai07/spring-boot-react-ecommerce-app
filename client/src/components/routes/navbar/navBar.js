@@ -40,7 +40,7 @@ const NavBar = props => {
     const [mobileSearchState, setMobileSearchState] = React.useState(false);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
     const [hamburgerBtnState, setHamburgerBtnState] = React.useState(false);
-    const {isSignedIn, tokenId} = useSelector(state => state.authApiReducer)
+    const {isSignedIn, tokenId} = useSelector(state => state.signInReducer)
     const tabsAPIData = useSelector(state => state.tabsDataReducer)
 
     const isMenuOpen = Boolean(anchorEl);

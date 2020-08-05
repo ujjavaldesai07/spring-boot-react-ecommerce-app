@@ -2,7 +2,7 @@
 export const checkoutFormStyles = theme => ({
     root: {
         '& > *': {
-            margin: theme.spacing(1),
+            marginLeft: theme.spacing(3),
         },
     },
     formControlLabel: {

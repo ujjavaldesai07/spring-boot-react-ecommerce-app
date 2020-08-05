@@ -1,6 +1,5 @@
 import {
     HANDLE_SIGN_IN,
-    HANDLE_SIGN_UP,
     HANDLE_SIGN_UP_ERROR,
     HANDLE_SIGN_OUT,
     HANDLE_SIGN_IN_ERROR,
@@ -9,7 +8,7 @@ import {
     SAVE_QUERY_STATUS,
     SHIPPING_ADDRESS_CONFIRMED,
     PAYMENT_INFO_CONFIRMED,
-    PAYMENT_RESPONSE, CART_TOTAL, LOAD_SHOPPING_BAG_PRODUCTS
+    PAYMENT_RESPONSE, CART_TOTAL, HANDLE_SIGN_UP_RESET,
 } from './types';
 import {INTERNAL_SERVER_ERROR_CODE, BAD_REQUEST_ERROR_CODE} from '../constants/http_error_codes'
 import {SHOPPERS_PRODUCT_INFO_COOKIE, CART_TOTAL_COOKIE, TOKEN_ID_COOKIE} from '../constants/cookies'
@@ -76,15 +75,22 @@ export const signOut = () => {
     }
 }
 
-export const signUp = formValues => async (dispatch) => {
+export const resetSignUp = () => {
+    return {
+        type: HANDLE_SIGN_UP_RESET
+    }
+}
+
+export const signUp = formValues => async dispatch => {
     log.info(`[ACTION]: signUp API = ${JSON.stringify(formValues)}.`)
+
     authServiceAPI.defaults.timeout = 15000;
     const response = await authServiceAPI.post('/signup', {
-        'username': formValues.Username,
-        'password': formValues.Password,
-        'firstname': formValues.FirstName,
-        'lastname': formValues.LastName,
-        'email': formValues.Email.toLowerCase(),
+        'username': formValues.username,
+        'password': formValues.password,
+        'firstname': formValues.firstName,
+        'lastname': formValues.lastName,
+        'email': formValues.email.toLowerCase(),
     }).catch(err => {
         log.info(`[ACTION]: signUp dispatch HANDLE_SIGN_UP_ERROR err.message = ${err.message}.`)
         dispatch({type: HANDLE_SIGN_UP_ERROR, payload: err.message});
@@ -93,8 +99,7 @@ export const signUp = formValues => async (dispatch) => {
     if (response) {
         if (response.data.account_creation_status === 'success') {
             log.info(`[ACTION]: dispatch HANDLE_SIGN_UP account_creation_status = ${response.data.account_creation_status}.`)
-            dispatch({type: HANDLE_SIGN_UP, payload: response.data.account_creation_status});
-
+            history.push("/login");
         } else {
             console.log('response.data.error_msg = ' + response.data.error_msg);
             log.info(`[ACTION]: dispatch HANDLE_SIGN_UP_ERROR response.data.error_msg = ${response.data.error_msg}.`)

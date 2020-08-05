@@ -11,7 +11,6 @@ import {
     INITIAL_PAGINATION_STATE,
     INITIAL_SORT_STATE
 } from "../../../constants/constants";
-import history from "../../../history";
 
 const removeValueIfExist = (list, id) => {
     if (list.length === 0) {

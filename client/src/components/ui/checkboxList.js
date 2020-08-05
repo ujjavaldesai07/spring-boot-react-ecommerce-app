@@ -6,7 +6,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import log from "loglevel";
-import {Box, Grid} from "@material-ui/core";
+import {Grid} from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
     root: {
