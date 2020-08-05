@@ -45,41 +45,15 @@ public class AuthController {
     @Autowired
     private AuthDataService authDataService;
 
-    @GetMapping(value = "/resources1")
-    public ResponseEntity<InputStreamResource> getImage1() throws IOException {
-
-        var imgFile = new ClassPathResource("static/images/b1.png");
-        return ResponseEntity
-                .ok()
-                .contentType(MediaType.IMAGE_PNG)
-                .body(new InputStreamResource(imgFile.getInputStream()));
-    }
-
-    @GetMapping(value = "/resources2")
-    public ResponseEntity<InputStreamResource> getImage2() throws IOException {
-        String mediaType = "image/webp";
-        String path = "static/images/s1.webp";
-        var imgFile = new ClassPathResource(path);
-        return ResponseEntity
-                .ok()
-                .contentType(MediaType.parseMediaType(mediaType))
-                .body(new InputStreamResource(imgFile.getInputStream()));
-    }
-
-    @GetMapping("/hello")
-    public String firstPage() {
-        return "Hello World";
-    }
-
-    public void loop() {
-        while (true) {
-        }
-    }
-
     @PostMapping("/signup")
     public ResponseEntity<?> createAccount(
             @RequestBody AccountCreationRequest accountCreationRequest)
             throws Exception {
+
+        if (authDataService.findByUsername(accountCreationRequest.getUsername()) != null) {
+            return ResponseEntity.ok(
+                    new AccountCreationResponse("failure", "Username already exist"));
+        }
 
         if (authDataService.findByEmail(accountCreationRequest.getEmail()) != null) {
             return ResponseEntity.ok(
@@ -91,7 +65,7 @@ public class AuthController {
         userInfo.setFirstName(accountCreationRequest.getFirstname());
         userInfo.setLastName(accountCreationRequest.getLastname());
         userInfo.setPassword(accountCreationRequest.getPassword());
-        userInfo.setUserName(accountCreationRequest.getUsername());
+        userInfo.setUsername(accountCreationRequest.getUsername());
 
         authDataService.createUserProfile(userInfo);
         return ResponseEntity.ok(new AccountCreationResponse("success", null));
@@ -99,8 +73,7 @@ public class AuthController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<?> createAuthenticationToken(
-            @RequestHeader(value = "Authorization", required = true) String headerData)
-            throws Exception {
+            @RequestHeader(value = "Authorization") String headerData) {
 
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
         String[] data = headerData.split(" ");

@@ -17,9 +17,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     private AuthDataService authDataService;
 
     @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        UserInfo userInfo = authDataService.findByUsername(userName);
-        System.out.println("Username = " + userInfo.getUserName() + ", Password = " + userInfo.getPassword());
-        return new User(userInfo.getUserName(), userInfo.getPassword(), Arrays.asList());
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserInfo userInfo = authDataService.findByUsername(username);
+        System.out.println("Username = " + userInfo.getUsername() + ", Password = " + userInfo.getPassword());
+        return new User(userInfo.getUsername(), userInfo.getPassword(), Arrays.asList());
     }
 }

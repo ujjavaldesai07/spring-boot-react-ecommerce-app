@@ -22,8 +22,6 @@ public class AuthDataServiceImpl implements AuthDataService {
 
         if(result.isPresent()) {
             userInfo = result.get();
-        } else {
-            return null;
         }
 
         return userInfo;
@@ -36,16 +34,13 @@ public class AuthDataServiceImpl implements AuthDataService {
 
         if(result.isPresent()) {
             userInfo = result.get();
-        } else {
-            return null;
         }
 
         return userInfo;
     }
 
     public void createUserProfile(UserInfo userInfo) throws NoSuchAlgorithmException {
-        System.out.println("Userinfoooo = " + userInfo);
-        UserInfoRepository.createUserProfile(userInfo.getUserName(),
+        UserInfoRepository.createUserProfile(userInfo.getUsername(),
                 userInfo.getFirstName(), userInfo.getLastName(),
                 userInfo.getEmail(), Md5Util.getInstance().getMd5Hash(userInfo.getPassword()));
     }

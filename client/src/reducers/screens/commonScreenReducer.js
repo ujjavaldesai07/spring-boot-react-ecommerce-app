@@ -19,7 +19,6 @@ import {
     HANDLE_SIGN_IN_ERROR,
     HANDLE_SIGN_OUT,
     HANDLE_SIGN_UP_ERROR,
-    HANDLE_SIGN_IN_RESET,
     HANDLE_SIGN_UP_RESET
 } from "../../actions/types";
 import log from "loglevel";
@@ -39,8 +38,6 @@ export const signInReducer = (state = {isSignedIn: null}, action) => {
             return {...state, isSignedIn: false, errorMsg: action.payload};
         case HANDLE_SIGN_OUT:
             return _.omit(state, 'tokenId', 'errorMsg');
-        case HANDLE_SIGN_IN_RESET:
-            return {isSignedIn: null}
         default:
             return state;
     }

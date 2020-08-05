@@ -19,16 +19,16 @@ public class UserInfo {
 
     private String lastName;
 
-    private String userName;
+    private String username;
 
     private String password;
 
     private String email;
 
-    public UserInfo(String firstName, String lastName, String userName, String password, String email) {
+    public UserInfo(String firstName, String lastName, String username, String password, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.userName = userName;
+        this.username = username;
         this.password = password;
         this.email = email;
     }

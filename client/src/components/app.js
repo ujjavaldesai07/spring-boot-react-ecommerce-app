@@ -5,7 +5,7 @@ import log from "loglevel"
 import NavBar from "./routes/navbar/navBar";
 import {TabPanelList} from "./routes/navbar/tabPanelList";
 import Home from "./routes/home/home";
-import Login from "./routes/login";
+import SignIn from "./routes/signin/signIn";
 import SignUp from "./routes/signup/signUp";
 import Product from "./routes/product/product";
 import ProductDetail from "./routes/detail/productDetails";
@@ -29,7 +29,7 @@ const App = () => {
             <TabPanelList/>
             {serverError ? null: <Switch>
                 <Route path="/" exact component={Home}/>
-                <Route path="/login" exact component={Login}/>
+                <Route path="/signin" exact component={SignIn}/>
                 <Route path="/signup" exact component={SignUp}/>
                 <Route path="/shopping-bag" exact component={ShoppingBag}/>
                 <Route path="/checkout" exact component={Checkout}/>

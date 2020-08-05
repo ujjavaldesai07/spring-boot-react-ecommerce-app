@@ -1,7 +1,5 @@
 import React from "react";
 import SignUpForm from "./signUpForm"
-import {connect} from 'react-redux';
-import {signUp} from "../../../actions";
 import {Grid} from "@material-ui/core";
 import log from "loglevel";
 
@@ -21,4 +19,4 @@ const SignUp = () => {
     )
 }
 
-export default connect(null, {signUp})(SignUp);
+export default SignUp;

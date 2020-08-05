@@ -13,11 +13,8 @@ export const StyledDimmer = styled(Dimmer)({
 });
 
 export const StyledWebButton = styled(Button)({
-    width: '10em !important'
-});
-
-export const StyledLoginScreenGrid = styled(Grid)({
-    paddingTop: '100px !important'
+    width: '100% !important',
+    height: '40px !important'
 });
 
 export const StyledLargeDropdown = styled(Dropdown)({

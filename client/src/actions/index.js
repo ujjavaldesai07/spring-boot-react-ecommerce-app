@@ -46,7 +46,7 @@ export const setPaymentInfo = payload => {
 export const signIn = formValues => async (dispatch) => {
     log.info(`[ACTION]: signIn API is invoked formValues = ${formValues}`)
 
-    const hash = Base64.encode(`${formValues.Username}:${formValues.Password}`);
+    const hash = Base64.encode(`${formValues.username}:${formValues.password}`);
     authServiceAPI.defaults.headers.common['Authorization'] = `Basic ${hash}`
     authServiceAPI.defaults.timeout = 5000;
     const response = await authServiceAPI.post('/authenticate').catch(err => {
@@ -58,7 +58,7 @@ export const signIn = formValues => async (dispatch) => {
         if (response.data.jwt) {
             log.info(`[ACTION]: dispatch HANDLE_SIGN_IN response.data.jwt = ${response.data.jwt}`)
             dispatch({type: HANDLE_SIGN_IN, payload: response.data.jwt});
-            Cookies.set(TOKEN_ID_COOKIE, response.data.jwt, {expires: 7});
+            Cookies.set(TOKEN_ID_COOKIE, response.data.jwt, {expires: 2});
             history.push('/');
         } else {
             log.info(`[ACTION]: dispatch HANDLE_SIGN_IN_ERROR response.data.error = ${response.data.error}`)
@@ -99,7 +99,7 @@ export const signUp = formValues => async dispatch => {
     if (response) {
         if (response.data.account_creation_status === 'success') {
             log.info(`[ACTION]: dispatch HANDLE_SIGN_UP account_creation_status = ${response.data.account_creation_status}.`)
-            history.push("/login");
+            history.push("/signin");
         } else {
             console.log('response.data.error_msg = ' + response.data.error_msg);
             log.info(`[ACTION]: dispatch HANDLE_SIGN_UP_ERROR response.data.error_msg = ${response.data.error_msg}.`)

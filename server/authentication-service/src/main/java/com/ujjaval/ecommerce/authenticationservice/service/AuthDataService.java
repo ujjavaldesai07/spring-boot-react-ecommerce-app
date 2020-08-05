@@ -6,11 +6,11 @@ import java.security.NoSuchAlgorithmException;
 
 public interface AuthDataService {
 
-    public UserInfo findByUsername(String username);
+    UserInfo findByUsername(String username);
 
-    public UserInfo findByEmail(String email);
+    UserInfo findByEmail(String email);
 
-    public void deleteByUsernamePassword(String username, String password) throws NoSuchAlgorithmException;
+    void deleteByUsernamePassword(String username, String password) throws NoSuchAlgorithmException;
 
-    public void createUserProfile(UserInfo userInfo) throws NoSuchAlgorithmException;
+    void createUserProfile(UserInfo userInfo) throws NoSuchAlgorithmException;
 }
