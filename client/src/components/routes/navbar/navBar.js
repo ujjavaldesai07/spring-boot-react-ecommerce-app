@@ -8,7 +8,7 @@ import {Menu, Grid} from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import Cookies from 'js-cookie';
-import {getDataViaAPI, setTokenFromCookie, signOut} from '../../../actions';
+import {getDataViaAPI, setAuthDetailsFromCookie, signOut} from '../../../actions';
 import {connect, useDispatch} from 'react-redux'
 
 import {
@@ -29,9 +29,11 @@ import {HTTPError} from "../../ui/error/httpError";
 import {BadRequest} from "../../ui/error/badRequest";
 import SearchBar from "./searchBar";
 import SideBar from "./sideBar";
-import {SHOPPERS_PRODUCT_INFO_COOKIE, TOKEN_ID_COOKIE} from "../../../constants/cookies";
+import {SHOPPERS_PRODUCT_INFO_COOKIE, AUTH_DETAILS_COOKIE} from "../../../constants/cookies";
 import {TABS_DATA_API} from "../../../constants/api_routes";
 import {TABS_API_OBJECT_LEN} from "../../../constants/constants"
+import Avatar from '@material-ui/core/Avatar';
+import history from "../../../history";
 
 const NavBar = props => {
     const classes = useNavBarStyles();
@@ -39,8 +41,9 @@ const NavBar = props => {
     const [mobileSearchState, setMobileSearchState] = React.useState(false);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
     const [hamburgerBtnState, setHamburgerBtnState] = React.useState(false);
-    const {isSignedIn, tokenId} = useSelector(state => state.signInReducer)
+    const {isSignedIn, tokenId, firstName} = useSelector(state => state.signInReducer)
     const tabsAPIData = useSelector(state => state.tabsDataReducer)
+    const addToCart = useSelector(state => state.addToCartReducer)
 
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -79,15 +82,15 @@ const NavBar = props => {
         // account details from the cookie.
         if (isSignedIn === null) {
             log.info(`[NavBar]: isSignedIn is null`)
-            let tokenIdFromCookie = Cookies.get(TOKEN_ID_COOKIE)
-            if (tokenIdFromCookie) {
-                log.info(`[NavBar]: Token set from Cookie`)
-                props.setTokenFromCookie(tokenIdFromCookie)
+            let savedAuthDetails = Cookies.get(AUTH_DETAILS_COOKIE)
+            if (savedAuthDetails) {
+                log.info(`[NavBar]: setting Auth Details from Cookie`)
+                props.setAuthDetailsFromCookie(JSON.parse(savedAuthDetails))
             }
         }
 
         // tabs data is not loaded then load it.
-        if(!tabsAPIData.hasOwnProperty("data")) {
+        if (!tabsAPIData.hasOwnProperty("data")) {
             props.getDataViaAPI(LOAD_TABS_DATA, TABS_DATA_API)
         }
 
@@ -155,12 +158,34 @@ const NavBar = props => {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <Link to={!tokenId ? "/signin" : "/"}>
-                <MenuItem onClick={handleLoginStatus}>{!tokenId ? 'SignIn' : 'SignOut'}</MenuItem>
+            <Link to={isSignedIn ? "/" : "/signin"}>
+                <MenuItem onClick={handleLoginStatus}>{isSignedIn ? 'Sign Out' : 'Sign In'}</MenuItem>
             </Link>
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
         </Menu>
     );
+
+    const menuProfileBtnHandler = () => {
+        if (isSignedIn) {
+            history.push("/")
+        } else {
+            history.push("/signin")
+        }
+        setMobileMoreAnchorEl(null);
+    }
+
+    const menuBagBtnHandler = () => {
+        history.push("/shopping-bag")
+        setMobileMoreAnchorEl(null);
+    }
+
+    const renderAvatar = () => {
+        return (
+            <Avatar className={classes.orange} sizes="small"
+                    style={{width: 20, height: 20, marginBottom: 3}}>{firstName? firstName.charAt(0):
+                "S"}</Avatar>
+        )
+    }
 
     const mobileMenuId = 'primary-search-account-menu-mobile';
     const renderMobileMenu = (
@@ -173,35 +198,43 @@ const NavBar = props => {
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}
         >
-            <MenuItem onClick={handleProfileMenuOpen}>
-                <IconButton
-                    aria-label="account of current user"
-                    aria-controls="primary-search-account-menu"
-                    aria-haspopup="true"
-                    color="inherit"
-                >
-                    <AccountCircle/>
-                </IconButton>
-                <p>Login</p>
+            <MenuItem onClick={menuProfileBtnHandler} style={{padding: "0 0.7rem 0 0"}}>
+                <Grid container alignItems="center">
+                    <Grid item>
+                        <IconButton aria-label="account of current user"
+                                    aria-controls="primary-search-account-menu"
+                                    aria-haspopup="true"
+                                    color="inherit">
+                            {isSignedIn ? renderAvatar() : <AccountCircle/>}
+                        </IconButton>
+                    </Grid>
+                    <Grid item>
+                        <p>{isSignedIn ? 'Sign Out' : 'Sign In'}</p>
+                    </Grid>
+                </Grid>
             </MenuItem>
-            <MenuItem>
-                <IconButton aria-label="show 11 new notifications" color="inherit">
-                    <Badge badgeContent={11} color="secondary">
-                        <LocalMallIcon/>
-                    </Badge>
-                </IconButton>
-                <p>Bag</p>
+            <MenuItem onClick={menuBagBtnHandler} style={{padding: "0 0.7rem 0 0"}}>
+                <Grid container alignItems="center">
+                    <Grid item xs={7}>
+                        <IconButton color="inherit">
+                            <Badge badgeContent={addToCart.totalQuantity} color="secondary">
+                                <LocalMallIcon/>
+                            </Badge>
+                        </IconButton>
+                    </Grid>
+                    <Grid item>
+                        <p>Bag</p>
+                    </Grid>
+                </Grid>
             </MenuItem>
         </Menu>
     );
 
     const handleMobileSearchOpen = () => {
-        log.info("Mobile Search is clicked....")
         setMobileSearchState(true)
     }
 
     const handleMobileSearchClose = () => {
-        log.info("Mobile Search is clicked....")
         setMobileSearchState(false)
     }
 
@@ -280,7 +313,7 @@ const NavBar = props => {
                             <Box display="flex" justifyContent="center" alignItems="center" css={{width: 90}}>
                                 <Box width="50%" onClick={handleProfileMenuOpen} css={{cursor: 'pointer'}}>
                                     <Box pl={1} pt={0.3}>
-                                        <AccountCircle/>
+                                        {isSignedIn ? renderAvatar() : <AccountCircle/>}
                                     </Box>
                                     <Box style={{color: "black", fontSize: "0.8rem", fontWeight: 'bold'}}>
                                         Profile
@@ -321,4 +354,4 @@ const NavBar = props => {
     );
 };
 
-export default connect(null, {setTokenFromCookie, signOut, getDataViaAPI})(NavBar);
+export default connect(null, {setAuthDetailsFromCookie, signOut, getDataViaAPI})(NavBar);

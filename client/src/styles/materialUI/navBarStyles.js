@@ -1,4 +1,5 @@
 import {fade, makeStyles} from "@material-ui/core/styles";
+import deepOrange from "@material-ui/core/colors/deepOrange";
 
 const useNavBarStyles = makeStyles(theme => ({
     grow_1: {
@@ -155,7 +156,11 @@ const useNavBarStyles = makeStyles(theme => ({
     },
     mobileSearchButton: {
         alignSelf: "flex-end"
-    }
+    },
+    orange: {
+        color: theme.palette.getContrastText(deepOrange[500]),
+        backgroundColor: deepOrange[500],
+    },
 }));
 
 export default useNavBarStyles;

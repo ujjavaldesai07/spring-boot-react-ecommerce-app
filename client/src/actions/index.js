@@ -11,7 +11,7 @@ import {
     PAYMENT_RESPONSE, CART_TOTAL, HANDLE_SIGN_UP_RESET,
 } from './types';
 import {INTERNAL_SERVER_ERROR_CODE, BAD_REQUEST_ERROR_CODE} from '../constants/http_error_codes'
-import {SHOPPERS_PRODUCT_INFO_COOKIE, CART_TOTAL_COOKIE, TOKEN_ID_COOKIE} from '../constants/cookies'
+import {SHOPPERS_PRODUCT_INFO_COOKIE, CART_TOTAL_COOKIE, AUTH_DETAILS_COOKIE} from '../constants/cookies'
 import history from "../history";
 import {Base64} from 'js-base64';
 import Cookies from 'js-cookie';
@@ -19,11 +19,11 @@ import log from "loglevel";
 import {commonServiceAPI, authServiceAPI} from "../api/service_api";
 import axios from 'axios';
 
-export const setTokenFromCookie = tokenId => {
-    log.info(`[ACTION]: setTokenFromCookie tokenId = ${tokenId}`)
+export const setAuthDetailsFromCookie = savedResponse => {
+    log.info(`[ACTION]: setTokenFromCookie savedResponse = ${savedResponse}`)
     return {
         type: HANDLE_SIGN_IN,
-        payload: tokenId
+        payload: savedResponse
     }
 }
 
@@ -57,8 +57,8 @@ export const signIn = formValues => async (dispatch) => {
     if (response) {
         if (response.data.jwt) {
             log.info(`[ACTION]: dispatch HANDLE_SIGN_IN response.data.jwt = ${response.data.jwt}`)
-            dispatch({type: HANDLE_SIGN_IN, payload: response.data.jwt});
-            Cookies.set(TOKEN_ID_COOKIE, response.data.jwt, {expires: 2});
+            dispatch({type: HANDLE_SIGN_IN, payload: response.data});
+            Cookies.set(AUTH_DETAILS_COOKIE, response.data, {expires: 2});
             history.push('/');
         } else {
             log.info(`[ACTION]: dispatch HANDLE_SIGN_IN_ERROR response.data.error = ${response.data.error}`)
@@ -69,7 +69,7 @@ export const signIn = formValues => async (dispatch) => {
 
 export const signOut = () => {
     log.info(`[ACTION]: signOut Cookie is removed...`)
-    Cookies.remove(TOKEN_ID_COOKIE)
+    Cookies.remove(AUTH_DETAILS_COOKIE)
     return {
         type: HANDLE_SIGN_OUT
     }

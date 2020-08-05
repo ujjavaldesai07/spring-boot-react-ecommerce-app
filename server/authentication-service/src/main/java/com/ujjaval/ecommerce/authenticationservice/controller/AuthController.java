@@ -90,15 +90,19 @@ public class AuthController {
                             Md5Util.getInstance().getMd5Hash(authenticationRequest.getPassword()))
             );
         } catch (BadCredentialsException e) {
-            return ResponseEntity.ok(new AuthenticationResponse(null, "Incorrect username or password."));
+            return ResponseEntity.ok(new AuthenticationResponse(null, "Incorrect username or password.",
+                    null));
         } catch (Exception e) {
-            return ResponseEntity.ok(new AuthenticationResponse(null, "Username does not exist."));
+            return ResponseEntity.ok(new AuthenticationResponse(null, "Username does not exist.",
+                    null));
         }
 
         final UserDetails userDetails = customUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 
         final String jwt = jwtTokenUtil.generateToken(userDetails);
 
-        return ResponseEntity.ok(new AuthenticationResponse(jwt, null));
+        UserInfo userInfo = authDataService.findByUsername(authenticationRequest.getUsername());
+
+        return ResponseEntity.ok(new AuthenticationResponse(jwt, null, userInfo.getFirstName()));
     }
 }
