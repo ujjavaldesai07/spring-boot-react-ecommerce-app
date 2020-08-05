@@ -28,6 +28,8 @@ class SignUpForm extends Component {
             this.setState({errorMsg: "Please read the terms and conditions. Checkbox is uncheck."})
             return
         }
+
+        this.props.loadingHandler(true)
         this.props.signUp(this.props.signUpFormStore.values)
     }
 
@@ -116,17 +118,19 @@ class SignUpForm extends Component {
                     {renderErrorMsg(this.state.errorMsg)}
                     {renderErrorMsg(this.props.signUpReducer.errorMsg)}
 
-                    <Grid item container justify="center" style={{padding: "1rem 0"}}>
-                        <Button variant="contained"
-                                size="large"
-                                style={{
-                                    width: "35%", backgroundColor: "teal",
-                                    color: "white", fontSize: "1rem", fontWeight: "bold"
-                                }}
-                                disabled={submitting || pristine}
-                                type="submit">
-                            Sign Up
-                        </Button>
+                    <Grid container justify="center" style={{padding: "1rem 0"}}>
+                        <Grid item xs={10} sm={6}>
+                            <Button variant="contained"
+                                    size="large"
+                                    style={{
+                                        width: "100%", backgroundColor: "teal",
+                                        color: "white", fontSize: "1rem", fontWeight: "bold"
+                                    }}
+                                    disabled={submitting || pristine}
+                                    type="submit">
+                                Sign Up
+                            </Button>
+                        </Grid>
                     </Grid>
 
                 </form>

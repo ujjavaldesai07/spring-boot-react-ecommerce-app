@@ -13,3 +13,7 @@ body ::-webkit-scrollbar {
 #customDropdown {
     font-weight: bold;
 }
+
+input {
+    font-size: 1.2rem !important;
+}

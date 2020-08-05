@@ -25,7 +25,6 @@ import log from "loglevel";
 import Hidden from "@material-ui/core/Hidden";
 import BagButton from "./bagButton";
 import {tabsDataReducer} from "../../../reducers/screens/commonScreenReducer";
-import Spinner from "../../ui/spinner";
 import {HTTPError} from "../../ui/error/httpError";
 import {BadRequest} from "../../ui/error/badRequest";
 import SearchBar from "./searchBar";
@@ -100,7 +99,7 @@ const NavBar = props => {
 
     if (tabsAPIData.isLoading) {
         log.info("[NavBar]: loading")
-        return <Spinner/>
+        return null
     } else {
         if (tabsAPIData.hasOwnProperty("data")) {
             if (Object.entries(tabsAPIData.data).length !== TABS_API_OBJECT_LEN) {
@@ -156,8 +155,8 @@ const NavBar = props => {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <Link to={!tokenId ? "/login" : "/"}>
-                <MenuItem onClick={handleLoginStatus}>{!tokenId ? 'Login' : 'Logout'}</MenuItem>
+            <Link to={!tokenId ? "/signin" : "/"}>
+                <MenuItem onClick={handleLoginStatus}>{!tokenId ? 'SignIn' : 'SignOut'}</MenuItem>
             </Link>
             <MenuItem onClick={handleMenuClose}>My account</MenuItem>
         </Menu>

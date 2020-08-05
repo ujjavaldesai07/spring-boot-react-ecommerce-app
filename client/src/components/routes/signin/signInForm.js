@@ -10,8 +10,16 @@ import {renderReduxTextField} from "../../ui/reduxTextField";
 
 class SignInForm extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoading: false
+        }
+    }
+
     handleSubmit = event => {
         event.preventDefault();
+        this.props.loadingHandler(true)
         this.props.signIn(this.props.signInFormStore.values)
     }
 
@@ -43,7 +51,7 @@ class SignInForm extends Component {
             )
         }
 
-        log.info(`[SignUpForm] Rendering SignUpForm Component...`)
+        log.info(`[SignInForm] Rendering SignInForm Component...`)
 
         return (
             <Grid container>
@@ -56,7 +64,7 @@ class SignInForm extends Component {
                     {renderErrorMsg(this.props.signInReducer.errorMsg)}
 
                     <Grid container justify="center" style={{paddingTop: "2rem"}}>
-                        <Grid item sm={5}>
+                        <Grid item xs={7} sm={5}>
                             <Button variant="contained"
                                     size="large"
                                     style={{

@@ -30,12 +30,15 @@ import {
 import _ from "lodash";
 
 
-export const signInReducer = (state = {isSignedIn: null}, action) => {
+export const signInReducer = (state = {isSignedIn: null, timestamp: null}, action) => {
+
+    // timestamp is used to update the state so that
+    // we can stop loading progress component
     switch (action.type) {
         case HANDLE_SIGN_IN:
-            return {...state, isSignedIn: true, tokenId: action.payload};
+            return {...state, isSignedIn: true, tokenId: action.payload, timestamp: Date.now()};
         case HANDLE_SIGN_IN_ERROR:
-            return {...state, isSignedIn: false, errorMsg: action.payload};
+            return {...state, isSignedIn: false, errorMsg: action.payload, timestamp: Date.now()};
         case HANDLE_SIGN_OUT:
             return _.omit(state, 'tokenId', 'errorMsg');
         default:
@@ -44,10 +47,12 @@ export const signInReducer = (state = {isSignedIn: null}, action) => {
 };
 
 export const signUpReducer = (state
-                                  = {errorMsg: null}, action) => {
+                                  = {errorMsg: null, timestamp: null}, action) => {
+    // timestamp is used to update the state so that
+    // we can stop loading progress component
     switch (action.type) {
         case HANDLE_SIGN_UP_ERROR:
-            return {...state, errorMsg: action.payload};
+            return {...state, errorMsg: action.payload, timestamp: Date.now()};
         case HANDLE_SIGN_UP_RESET: 
             return {account_status: null, errorMsg: null}
         default:
