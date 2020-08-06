@@ -4,6 +4,7 @@ import {Grid} from "@material-ui/core";
 import log from "loglevel";
 import {useSelector} from "react-redux";
 import {Dimmer, Loader} from "semantic-ui-react";
+import {DocumentTitle} from "../../ui/documentTitle";
 
 const SignUp = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -24,6 +25,7 @@ const SignUp = () => {
     return (
         <Grid container justify="center" style={{paddingTop: "2rem"}}>
             <Grid item container xs={10} sm={6} lg={4} direction="column">
+                <DocumentTitle title="Sign Up"/>
                 <Grid item style={{alignSelf: "center"}}>
                     <h1 style={{fontSize: "2.5rem"}}>Sign Up</h1>
                 </Grid>

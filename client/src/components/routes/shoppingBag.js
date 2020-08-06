@@ -22,6 +22,7 @@ import Hidden from "@material-ui/core/Hidden";
 import {useAddProductsToShoppingBag} from "../../hooks/useAddProductsToShoppingBag";
 import {CART_TOTAL_COOKIE, SHOPPERS_PRODUCT_INFO_COOKIE} from "../../constants/cookies";
 import {HOME_ROUTE} from "../../constants/react_routes";
+import {DocumentTitle} from "../ui/documentTitle";
 
 const modalWidth = 430
 
@@ -284,6 +285,8 @@ function ShoppingBag(props) {
 
     return (
         <>
+            <DocumentTitle title="Shopping Bag"/>
+
             <Box display="flex" p={3}>
                 <BreadcrumbsSection linkList={breadcrumbLinks}/>
             </Box>

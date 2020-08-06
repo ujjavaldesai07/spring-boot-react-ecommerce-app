@@ -50,7 +50,7 @@ function TabPanel(props) {
 
         return (
             <Paper square className={classes.paperRoot} onMouseLeave={mouseLeaveHandler}
-                   style={{left: `${index * 70 + 130}px`}}>
+                   style={{left: `${index * 70 + 185}px`}}>
                 <Box display="flex" flexDirection="column" flexWrap="wrap" p={1} pl={4}>
                     <Box pt={0.75} css={{color: TAB_CONFIG[index].color, fontWeight: "bold",
                         fontSize: '15px', fontFamily: 'Arial, Helvetica, sans-serif'}}>

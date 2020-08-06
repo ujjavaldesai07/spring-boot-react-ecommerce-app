@@ -17,9 +17,11 @@ import {
     DELIVERY_CHARGES,
     HANDLE_SIGN_IN,
     HANDLE_SIGN_IN_ERROR,
+    HANDLE_GOOGLE_AUTH_SIGN_IN,
+    HANDLE_GOOGLE_AUTH_SIGN_OUT,
     HANDLE_SIGN_OUT,
     HANDLE_SIGN_UP_ERROR,
-    HANDLE_SIGN_UP_RESET
+    HANDLE_SIGN_UP_RESET, SET_GOOGLE_AUTH
 } from "../../actions/types";
 import log from "loglevel";
 import {
@@ -31,19 +33,44 @@ import _ from "lodash";
 
 
 export const signInReducer = (state
-                                  = {isSignedIn: null, timestamp: null, firstName: null}, action) => {
+                                  = {isSignedIn: null, timestamp: null, firstName: null, oAuth: null}, action) => {
 
     // timestamp is used to update the state so that
     // we can stop loading progress component
     switch (action.type) {
         case HANDLE_SIGN_IN:
-            return {...state, isSignedIn: true, tokenId: action.payload.jwt,
-                firstName: action.payload.firstName, timestamp: Date.now()};
+            return {
+                ...state, isSignedIn: true, tokenId: action.payload.jwt,
+                firstName: action.payload.firstName, timestamp: Date.now()
+            };
         case HANDLE_SIGN_IN_ERROR:
             return {...state, isSignedIn: false, errorMsg: action.payload, timestamp: Date.now()};
         case HANDLE_SIGN_OUT:
             _.omit(state, 'tokenId', 'errorMsg')
-            return {...state, isSignedIn: false};
+            return {...state, isSignedIn: false, firstName: null};
+        default:
+            return state;
+    }
+};
+
+export const googleAuthReducer = (state
+                                      = {isSignedInUsingOAuth: null, firstName: null, oAuth: null}, action) => {
+    switch (action.type) {
+        case SET_GOOGLE_AUTH:
+            return {
+                ...state,
+                isSignedInUsingOAuth: action.payload.oAuth.isSignedIn.get(),
+                firstName: action.payload.firstName,
+                oAuth: action.payload.oAuth
+            };
+        case HANDLE_GOOGLE_AUTH_SIGN_IN:
+            return {
+                ...state, isSignedInUsingOAuth: true,
+                firstName: action.payload.firstName,
+                oAuth: action.payload.oAuth
+            };
+        case HANDLE_GOOGLE_AUTH_SIGN_OUT:
+            return {...state, isSignedInUsingOAuth: false, firstName: null};
         default:
             return state;
     }
@@ -56,7 +83,7 @@ export const signUpReducer = (state
     switch (action.type) {
         case HANDLE_SIGN_UP_ERROR:
             return {...state, errorMsg: action.payload, timestamp: Date.now()};
-        case HANDLE_SIGN_UP_RESET: 
+        case HANDLE_SIGN_UP_RESET:
             return {account_status: null, errorMsg: null}
         default:
             return state;
@@ -180,7 +207,7 @@ export const shippingAddressReducer = (state
     }
 };
 
-export const paymentInfoReducer = (state= {values: null, submitted: false}, action) => {
+export const paymentInfoReducer = (state = {values: null, submitted: false}, action) => {
     switch (action.type) {
         case PAYMENT_INFO_CONFIRMED:
             return action.payload
@@ -189,7 +216,7 @@ export const paymentInfoReducer = (state= {values: null, submitted: false}, acti
     }
 };
 
-export const shippingOptionReducer = (state= INITIAL_SHIPPING_OPTION_STATE, action) => {
+export const shippingOptionReducer = (state = INITIAL_SHIPPING_OPTION_STATE, action) => {
     switch (action.type) {
         case SHIPPING_OPTION_CONFIRMED:
             return action.payload

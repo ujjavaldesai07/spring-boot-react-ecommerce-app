@@ -74,8 +74,7 @@ export default function TabList() {
                       backgroundColor: index === false ? 'none' : TAB_CONFIG[index].color,
                       height: '4px',
                   }
-              }}
-              classes={{root: classes.tabsFlexContainer}}>
+              }}>
             {renderTabs(index)}
         </Tabs>
     );

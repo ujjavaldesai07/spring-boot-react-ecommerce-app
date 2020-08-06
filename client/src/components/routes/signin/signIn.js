@@ -2,15 +2,17 @@ import React, {useEffect, useState} from "react";
 import SignInForm from "./signInForm"
 import {Grid, Typography} from "@material-ui/core";
 import log from "loglevel";
-import {StyledWebButton} from "../../../styles/semanticUI/customStyles";
-import {Divider, Icon} from "semantic-ui-react";
+import {Divider} from "semantic-ui-react";
 import {Link} from "react-router-dom";
-import { Dimmer, Loader } from 'semantic-ui-react'
+import {Dimmer, Loader} from 'semantic-ui-react'
 import {useSelector} from "react-redux";
+import GoogleAuthButton from "./GoogleAuthButton";
+import {DocumentTitle} from "../../ui/documentTitle";
 
 const SignIn = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const {timestamp} = useSelector(state => state.signInReducer)
+    const {isSignedIn, timestamp} = useSelector(state => state.signInReducer)
+    const {isSignedInUsingOAuth} = useSelector(state => state.googleAuthReducer)
 
     const setIsLoadingState = () => {
         setIsLoading(true);
@@ -22,12 +24,18 @@ const SignIn = () => {
 
     }, [timestamp])
 
+    if ((isSignedIn !== null && isSignedIn)
+        || (isSignedInUsingOAuth !== null && isSignedInUsingOAuth)) {
+        log.info(`[SignIn] Already signed In...`)
+        return null
+    }
+
     log.info(`[SignIn]: Rendering SignIn Component`)
 
     return (
         <Grid container justify="center" style={{paddingTop: "2rem"}}>
             <Grid item container xs={10} sm={5} lg={3} direction="column">
-
+                <DocumentTitle title="Sign In"/>
                 <Grid item style={{alignSelf: "center", paddingBottom: "1rem"}}>
                     <h1 style={{fontSize: "2.5rem"}}>Sign In</h1>
                 </Grid>
@@ -42,9 +50,7 @@ const SignIn = () => {
 
                 <Grid container justify="center">
                     <Grid item xs={7} sm={5}>
-                        <StyledWebButton color='google plus'>
-                            <Icon name='google plus'/> Google
-                        </StyledWebButton>
+                        <GoogleAuthButton/>
                     </Grid>
                 </Grid>
 

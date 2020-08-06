@@ -14,6 +14,7 @@ import PaymentButton from "./paymentButton";
 import {useAddProductsToShoppingBag} from "../../../hooks/useAddProductsToShoppingBag";
 import {getDataViaAPI} from "../../../actions";
 import {useCartTotal} from "../../../hooks/useCartTotal";
+import {DocumentTitle} from "../../ui/documentTitle";
 // import {Elements, ElementsConsumer} from "@stripe/react-stripe-js";
 // import Payment from "./payment"
 
@@ -102,6 +103,8 @@ function Checkout(props) {
         <Grid container justify={"center"} classes={{root: classes.root}}>
 
             <Grid item xs={12} sm={11} md={5}>
+
+                <DocumentTitle title="Checkout"/>
 
                 <Accordion square expanded>
                     <AccordionSummary aria-controls={`${shippingAddressPanel}-content`}

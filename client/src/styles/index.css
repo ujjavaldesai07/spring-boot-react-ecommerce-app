@@ -17,3 +17,8 @@ body ::-webkit-scrollbar {
 input {
     font-size: 1.2rem !important;
 }
+
+.ui.button.googleButtonStyle {
+    width: 100%;
+    height: 40px;
+}

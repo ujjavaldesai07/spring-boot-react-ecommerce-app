@@ -8,7 +8,7 @@ import {
     SAVE_QUERY_STATUS,
     SHIPPING_ADDRESS_CONFIRMED,
     PAYMENT_INFO_CONFIRMED,
-    PAYMENT_RESPONSE, CART_TOTAL, HANDLE_SIGN_UP_RESET,
+    PAYMENT_RESPONSE, CART_TOTAL, HANDLE_SIGN_UP_RESET, HANDLE_GOOGLE_AUTH_SIGN_IN, HANDLE_GOOGLE_AUTH_SIGN_OUT,
 } from './types';
 import {INTERNAL_SERVER_ERROR_CODE, BAD_REQUEST_ERROR_CODE} from '../constants/http_error_codes'
 import {SHOPPERS_PRODUCT_INFO_COOKIE, CART_TOTAL_COOKIE, AUTH_DETAILS_COOKIE} from '../constants/cookies'
@@ -43,7 +43,7 @@ export const setPaymentInfo = payload => {
     }
 }
 
-export const signIn = formValues => async (dispatch) => {
+export const signIn = formValues => async dispatch => {
     log.info(`[ACTION]: signIn API is invoked formValues = ${formValues}`)
 
     const hash = Base64.encode(`${formValues.username}:${formValues.password}`);
@@ -74,6 +74,54 @@ export const signOut = () => {
         type: HANDLE_SIGN_OUT
     }
 }
+
+export const signInUsingOAuth = googleAuth => async dispatch => {
+    log.info(`[signInUsingOAuth] googleAuth = ${googleAuth}`)
+
+    // check if not signed in
+    if (googleAuth && !googleAuth.isSignedIn.get()) {
+        log.info('[signInUsingOAuth] User has not signed in yet')
+
+        // sign in
+        googleAuth.signIn(JSON.parse(googleAuth.currentUser.get().getId())).then(() => {
+            // if sign in works
+            if (googleAuth.isSignedIn.get()) {
+                log.info('[signInUsingOAuth] User is signed in successfully')
+                // here we are sure that we signed in and now dispatch.
+                dispatch({
+                    type: HANDLE_GOOGLE_AUTH_SIGN_IN,
+                    payload: {
+                        firstName: "Norman",
+                        oAuth: googleAuth
+                    }
+                })
+
+                history.push("/");
+            }
+        })
+    }
+}
+
+export const signOutUsingOAuth = googleAuth => async dispatch => {
+    log.info(`[signOutUsingOAuth] googleAuth = ${googleAuth}, ` +
+        `googleAuth.isSignedIn.get() = ${googleAuth.isSignedIn.get()}`)
+
+    // if signed in then only try to sign out
+    if (googleAuth && googleAuth.isSignedIn.get()) {
+
+        log.info(`[signOutUsingOAuth] trying to signout`)
+        googleAuth.signOut().then(() => {
+            if (!googleAuth.isSignedIn.get()) {
+                log.info(`[signOutUsingOAuth] Successfully signed out`)
+                dispatch({
+                    type: HANDLE_GOOGLE_AUTH_SIGN_OUT,
+                    payload: null
+                })
+            }
+        });
+    }
+}
+
 
 export const resetSignUp = () => {
     return {

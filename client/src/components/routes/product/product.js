@@ -17,6 +17,7 @@ import {useDispatch} from "react-redux";
 import {SAVE_QUERY_STATUS} from "../../../actions/types";
 import {BadRequest} from "../../ui/error/badRequest";
 import {HOME_ROUTE} from "../../../constants/react_routes";
+import {DocumentTitle} from "../../ui/documentTitle";
 
 export const stickyBoxStyle = {
     position: 'sticky',
@@ -84,6 +85,7 @@ function Product() {
     log.info("[Product] Rendering Product Component.")
     return (
         <Grid container>
+            <DocumentTitle title="Shoppers Products"/>
             <Grid item md={3} lg={2}>
                 <FilterNavBar/>
             </Grid>

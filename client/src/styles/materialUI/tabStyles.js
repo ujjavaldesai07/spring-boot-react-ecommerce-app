@@ -33,12 +33,6 @@ const useTabStyles = makeStyles((theme) => ({
             fontSize: "1rem",
         }
     },
-    tabsFlexContainer: {
-        flexGrow: 1,
-        [theme.breakpoints.up('md')]: {
-            width: "35%",
-        }
-    }
 }));
 
 export default useTabStyles;

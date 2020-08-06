@@ -2,14 +2,11 @@ import {fade, makeStyles} from "@material-ui/core/styles";
 import deepOrange from "@material-ui/core/colors/deepOrange";
 
 const useNavBarStyles = makeStyles(theme => ({
-    grow_1: {
-        flex: 1,
-    },
-    grow_3: {
-        flex: 2,
-    },
     growQuarter: {
         flexGrow: 0.25,
+    },
+    growHalf: {
+        flexGrow: 0.5,
     },
     menuButton: {
         marginRight: theme.spacing(2),

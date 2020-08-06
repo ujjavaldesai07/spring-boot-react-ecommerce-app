@@ -20,6 +20,7 @@ import _ from "lodash";
 import {PRODUCT_BY_ID_DATA_API} from "../../../constants/api_routes";
 import {SHOPPERS_PRODUCT_INFO_COOKIE} from "../../../constants/cookies";
 import {HOME_ROUTE} from "../../../constants/react_routes";
+import {DocumentTitle} from "../../ui/documentTitle";
 
 export const useButtonStyles = makeStyles(() => ({
     buttonStartIcon: {
@@ -166,6 +167,7 @@ function ProductDetails(props) {
     log.info(`[Product Detail] Rendering Detail Component. selectedProduct = ${JSON.stringify(selectedProduct)}`)
     return (
         <>
+            <DocumentTitle title="Product Details"/>
             <Box display="flex" p={3}>
                 <BreadcrumbsSection linkList={breadcrumbLinks}/>
             </Box>

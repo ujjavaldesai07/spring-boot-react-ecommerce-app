@@ -14,6 +14,7 @@ import {
     INITIAL_SHIPPING_ADDRESS_STATE,
     INITIAL_SHIPPING_OPTION_STATE
 } from "../../constants/constants";
+import {DocumentTitle} from "../ui/documentTitle";
 
 export const SuccessPayment = () => {
     const dispatch = useDispatch()
@@ -130,6 +131,7 @@ export const SuccessPayment = () => {
             padding: "2rem", margin: "2rem", border: "1px solid black",
             fontSize: "1.2rem"
         }}>
+            <DocumentTitle title="Payment Success"/>
             <Grid item xs={12}
                   style={{border: "1px solid green", padding: "2rem", fontSize: "2rem", fontWeight: "bold"}}>
                 Payment Successful. Thank You For Shopping at Shoppers.
