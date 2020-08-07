@@ -11,11 +11,6 @@ class GoogleAuthButton extends React.Component {
     };
 
     render() {
-        if(!this.props.googleAuthReducer.oAuth) {
-            log.info(`[GoogleAuthButton] Failed to load Google OAuth`)
-            return null
-        }
-
         log.info('[GoogleAuthButton] Rendering GoogleAuthButton Component')
         return (
             <Button className='googleButtonStyle' color='google plus' onClick={this.onSignInClick}>

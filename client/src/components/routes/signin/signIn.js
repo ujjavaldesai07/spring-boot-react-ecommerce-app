@@ -22,6 +22,7 @@ const SignIn = () => {
         log.info(`[SignIn]: Component did mount...`)
         setIsLoading(false)
 
+        // eslint-disable-next-line
     }, [timestamp])
 
     if ((isSignedIn !== null && isSignedIn)

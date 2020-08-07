@@ -83,22 +83,65 @@ export const signInUsingOAuth = googleAuth => async dispatch => {
         log.info('[signInUsingOAuth] User has not signed in yet')
 
         // sign in
-        googleAuth.signIn(JSON.parse(googleAuth.currentUser.get().getId())).then(() => {
-            // if sign in works
-            if (googleAuth.isSignedIn.get()) {
-                log.info('[signInUsingOAuth] User is signed in successfully')
-                // here we are sure that we signed in and now dispatch.
-                dispatch({
-                    type: HANDLE_GOOGLE_AUTH_SIGN_IN,
-                    payload: {
-                        firstName: "Norman",
-                        oAuth: googleAuth
-                    }
-                })
+        googleAuth.signIn(JSON.parse(googleAuth.currentUser.get().getId())).then(async () => {
 
-                history.push("/");
+                // if sign in works
+                if (googleAuth.isSignedIn.get()) {
+                    log.info('[signInUsingOAuth] User is signed in successfully')
+
+                    dispatch({
+                        type: HANDLE_GOOGLE_AUTH_SIGN_IN,
+                        payload: {
+                            firstName: googleAuth.currentUser.get().getBasicProfile().getGivenName(),
+                            oAuth: googleAuth
+                        }
+                    })
+                    history.push("/");
+
+                    // try {
+                        // let userProfile = googleAuth.currentUser.get().getBasicProfile()
+                        // if (userProfile) {
+                        //     authServiceAPI.defaults.timeout = 15000;
+                        //     const response = await authServiceAPI.post('/signin-using-google-auth', {
+                        //         'id': userProfile.getId(),
+                        //         'firstname': userProfile.getGivenName(),
+                        //         'lastname': userProfile.getFamilyName(),
+                        //         'email': userProfile.getEmail(),
+                        //         'username': null,
+                        //         'password': null,
+                        //     }).catch(err => {
+                        //         log.info(`[ACTION]: signUp dispatch HANDLE_SIGN_UP_ERROR err.message = ${err.message}.`)
+                        //     });
+                        //
+                        //     if(response.data === "success") {
+                        //         // here we are sure that we signed in and now dispatch.
+                        //         dispatch({
+                        //             type: HANDLE_GOOGLE_AUTH_SIGN_IN,
+                        //             payload: {
+                        //                 oAuth: googleAuth
+                        //             }
+                        //         })
+                        //         history.push("/");
+                        //     } else {
+                        //         dispatch({type: HANDLE_SIGN_IN_ERROR, payload: response.data.error});
+                        //     }
+
+                        // dispatch({
+                        //     type: HANDLE_GOOGLE_AUTH_SIGN_IN,
+                        //     payload: {
+                        //         oAuth: googleAuth
+                        //     }
+                        // })
+                        // history.push("/");
+                        // }
+                        // } catch
+                        //     (e) {
+                        //     log.info(`[signInUsingOAuth] Unable to retrieve user profile.`)
+                        //     dispatch({type: HANDLE_SIGN_IN_ERROR, payload: "Unable to retrieve user profile."});
+                        // }
+                }
             }
-        })
+        )
     }
 }
 
@@ -160,7 +203,7 @@ export const sendPaymentToken = (token) => async dispatch => {
     log.info(`Token = ${JSON.stringify(token)}`)
     let config = {
         method: 'post',
-        url: 'http://localhost:9050/payment',
+        url: `http://localhost:${process.env.REACT_APP_PAYMENT_SERVICE_PORT}/payment`,
         headers: {
             'Content-Type': 'application/json'
         },

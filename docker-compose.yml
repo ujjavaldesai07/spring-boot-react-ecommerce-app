@@ -25,6 +25,33 @@ services:
     networks:
       - spring-cloud-microservices
 
+  authentication-service:
+    build:
+      context: .
+      dockerfile: ./server/authentication-service/Dockerfile
+    container_name: authentication-service-container
+    restart: always
+    depends_on:
+      - mysql-db
+      - redis-cache
+      - react-ui
+    environment:
+      - DB_HOST=mysql-db
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_SCHEMA=${DB_SCHEMA}
+      - ACTIVE_PROFILE=${ACTIVE_PROFILE}
+      - REACT_APP_AUTHENTICATION_SERVICE_PORT=${AUTHENTICATION_SERVICE_PORT}
+    links:
+      - mysql-db:mysql
+    expose:
+      - ${AUTHENTICATION_SERVICE_PORT}
+    ports:
+      - ${AUTHENTICATION_SERVICE_PORT}:${AUTHENTICATION_SERVICE_PORT}
+    networks:
+      - spring-cloud-microservices
+
   common-data-service:
     build:
       context: .
@@ -55,6 +82,33 @@ services:
     networks:
       - spring-cloud-microservices
 
+  payment-service:
+    build:
+      context: .
+      dockerfile: ./server/payment-service/Dockerfile
+    container_name: payment-service-container
+    restart: always
+    depends_on:
+      - mysql-db
+      - redis-cache
+      - react-ui
+    environment:
+      - DB_HOST=mysql-db
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_SCHEMA=${DB_SCHEMA}
+      - ACTIVE_PROFILE=${ACTIVE_PROFILE}
+      - REACT_APP_PAYMENT_SERVICE_PORT=${PAYMENT_SERVICE_PORT}
+    links:
+      - mysql-db:mysql
+    expose:
+      - ${PAYMENT_SERVICE_PORT}
+    ports:
+      - ${PAYMENT_SERVICE_PORT}:${PAYMENT_SERVICE_PORT}
+    networks:
+      - spring-cloud-microservices
+
   react-ui:
     build:
       context: .
@@ -68,7 +122,6 @@ services:
       - ${REACT_APP_PORT}:${REACT_APP_PORT}
     environment:
       - REACT_APP_STRIPE_PUBLISH_KEY=${REACT_APP_STRIPE_PUBLISH_KEY}
-      - REACT_APP_COMMON_DATA_SERVICE_IP=${REACT_APP_COMMON_DATA_SERVICE_IP}
       - REACT_APP_COMMON_DATA_SERVICE_PORT=${COMMON_DATA_SERVICE_PORT}
     volumes:
       - ./client:/usr/src/app

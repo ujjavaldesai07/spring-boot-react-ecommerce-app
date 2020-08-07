@@ -18,7 +18,7 @@ FROM openjdk:11-jdk
 
 VOLUME /tmp
 
-# Add Spring Boot app.jar to Container
+# Add Spring Boot common-data-service.jar to Container
 COPY --from=0 /common_data_service_staging/target/common-data-service.jar common-data-service.jar
 
 # Fire up our Spring Boot app by default

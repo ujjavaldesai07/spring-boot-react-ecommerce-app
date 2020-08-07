@@ -87,13 +87,14 @@ const NavBar = props => {
                 window.gapi.load('client:auth2', () => {
                     window.gapi.client.init({
                         clientId: process.env.REACT_APP_GOOGLE_AUTH_CLIENT_ID,
-                        scope: 'email'
+                        scope: 'profile'
                     }).then(() => {
                         const auth = window.gapi.auth2.getAuthInstance();
                         dispatch({
                             type: SET_GOOGLE_AUTH,
                             payload: {
-                                firstName: "Norman",
+                                firstName: auth.currentUser.get().getBasicProfile() ?
+                                    auth.currentUser.get().getBasicProfile().getGivenName() : null,
                                 oAuth: auth
                             }
                         })
@@ -102,7 +103,9 @@ const NavBar = props => {
             } catch (e) {
                 log.info(`[Navbar] Failed to load google OAuth.`)
             }
-        } else if (isSignedIn === null) {
+        }
+
+        if (isSignedIn === null) {
             // if user is not signed in then signed it in using
             // account details from the cookie.
 
@@ -148,12 +151,19 @@ const NavBar = props => {
     }
 
     if (isSignedIn || googleAuthReducer.isSignedInUsingOAuth) {
+        let fName
+        if (firstName) {
+            fName = firstName
+        } else if (googleAuthReducer.isSignedInUsingOAuth) {
+            fName = googleAuthReducer.firstName
+        } else {
+            fName = "S"
+        }
+
         authIcon = <Avatar className={classes.orange} sizes="small"
                            style={{width: 20, height: 20, marginBottom: 3}}>
-            {firstName ? firstName.charAt(0)
-                : googleAuthReducer.isSignedInUsingOAuth ?
-                    googleAuthReducer.firstName.charAt(0) : "S"}
-        </Avatar>
+                            {fName.charAt(0).toUpperCase()}
+                    </Avatar>
         authLabel = "Sign Out"
     } else {
         authIcon = <AccountCircle/>

@@ -9,6 +9,7 @@ import com.ujjaval.ecommerce.commondataservice.model.SearchSuggestionResponse;
 import com.ujjaval.ecommerce.commondataservice.service.interfaces.CommonDataService;
 import com.ujjaval.ecommerce.commondataservice.service.interfaces.LoadFakeDataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,20 +23,22 @@ import java.util.List;
 public class CommonDataController {
 
     @Autowired
+    Environment environment;
+
+    @Autowired
     CommonDataService commonDataService;
 
     @Autowired
     LoadFakeDataService loadFakeDataService;
 
     @GetMapping("/load")
-    public ResponseEntity<?> loadTestData() {
-
-        if (!loadFakeDataService.loadTestData()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("An error has " +
-                    "occurred while loading the data in database");
-        }
-
-        return ResponseEntity.ok("Success");
+    public ResponseEntity<String> loadTestData() {
+        
+            if (!loadFakeDataService.loadTestData()) {
+                return new ResponseEntity<>("An error has occurred " +
+                        "while loading the data in database", HttpStatus.FORBIDDEN);
+            }
+            return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 
     @GetMapping(value = "/products", params = "q")
