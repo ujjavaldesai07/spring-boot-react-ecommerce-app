@@ -28,7 +28,7 @@ services:
   authentication-service:
     build:
       context: .
-      dockerfile: ./server/authentication-service/Dockerfile
+      dockerfile: ./server/authentication-service/Dockerfile-dev
     container_name: authentication-service-container
     restart: always
     depends_on:
@@ -42,7 +42,7 @@ services:
       - DB_PASS=${DB_PASS}
       - DB_SCHEMA=${DB_SCHEMA}
       - ACTIVE_PROFILE=${ACTIVE_PROFILE}
-      - REACT_APP_AUTHENTICATION_SERVICE_PORT=${AUTHENTICATION_SERVICE_PORT}
+      - PORT=${AUTHENTICATION_SERVICE_PORT}
     links:
       - mysql-db:mysql
     expose:
@@ -55,7 +55,7 @@ services:
   common-data-service:
     build:
       context: .
-      dockerfile: ./server/common-data-service/Dockerfile
+      dockerfile: ./server/common-data-service/Dockerfile-dev
     container_name: common-data-service-container
     restart: always
     depends_on:
@@ -69,7 +69,7 @@ services:
       - DB_PASS=${DB_PASS}
       - DB_SCHEMA=${DB_SCHEMA}
       - ACTIVE_PROFILE=${ACTIVE_PROFILE}
-      - COMMON_DATA_SERVICE_PORT=${COMMON_DATA_SERVICE_PORT}
+      - PORT=${COMMON_DATA_SERVICE_PORT}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_HOST=redis-cache
       - REDIS_PORT=${REDIS_PORT}
@@ -85,7 +85,7 @@ services:
   payment-service:
     build:
       context: .
-      dockerfile: ./server/payment-service/Dockerfile
+      dockerfile: ./server/payment-service/Dockerfile-dev
     container_name: payment-service-container
     restart: always
     depends_on:
@@ -99,7 +99,7 @@ services:
       - DB_PASS=${DB_PASS}
       - DB_SCHEMA=${DB_SCHEMA}
       - ACTIVE_PROFILE=${ACTIVE_PROFILE}
-      - REACT_APP_PAYMENT_SERVICE_PORT=${PAYMENT_SERVICE_PORT}
+      - PORT=${PAYMENT_SERVICE_PORT}
     links:
       - mysql-db:mysql
     expose:

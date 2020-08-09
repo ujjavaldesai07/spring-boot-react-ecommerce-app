@@ -3,7 +3,7 @@ import log from 'loglevel';
 import {Button, Grid} from "@material-ui/core";
 import {Field, reduxForm} from "redux-form";
 import {connect} from "react-redux";
-import {signUp, resetSignUp} from "../../../actions"
+import {signUp} from "../../../actions"
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import AccountCircle from '@material-ui/icons/AccountCircle';
@@ -31,10 +31,6 @@ class SignUpForm extends Component {
 
         this.props.loadingHandler(true)
         this.props.signUp(this.props.signUpFormStore.values)
-    }
-
-    componentWillUnmount() {
-        this.props.resetSignUp();
     }
 
     render() {
@@ -190,4 +186,4 @@ const reduxWrapperForm = reduxForm({
     validate,
 })(SignUpForm);
 
-export default connect(mapStateToProps, {signUp, resetSignUp})(reduxWrapperForm);
+export default connect(mapStateToProps, {signUp})(reduxWrapperForm);

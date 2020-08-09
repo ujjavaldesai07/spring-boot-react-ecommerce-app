@@ -14,15 +14,15 @@ import org.springframework.web.bind.annotation.*;
 import java.net.UnknownHostException;
 import java.sql.Timestamp;
 
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class PaymentController {
 
     @Autowired
     private Environment env;
 
-    @PostMapping(value = "/payment")
-    public ResponseEntity<PaymentStatus> chargeCustomer(@RequestBody CardToken cardToken) throws UnknownHostException, StripeException {
-
+    @PostMapping("/payment")
+    public ResponseEntity<PaymentStatus> chargeCustomer(@RequestBody CardToken cardToken) {
         Stripe.apiKey = env.getProperty("STRIPE_SECRET_KEY");
         Stripe.setMaxNetworkRetries(2);
 
@@ -51,9 +51,11 @@ public class PaymentController {
         } catch (Exception e) {
             paymentStatus = new PaymentStatus();
             paymentStatus.setPayment_failed(true);
+            System.out.println("Something went wrong with Stripe API");
             return ResponseEntity.badRequest().body(paymentStatus);
         }
 
+        System.out.println("Payment is successful....");
         return ResponseEntity.ok(paymentStatus);
     }
 }

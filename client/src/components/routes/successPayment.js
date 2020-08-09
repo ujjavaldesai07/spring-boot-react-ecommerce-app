@@ -4,7 +4,7 @@ import {Grid} from "@material-ui/core";
 import {useDispatch, useSelector} from "react-redux";
 import {BadRequest} from "../ui/error/badRequest";
 import {
-    ADD_TO_CART,
+    ADD_TO_CART, CART_TOTAL,
     DELIVERY_CHARGES,
     LOAD_SHOPPING_BAG_PRODUCTS, PAYMENT_RESPONSE,
     SHIPPING_ADDRESS_CONFIRMED,
@@ -62,6 +62,11 @@ export const SuccessPayment = () => {
             dispatch({
                 type: PAYMENT_RESPONSE,
                 payload: null
+            })
+
+            dispatch({
+                type: CART_TOTAL,
+                payload: 0
             })
 
         }

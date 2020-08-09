@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 public class CommonDataController {
@@ -31,14 +32,10 @@ public class CommonDataController {
     @Autowired
     LoadFakeDataService loadFakeDataService;
 
-    @GetMapping("/load")
-    public ResponseEntity<String> loadTestData() {
-        
-            if (!loadFakeDataService.loadTestData()) {
-                return new ResponseEntity<>("An error has occurred " +
-                        "while loading the data in database", HttpStatus.FORBIDDEN);
-            }
-            return new ResponseEntity<>("Success", HttpStatus.OK);
+    public void fillWithTestData() {
+        if (Objects.equals(environment.getProperty("ACTIVE_PROFILE"), "dev")) {
+            loadFakeDataService.loadTestData();
+        }
     }
 
     @GetMapping(value = "/products", params = "q")

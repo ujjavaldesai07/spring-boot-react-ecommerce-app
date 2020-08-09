@@ -8,7 +8,7 @@ import {
     SAVE_QUERY_STATUS,
     SHIPPING_ADDRESS_CONFIRMED,
     PAYMENT_INFO_CONFIRMED,
-    PAYMENT_RESPONSE, CART_TOTAL, HANDLE_SIGN_UP_RESET, HANDLE_GOOGLE_AUTH_SIGN_IN, HANDLE_GOOGLE_AUTH_SIGN_OUT,
+    PAYMENT_RESPONSE, CART_TOTAL, RESET_SIGN_UP, HANDLE_GOOGLE_AUTH_SIGN_IN, HANDLE_GOOGLE_AUTH_SIGN_OUT,
 } from './types';
 import {INTERNAL_SERVER_ERROR_CODE, BAD_REQUEST_ERROR_CODE} from '../constants/http_error_codes'
 import {SHOPPERS_PRODUCT_INFO_COOKIE, CART_TOTAL_COOKIE, AUTH_DETAILS_COOKIE} from '../constants/cookies'
@@ -48,7 +48,6 @@ export const signIn = formValues => async dispatch => {
 
     const hash = Base64.encode(`${formValues.username}:${formValues.password}`);
     authServiceAPI.defaults.headers.common['Authorization'] = `Basic ${hash}`
-    authServiceAPI.defaults.timeout = 5000;
     const response = await authServiceAPI.post('/authenticate').catch(err => {
         log.info(`[ACTION]: dispatch HANDLE_SIGN_IN_ERROR err.message = ${err.message}`)
         dispatch({type: HANDLE_SIGN_IN_ERROR, payload: err.message});
@@ -101,7 +100,6 @@ export const signInUsingOAuth = googleAuth => async dispatch => {
                     // try {
                         // let userProfile = googleAuth.currentUser.get().getBasicProfile()
                         // if (userProfile) {
-                        //     authServiceAPI.defaults.timeout = 15000;
                         //     const response = await authServiceAPI.post('/signin-using-google-auth', {
                         //         'id': userProfile.getId(),
                         //         'firstname': userProfile.getGivenName(),
@@ -165,17 +163,9 @@ export const signOutUsingOAuth = googleAuth => async dispatch => {
     }
 }
 
-
-export const resetSignUp = () => {
-    return {
-        type: HANDLE_SIGN_UP_RESET
-    }
-}
-
 export const signUp = formValues => async dispatch => {
     log.info(`[ACTION]: signUp API = ${JSON.stringify(formValues)}.`)
 
-    authServiceAPI.defaults.timeout = 15000;
     const response = await authServiceAPI.post('/signup', {
         'username': formValues.username,
         'password': formValues.password,
@@ -203,9 +193,10 @@ export const sendPaymentToken = (token) => async dispatch => {
     log.info(`Token = ${JSON.stringify(token)}`)
     let config = {
         method: 'post',
-        url: `http://localhost:${process.env.REACT_APP_PAYMENT_SERVICE_PORT}/payment`,
+        url: `${process.env.REACT_APP_PAYMENT_SERVICE_URL}/payment`
+            || `http://localhost:${process.env.REACT_APP_PAYMENT_SERVICE_PORT}/payment`,
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
         data: JSON.stringify(token)
     };
@@ -225,11 +216,6 @@ export const sendPaymentToken = (token) => async dispatch => {
                 history.push(`/checkout/success-payment/${response.data.charge_id}`)
                 Cookies.remove(CART_TOTAL_COOKIE)
                 Cookies.remove(SHOPPERS_PRODUCT_INFO_COOKIE)
-
-                dispatch({
-                    type: CART_TOTAL,
-                    payload: 0
-                })
             }
 
             dispatch({
@@ -239,11 +225,12 @@ export const sendPaymentToken = (token) => async dispatch => {
 
         })
         .catch(function (error) {
-            console.log(error);
+            log.error(`[sendPaymentToken]: Error = ${error} `)
             dispatch({
                 type: PAYMENT_RESPONSE,
                 payload: {error: true}
             })
+            return false
         });
 }
 
@@ -252,7 +239,6 @@ export const getDataViaAPI = (type, uri) => async dispatch => {
     log.info(`[ACTION]: invokeAndDispatchAPIData Calling API = ${uri}.`)
 
     if (uri) {
-        commonServiceAPI.defaults.timeout = 15000;
         uri = uri.replace(/\s/g, '')
         let responseError = false
         const response = await commonServiceAPI.get(uri)

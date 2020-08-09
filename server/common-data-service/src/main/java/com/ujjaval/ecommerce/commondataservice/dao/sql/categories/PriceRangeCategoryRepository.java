@@ -11,5 +11,5 @@ public interface PriceRangeCategoryRepository extends JpaRepository<PriceRangeCa
     @Query(value = "SELECT p FROM PriceRangeCategory p")
     List<PriceRangeCategory> getAllData();
 
-    PriceRangeCategory findByType(String line);
+    PriceRangeCategory findByType(String type);
 }

@@ -21,7 +21,7 @@ import {
     HANDLE_GOOGLE_AUTH_SIGN_OUT,
     HANDLE_SIGN_OUT,
     HANDLE_SIGN_UP_ERROR,
-    HANDLE_SIGN_UP_RESET, SET_GOOGLE_AUTH
+    RESET_SIGN_UP, SET_GOOGLE_AUTH, RESET_SIGN_IN_ERROR
 } from "../../actions/types";
 import log from "loglevel";
 import {
@@ -45,6 +45,8 @@ export const signInReducer = (state
             };
         case HANDLE_SIGN_IN_ERROR:
             return {...state, isSignedIn: false, errorMsg: action.payload, timestamp: Date.now()};
+        case RESET_SIGN_IN_ERROR:
+            return {...state, errorMsg: null};
         case HANDLE_SIGN_OUT:
             _.omit(state, 'tokenId', 'errorMsg')
             return {...state, isSignedIn: false, firstName: null};
@@ -83,7 +85,7 @@ export const signUpReducer = (state
     switch (action.type) {
         case HANDLE_SIGN_UP_ERROR:
             return {...state, errorMsg: action.payload, timestamp: Date.now()};
-        case HANDLE_SIGN_UP_RESET:
+        case RESET_SIGN_UP:
             return {account_status: null, errorMsg: null}
         default:
             return state;

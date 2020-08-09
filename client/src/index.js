@@ -11,9 +11,10 @@ import 'semantic-ui-css/semantic.min.css'
 import '../src/styles/library/swiper/swiper.css';
 import '../src/styles/library/swiper/swiper.min.css';
 import log from 'loglevel';
+import ErrorBoundary from "./ErrorBoundary";
 
-// log.disableAll(true)
-log.setLevel("info")
+log.disableAll(true)
+// log.setLevel("info")
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose();
 const store = createStore(
@@ -23,7 +24,9 @@ const store = createStore(
 
 ReactDOM.render(
     <Provider store={store}>
-        <App />
+        <ErrorBoundary>
+            <App/>
+        </ErrorBoundary>
     </Provider>,
     document.getElementById('root')
 );

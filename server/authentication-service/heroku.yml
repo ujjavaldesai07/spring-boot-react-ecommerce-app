@@ -1,0 +1,7 @@
+setup:
+  addons:
+    - plan: cleardb
+      as: DATABASE
+build:
+  docker:
+    web: Dockerfile-prod

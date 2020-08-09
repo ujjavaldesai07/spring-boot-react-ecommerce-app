@@ -18,7 +18,6 @@ import java.util.List;
 @Entity
 public class PriceRangeCategory implements Serializable {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int id;
 
     private String type;
@@ -27,7 +26,8 @@ public class PriceRangeCategory implements Serializable {
     @JsonIgnore
     private List<ProductInfo> productInfos;
 
-    public PriceRangeCategory(String type) {
+    public PriceRangeCategory(int id, String type) {
+        this.id = id;
         this.type = type;
     }
 }

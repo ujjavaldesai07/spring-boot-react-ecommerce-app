@@ -17,6 +17,7 @@ class PaymentButton extends Component {
     }
 
     componentDidMount() {
+        log.info(`[PaymentButton] Component Did Mount...paymentResponse = ${JSON.stringify(this.props.paymentResponse)}`)
         if(this.props.paymentResponse && this.props.paymentResponse.hasOwnProperty("error")) {
             this.setState({paymentBtnClicked: true})
         }
@@ -31,7 +32,7 @@ class PaymentButton extends Component {
 
         this.setState({paymentBtnClicked: true})
 
-        this.props.sendPaymentToken({
+        let value = this.props.sendPaymentToken({
             ...token,
             amount: this._GrandTotal,
             currency: "USD",
@@ -39,10 +40,14 @@ class PaymentButton extends Component {
             addToCart: this.props.addToCart,
             shippingOption: this.props.shippingOption
         })
+
+        if(value) {
+            this.setState({paymentBtnClicked: false})
+        }
     }
 
     renderButton = () => {
-        log.info(`[PaymentButton] renderButton....`)
+        log.info(`[PaymentButton] renderButton.....`)
         return (
             <Grid container justify="center" style={{padding: "2rem 0 2rem 0"}}>
                 <Grid item lg={9}>

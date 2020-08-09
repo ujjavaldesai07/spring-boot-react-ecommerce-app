@@ -81,28 +81,26 @@ const NavBar = props => {
      */
     useEffect(() => {
         log.info(`[NavBar]: Component did update.`)
-
+        
         if (!googleAuthReducer.oAuth) {
-            try {
-                window.gapi.load('client:auth2', () => {
-                    window.gapi.client.init({
-                        clientId: process.env.REACT_APP_GOOGLE_AUTH_CLIENT_ID,
-                        scope: 'profile'
-                    }).then(() => {
-                        const auth = window.gapi.auth2.getAuthInstance();
-                        dispatch({
-                            type: SET_GOOGLE_AUTH,
-                            payload: {
-                                firstName: auth.currentUser.get().getBasicProfile() ?
-                                    auth.currentUser.get().getBasicProfile().getGivenName() : null,
-                                oAuth: auth
-                            }
-                        })
-                    });
-                });
-            } catch (e) {
-                log.info(`[Navbar] Failed to load google OAuth.`)
-            }
+            window.gapi.load('client:auth2', () => {
+                window.gapi.client.init({
+                    clientId: process.env.REACT_APP_GOOGLE_AUTH_CLIENT_ID,
+                    scope: 'profile'
+                }).then(() => {
+                    const auth = window.gapi.auth2.getAuthInstance();
+                    dispatch({
+                        type: SET_GOOGLE_AUTH,
+                        payload: {
+                            firstName: auth.currentUser.get().getBasicProfile() ?
+                                auth.currentUser.get().getBasicProfile().getGivenName() : null,
+                            oAuth: auth
+                        }
+                    })
+                }).catch(function (e) {
+                    log.error(`[Navbar] Failed to load google OAuth`)
+                })
+            });
         }
 
         if (isSignedIn === null) {
@@ -160,10 +158,15 @@ const NavBar = props => {
             fName = "S"
         }
 
-        authIcon = <Avatar className={classes.orange} sizes="small"
-                           style={{width: 20, height: 20, marginBottom: 3}}>
-                            {fName.charAt(0).toUpperCase()}
-                    </Avatar>
+        authIcon = <Avatar sizes="small"
+                           style={{
+                               width: 20, height: 20,
+                               backgroundColor: "orange",
+                               filter: "saturate(5)"
+                           }}>
+
+            {fName.charAt(0).toUpperCase()}
+        </Avatar>
         authLabel = "Sign Out"
     } else {
         authIcon = <AccountCircle/>
@@ -260,12 +263,12 @@ const NavBar = props => {
         setHamburgerBtnState(false)
     }
 
-    const renderIndependentElem = (eventHandler, icon, label) => {
+    const renderIndependentElem = (eventHandler, icon, label, paddingTop) => {
         return (
             <Grid item>
                 <Grid container direction="column" alignItems="center"
                       onClick={eventHandler} style={{cursor: 'pointer'}}>
-                    <Grid item style={{height: 21, width: 21}}>
+                    <Grid item style={{height: 21, width: 21, paddingTop: paddingTop}}>
                         {icon}
                     </Grid>
                     <Grid item style={{color: "black", fontSize: "0.8rem", fontWeight: 'bold'}}>
@@ -335,11 +338,13 @@ const NavBar = props => {
                             <div className={classes.growHalf}/>
 
                             <Hidden xsDown>
-                                {renderIndependentElem(changeAuthStatusHandler, authIcon, authLabel)}
+                                {renderIndependentElem(changeAuthStatusHandler, authIcon, authLabel,
+                                    2)}
 
                                 <div className={classes.growQuarter}/>
 
-                                {renderIndependentElem(changePageToShoppingBagHandler, <BagButton/>, "Bag")}
+                                {renderIndependentElem(changePageToShoppingBagHandler, <BagButton/>,
+                                    "Bag", 0)}
                             </Hidden>
 
 

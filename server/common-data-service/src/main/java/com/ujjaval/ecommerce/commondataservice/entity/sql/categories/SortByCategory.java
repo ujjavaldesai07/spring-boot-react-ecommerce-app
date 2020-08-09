@@ -18,12 +18,12 @@ import java.io.Serializable;
 @Entity
 public class SortByCategory implements Serializable {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int id;
 
     private String type;
 
-    public SortByCategory(String type) {
+    public SortByCategory(int id, String type) {
+        this.id = id;
         this.type = type;
     }
 }

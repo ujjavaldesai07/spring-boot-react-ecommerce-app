@@ -18,6 +18,7 @@ import com.ujjaval.ecommerce.commondataservice.service.interfaces.LoadFakeDataSe
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -96,6 +97,7 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
         return new Date(beginTime + (long) (Math.random() * diff));
     }
 
+    @Transactional
     public boolean loadHomeScreenData() {
         System.out.println("Loading website data in to database...");
 
@@ -172,6 +174,7 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
         return true;
     }
 
+    @Transactional
     public boolean loadFixedPatternData(String filename, FileNameType filenameType) {
         System.out.println("Loading sortby data in to database...");
 
@@ -191,9 +194,12 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                 case SORT_BY:
                     for (String line; (line = reader.readLine()) != null; ) {
                         System.out.println("SortBy Line = " + line);
-                        SortByCategory sortByCategory = sortByCategoryRepository.findByType(line);
+                        String[] result = line.split("\\|");
+                        String id = result[0];
+                        String type = result[1];
+                        SortByCategory sortByCategory = sortByCategoryRepository.findByType(type);
                         if (sortByCategory == null) {
-                            sortByCategory = new SortByCategory(line);
+                            sortByCategory = new SortByCategory(Integer.parseInt(id),type);
                             sortByCategoryRepository.save(sortByCategory);
                         }
                     }
@@ -201,9 +207,12 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                 case PRICE_RANGE:
                     for (String line; (line = reader.readLine()) != null; ) {
                         System.out.println("PriceRange Line = " + line);
-                        PriceRangeCategory priceRangeCategory = priceRangeCategoryRepository.findByType(line);
+                        String[] result = line.split("\\|");
+                        String id = result[0];
+                        String type = result[1];
+                        PriceRangeCategory priceRangeCategory = priceRangeCategoryRepository.findByType(type);
                         if (priceRangeCategory == null) {
-                            priceRangeCategory = new PriceRangeCategory(line);
+                            priceRangeCategory = new PriceRangeCategory(Integer.parseInt(id),type);
                             priceRangeCategoryRepository.save(priceRangeCategory);
                         }
                     }
@@ -241,6 +250,7 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
         }
     }
 
+    @Transactional
     public boolean loadTestData() {
         System.out.println("Loading test data in to database...");
 
@@ -256,6 +266,18 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
         if (!loadFixedPatternData(String.format("%s/%s", DATA_DIRECTORY, PRICE_RANGE_DATA), FileNameType.PRICE_RANGE)) {
             return false;
         }
+
+        List<PriceRangeCategory> priceRangeCategoryList = priceRangeCategoryRepository.findAll();
+
+        if(!priceRangeCategoryList.isEmpty()) {
+            for(PriceRangeCategory priceRangeCategory: priceRangeCategoryList) {
+                System.out.println("STORED PRICE RANGE CATEGORY id = " + priceRangeCategory.getId() + "type = "+ priceRangeCategory.getType());
+            }
+        } else {
+            System.out.println("PRICE RANGE CATEGORY LIST IS EMPTY..Hence exiting.....");
+            return false;
+        }
+
 
         try {
 
@@ -288,9 +310,7 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                 String imageURL = result[7];
                 String imageLocalPath = replaceSpacesWithUnderscore(String.format("%s/%s/%s", gender, apparel, fileName));
 
-//                System.out.println("MainCategory = " + gender + ", SubCategory = " + subCategory
-//                        + ", + BrandName = " + brandName + ", ProductName = " + productName + ", Price = "
-//                        + price + ", filePath = " + filePath);
+                System.out.println("TestData = " + line);
 
 //                File file = ResourceUtils.getFile("classpath:static/images_2/" + filePath);
 //
@@ -351,16 +371,21 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                     productBrandCategoryRepository.save(productBrandCategory);
                 }
 
+                System.out.println("price = " + price);
                 Optional<PriceRangeCategory> priceRangeCategory = findPriceRangeCategory(Integer.parseInt(price));
-                System.out.println("Price == " + priceRangeCategory.get().getType());
 
-                ProductInfo productInfo = new ProductInfo(1, productName, generateRandomDate(),
-                        productBrandCategory, genderCategory, apparelCategory, priceRangeCategory.get(),
-                        Integer.parseInt(price), generateRandomInt(1, 10),
-                        generateRandomInt(2, 5), generateRandomFloat(0, 5, 1),
-                        true, imageLocalPath, imageURL);
+                if(priceRangeCategory.isPresent()) {
+                    ProductInfo productInfo = new ProductInfo(1, productName, generateRandomDate(),
+                            productBrandCategory, genderCategory, apparelCategory, priceRangeCategory.get(),
+                            Integer.parseInt(price), generateRandomInt(1, 10),
+                            generateRandomInt(2, 5), generateRandomFloat(0, 5, 1),
+                            true, imageLocalPath, imageURL);
+                    productInfoRepository.save(productInfo);
+                } else {
+                    System.out.println("ERROR: Unable to find price range category......");
+                    return false;
+                }
 
-                productInfoRepository.save(productInfo);
             }
             reader.close();
 //            writer.close();
@@ -371,10 +396,6 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
             e.printStackTrace();
         }
 
-        if (!loadHomeScreenData()) {
-            return false;
-        }
-
-        return true;
+        return loadHomeScreenData();
     }
 }

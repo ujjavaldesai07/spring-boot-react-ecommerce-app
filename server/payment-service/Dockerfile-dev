@@ -22,5 +22,5 @@ VOLUME /tmp
 COPY --from=0 /payment_service_staging/target/payment-service.jar payment-service.jar
 
 # Fire up our Spring Boot app by default
-CMD ["sh", "-c", "java -Dserver.port=$PAYMENT_SERVICE_PORT -Xmx300m -Xss512k -XX:CICompilerCount=2 -Dfile.encoding=UTF-8 -XX:+UseContainerSupport -Dspring.profiles.active=$ACTIVE_PROFILE -Djava.security.egd=file:/dev/./urandom -jar payment-service.jar" ]
+CMD ["sh", "-c", "java -Dserver.port=$PORT -Xmx300m -Xss512k -XX:CICompilerCount=2 -Dfile.encoding=UTF-8 -XX:+UseContainerSupport -Dspring.profiles.active=$ACTIVE_PROFILE -Djava.security.egd=file:/dev/./urandom -jar payment-service.jar" ]
 

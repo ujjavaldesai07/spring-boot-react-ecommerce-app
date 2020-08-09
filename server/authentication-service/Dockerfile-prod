@@ -3,7 +3,7 @@
 # 1. Building the App with Maven
 FROM maven:3-jdk-11
 
-ADD ./server/authentication-service /authentication_service_staging
+ADD . /authentication_service_staging
 
 WORKDIR /authentication_service_staging
 
@@ -22,5 +22,5 @@ VOLUME /tmp
 COPY --from=0 /authentication_service_staging/target/authentication-service.jar authentication-service.jar
 
 # Fire up our Spring Boot app by default
-CMD ["sh", "-c", "java -Dserver.port=$AUTHENTICATION_SERVICE_PORT -Xmx300m -Xss512k -XX:CICompilerCount=2 -Dfile.encoding=UTF-8 -XX:+UseContainerSupport -Dspring.profiles.active=$ACTIVE_PROFILE -Djava.security.egd=file:/dev/./urandom -jar authentication-service.jar" ]
+CMD ["sh", "-c", "java -Dserver.port=$PORT -Xmx300m -Xss512k -XX:CICompilerCount=2 -Dfile.encoding=UTF-8 -XX:+UseContainerSupport -Dspring.profiles.active=$ACTIVE_PROFILE -Djava.security.egd=file:/dev/./urandom -jar authentication-service.jar" ]
 

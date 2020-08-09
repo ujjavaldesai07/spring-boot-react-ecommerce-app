@@ -5,14 +5,16 @@ import log from "loglevel";
 import {Divider} from "semantic-ui-react";
 import {Link} from "react-router-dom";
 import {Dimmer, Loader} from 'semantic-ui-react'
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import GoogleAuthButton from "./GoogleAuthButton";
 import {DocumentTitle} from "../../ui/documentTitle";
+import {RESET_SIGN_IN_ERROR} from "../../../actions/types";
 
 const SignIn = () => {
     const [isLoading, setIsLoading] = useState(false);
     const {isSignedIn, timestamp} = useSelector(state => state.signInReducer)
     const {isSignedInUsingOAuth} = useSelector(state => state.googleAuthReducer)
+    const dispatch = useDispatch()
 
     const setIsLoadingState = () => {
         setIsLoading(true);
@@ -24,6 +26,18 @@ const SignIn = () => {
 
         // eslint-disable-next-line
     }, [timestamp])
+
+    useEffect(() => {
+
+        return () => {
+            log.info(`[SignIn] Component will unmount...`)
+            dispatch({
+                type: RESET_SIGN_IN_ERROR
+            })
+        }
+
+        // eslint-disable-next-line
+    }, [])
 
     if ((isSignedIn !== null && isSignedIn)
         || (isSignedInUsingOAuth !== null && isSignedInUsingOAuth)) {
