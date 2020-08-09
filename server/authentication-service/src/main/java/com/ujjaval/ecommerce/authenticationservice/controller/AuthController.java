@@ -45,6 +45,11 @@ public class AuthController {
     @Autowired
     private AuthDataService authDataService;
 
+    @GetMapping("/test")
+    public ResponseEntity<?> test() {
+        return ResponseEntity.ok("success");
+    }
+
     @PostMapping("/signup")
     public ResponseEntity<?> createAccount(
             @RequestBody AccountCreationRequest accountCreationRequest)

@@ -81,7 +81,7 @@ const NavBar = props => {
      */
     useEffect(() => {
         log.info(`[NavBar]: Component did update.`)
-        
+
         if (!googleAuthReducer.oAuth) {
             window.gapi.load('client:auth2', () => {
                 window.gapi.client.init({

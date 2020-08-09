@@ -21,6 +21,11 @@ public class PaymentController {
     @Autowired
     private Environment env;
 
+    @GetMapping("/test")
+    public ResponseEntity<?> test() {
+        return ResponseEntity.ok("success");
+    }
+
     @PostMapping("/payment")
     public ResponseEntity<PaymentStatus> chargeCustomer(@RequestBody CardToken cardToken) {
         Stripe.apiKey = env.getProperty("STRIPE_SECRET_KEY");
