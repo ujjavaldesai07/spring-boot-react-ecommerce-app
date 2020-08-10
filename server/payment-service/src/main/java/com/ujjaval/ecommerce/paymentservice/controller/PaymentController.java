@@ -28,6 +28,7 @@ public class PaymentController {
 
     @PostMapping("/payment")
     public ResponseEntity<PaymentStatus> chargeCustomer(@RequestBody CardToken cardToken) {
+
         Stripe.apiKey = env.getProperty("STRIPE_SECRET_KEY");
         Stripe.setMaxNetworkRetries(2);
 

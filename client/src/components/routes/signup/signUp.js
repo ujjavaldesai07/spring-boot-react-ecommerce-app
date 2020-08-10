@@ -5,7 +5,7 @@ import log from "loglevel";
 import {useDispatch, useSelector} from "react-redux";
 import {Dimmer, Loader} from "semantic-ui-react";
 import {DocumentTitle} from "../../ui/documentTitle";
-import {RESET_SIGN_IN_ERROR, RESET_SIGN_UP} from "../../../actions/types";
+import {RESET_SIGN_UP} from "../../../actions/types";
 
 const SignUp = () => {
     const [isLoading, setIsLoading] = useState(false);

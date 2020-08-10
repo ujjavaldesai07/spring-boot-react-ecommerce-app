@@ -4,17 +4,14 @@ import {Grid} from "@material-ui/core";
 import {useDispatch, useSelector} from "react-redux";
 import {BadRequest} from "../ui/error/badRequest";
 import {
-    ADD_TO_CART, CART_TOTAL,
-    DELIVERY_CHARGES,
-    LOAD_SHOPPING_BAG_PRODUCTS, PAYMENT_RESPONSE,
-    SHIPPING_ADDRESS_CONFIRMED,
-    SHIPPING_OPTION_CONFIRMED
+    RESET_ADD_TO_CART, RESET_CART_TOTAL, RESET_DELIVERY_CHARGES,
+    RESET_PAYMENT_RESPONSE, RESET_SHIPPING_ADDRESS, RESET_SHIPPING_OPTION, RESET_SHOPPING_BAG_PRODUCTS,
 } from "../../actions/types";
-import {
-    INITIAL_SHIPPING_ADDRESS_STATE,
-    INITIAL_SHIPPING_OPTION_STATE
-} from "../../constants/constants";
 import {DocumentTitle} from "../ui/documentTitle";
+import {GenericErrorMsg} from "../ui/error/GenericErrorMsg";
+
+const resetStates = [RESET_ADD_TO_CART, RESET_CART_TOTAL, RESET_DELIVERY_CHARGES,
+    RESET_PAYMENT_RESPONSE, RESET_SHIPPING_ADDRESS, RESET_SHIPPING_OPTION, RESET_SHOPPING_BAG_PRODUCTS]
 
 export const SuccessPayment = () => {
     const dispatch = useDispatch()
@@ -31,42 +28,11 @@ export const SuccessPayment = () => {
 
         return () => {
             log.info("[SuccessPayment] Component will unmount.")
-            dispatch({
-                type: ADD_TO_CART,
-                payload: {
-                    totalQuantity: 0,
-                    productQty: {}
-                }
-            })
 
-            dispatch({
-                type: LOAD_SHOPPING_BAG_PRODUCTS,
-                payload: {isLoading: false, data: {}}
-            })
-
-            dispatch({
-                type: DELIVERY_CHARGES,
-                payload: 0
-            })
-
-            dispatch({
-                type: SHIPPING_OPTION_CONFIRMED,
-                payload: INITIAL_SHIPPING_OPTION_STATE
-            })
-
-            dispatch({
-                type: SHIPPING_ADDRESS_CONFIRMED,
-                payload: INITIAL_SHIPPING_ADDRESS_STATE
-            })
-
-            dispatch({
-                type: PAYMENT_RESPONSE,
-                payload: null
-            })
-
-            dispatch({
-                type: CART_TOTAL,
-                payload: 0
+            resetStates.forEach(resetState => {
+                dispatch({
+                    type: resetState
+                })
             })
 
         }
@@ -74,8 +40,19 @@ export const SuccessPayment = () => {
         // eslint-disable-next-line
     }, [])
 
-    if (!shippingAddressForm || !paymentResponse) {
+    log.info(`paymentResponse = ${JSON.stringify(paymentResponse)}`)
+    if (paymentResponse.error) {
+        // if user land on this page with an payment error
+        // then we cannot proceed further...
+        return <GenericErrorMsg/>
+    }
+
+    if (!shippingAddressForm) {
         return <BadRequest/>
+    }
+
+    if (!paymentResponse.hasOwnProperty("order_id")) {
+        return null
     }
 
     const renderShippingAddress = () => {

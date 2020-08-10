@@ -99,7 +99,7 @@ class ShippingAddressForm extends Component {
         const renderShippingForm = () => {
             return (
                 <Grid item style={{width: "100%", height: "fit-content"}}>
-                    <Grid item xs={12} sm={12}>
+                    <Grid item xs={12}>
                         <form onSubmit={this.handleSubmit} className={classes.root}
                               style={{width: "inherit"}}>
 

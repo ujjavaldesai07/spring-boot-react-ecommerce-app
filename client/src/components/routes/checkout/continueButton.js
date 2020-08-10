@@ -26,7 +26,7 @@ function ContinueButton(props) {
 
     const renderContinueMobileBtn = () => {
         return (
-            <Grid item container justify="center" style={{paddingTop: 30, margin: 0}}>
+            <Grid item container justify="center" style={{padding: "30px 0", margin: 0}}>
                 <Button variant="contained" size="large" style={{
                     ...continueButtonStyle, width: "85%"
                 }} type={props.type} disabled={props.action} onClick={props.buttonHandler}>

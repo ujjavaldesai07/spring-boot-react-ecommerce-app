@@ -4,24 +4,11 @@ import {Button, Grid} from "@material-ui/core";
 import {connect} from "react-redux";
 import {sendPaymentToken} from "../../../actions"
 import log from 'loglevel';
+import AlertModal from "../../ui/alertModal";
 
 class PaymentButton extends Component {
 
     _GrandTotal = 0
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            paymentBtnClicked: false
-        }
-    }
-
-    componentDidMount() {
-        log.info(`[PaymentButton] Component Did Mount...paymentResponse = ${JSON.stringify(this.props.paymentResponse)}`)
-        if(this.props.paymentResponse && this.props.paymentResponse.hasOwnProperty("error")) {
-            this.setState({paymentBtnClicked: true})
-        }
-    }
 
     getGrandTotal = () => {
         this._GrandTotal = (this.props.cartTotal + this.props.deliveryCharges) * 100
@@ -29,10 +16,10 @@ class PaymentButton extends Component {
     }
 
     onToken = (token) => {
+        log.info("[PaymentButton] onToken setting loadingHandler to true")
+        this.props.loadingHandler(true)
 
-        this.setState({paymentBtnClicked: true})
-
-        let value = this.props.sendPaymentToken({
+        this.props.sendPaymentToken({
             ...token,
             amount: this._GrandTotal,
             currency: "USD",
@@ -40,10 +27,6 @@ class PaymentButton extends Component {
             addToCart: this.props.addToCart,
             shippingOption: this.props.shippingOption
         })
-
-        if(value) {
-            this.setState({paymentBtnClicked: false})
-        }
     }
 
     renderButton = () => {
@@ -52,7 +35,7 @@ class PaymentButton extends Component {
             <Grid container justify="center" style={{padding: "2rem 0 2rem 0"}}>
                 <Grid item lg={9}>
                     <Button variant="contained" size="medium"
-                            disabled={this.state.paymentBtnClicked || this.props.disabled}
+                            disabled={this.props.disabled}
                             style={{
                                 width: '100%', height: 50, color: 'white',
                                 fontWeight: "bold", backgroundColor: "#e01a2b",
@@ -66,11 +49,17 @@ class PaymentButton extends Component {
     }
 
     render() {
-        console.log(`[PaymentButton] Rendering PaymentButton Component...`)
+        log.info(`[PaymentButton] Rendering PaymentButton Component...error = ${this.props.paymentResponse.error}`)
 
         return (
             <>
-                {this.state.paymentBtnClicked || this.props.disabled ?
+                <AlertModal title="Payment Error"
+                            question="Something went wrong. Please try again later."
+                            enable={this.props.paymentResponse.error}
+                            timestamp={this.props.paymentResponse.timestamp}
+                />
+
+                {this.props.disabled ?
                     this.renderButton():
                     <StripeCheckout
                         token={this.onToken}
@@ -97,10 +86,4 @@ const mapStateToProps = (state) => {
     })
 }
 
-function paymentButtonPropsAreEqual(prevProps, nextProps) {
-    return prevProps.disabled === nextProps.disabled;
-}
-
-const wrapperMemo = React.memo(PaymentButton, paymentButtonPropsAreEqual);
-
-export default connect(mapStateToProps, {sendPaymentToken})(wrapperMemo)
+export default connect(mapStateToProps, {sendPaymentToken})(PaymentButton)

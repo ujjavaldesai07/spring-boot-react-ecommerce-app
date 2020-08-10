@@ -19,7 +19,7 @@ public class CORSFilter implements Filter {
     private final Logger log = LoggerFactory.getLogger(CORSFilter.class);
 
     public CORSFilter() {
-        log.info("CORSFilter init");
+        log.info("SimpleCORSFilter init");
     }
 
     @Override

@@ -8,7 +8,10 @@ import {
     SAVE_QUERY_STATUS,
     SHIPPING_ADDRESS_CONFIRMED,
     PAYMENT_INFO_CONFIRMED,
-    PAYMENT_RESPONSE, CART_TOTAL, RESET_SIGN_UP, HANDLE_GOOGLE_AUTH_SIGN_IN, HANDLE_GOOGLE_AUTH_SIGN_OUT,
+    PAYMENT_RESPONSE,
+    HANDLE_GOOGLE_AUTH_SIGN_IN,
+    HANDLE_GOOGLE_AUTH_SIGN_OUT,
+    PAYMENT_RESPONSE_ERROR,
 } from './types';
 import {INTERNAL_SERVER_ERROR_CODE, BAD_REQUEST_ERROR_CODE} from '../constants/http_error_codes'
 import {SHOPPERS_PRODUCT_INFO_COOKIE, CART_TOTAL_COOKIE, AUTH_DETAILS_COOKIE} from '../constants/cookies'
@@ -191,15 +194,30 @@ export const signUp = formValues => async dispatch => {
 
 export const sendPaymentToken = (token) => async dispatch => {
     log.info(`Token = ${JSON.stringify(token)}`)
+    if(!token || (token && !token.hasOwnProperty("id"))) {
+        dispatch({
+            type: PAYMENT_RESPONSE_ERROR,
+            payload: {errorMsg: "Unable to fetch token. Try again later"}
+        })
+    }
+
+    let url
+    if(process.env.REACT_APP_PAYMENT_SERVICE_URL) {
+        url = `${process.env.REACT_APP_PAYMENT_SERVICE_URL}/payment`
+    } else {
+        url = `http://localhost:${process.env.REACT_APP_PAYMENT_SERVICE_PORT}/payment`
+    }
+
     let config = {
         method: 'post',
-        url: `${process.env.REACT_APP_PAYMENT_SERVICE_URL}/payment`
-            || `http://localhost:${process.env.REACT_APP_PAYMENT_SERVICE_PORT}/payment`,
+        url: url,
         headers: {
             'Content-Type': 'application/json',
         },
         data: JSON.stringify(token)
     };
+
+    log.info(`URL = ${config.url}`)
 
     axios(config)
         .then(function (response) {
@@ -220,17 +238,16 @@ export const sendPaymentToken = (token) => async dispatch => {
 
             dispatch({
                 type: PAYMENT_RESPONSE,
-                payload: paymentResponse
+                payload: {...paymentResponse, error: false, errorMsg: null}
             })
 
         })
         .catch(function (error) {
             log.error(`[sendPaymentToken]: Error = ${error} `)
             dispatch({
-                type: PAYMENT_RESPONSE,
-                payload: {error: true}
+                type: PAYMENT_RESPONSE_ERROR,
+                payload: {errorMsg: "Something Went Wrong"}
             })
-            return false
         });
 }
 

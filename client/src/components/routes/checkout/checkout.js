@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import log from 'loglevel';
 import {Paper, Grid, Hidden} from "@material-ui/core";
 import PriceDetails from "../priceDetails";
@@ -8,13 +8,15 @@ import {makeStyles, withStyles} from '@material-ui/core/styles';
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
-import {connect, useSelector} from "react-redux";
+import {connect, useDispatch, useSelector} from "react-redux";
 // import {loadStripe} from "@stripe/stripe-js/pure";
 import PaymentButton from "./paymentButton";
 import {useAddProductsToShoppingBag} from "../../../hooks/useAddProductsToShoppingBag";
 import {getDataViaAPI} from "../../../actions";
 import {useCartTotal} from "../../../hooks/useCartTotal";
 import {DocumentTitle} from "../../ui/documentTitle";
+import {RESET_PAYMENT_RESPONSE_ERROR} from "../../../actions/types";
+import BackgroundDisabledSpinner from "../../ui/BackgroundDisabledSpinner";
 // import {Elements, ElementsConsumer} from "@stripe/react-stripe-js";
 // import Payment from "./payment"
 
@@ -80,7 +82,33 @@ const shippingOptionPanel = 'shipOptPanel'
 function Checkout(props) {
     const shippingAddress = useSelector(state => state.shippingAddressReducer)
     const shippingOption = useSelector(state => state.shippingOptionReducer)
+    const {timestamp} = useSelector(state => state.paymentResponseReducer)
     const classes = useGridStyles();
+    const dispatch = useDispatch()
+    const [isLoading, setIsLoading] = useState(false);
+
+    const setIsLoadingState = () => {
+        setIsLoading(true);
+    }
+
+    useEffect(() => {
+        log.info(`[Checkout]: Component did mount...`)
+        setIsLoading(false)
+
+        // eslint-disable-next-line
+    }, [timestamp])
+
+    useEffect(() => {
+
+        return () => {
+            log.info(`[Checkout] Component will unmount...`)
+            dispatch({
+                type: RESET_PAYMENT_RESPONSE_ERROR
+            })
+        }
+
+        // eslint-disable-next-line
+    }, [])
 
     useCartTotal()
     useAddProductsToShoppingBag(props.getDataViaAPI)
@@ -97,10 +125,11 @@ function Checkout(props) {
         )
     }
 
-    log.info("[Checkout] Rendering Checkout Component.")
+    log.info(`[Checkout] Rendering Checkout Component. isLoading = ${isLoading}`)
 
     return (
         <Grid container justify={"center"} classes={{root: classes.root}}>
+            {isLoading ? <BackgroundDisabledSpinner/> : null}
 
             <Grid item xs={12} sm={11} md={5}>
 
@@ -152,6 +181,7 @@ function Checkout(props) {
                 <Grid item sm={11} md={4} style={{height: 300, marginTop: "1rem"}}>
                     <Paper square style={{width: "inherit"}}>
                         <PriceDetails buttonName="PLACE ORDER"/>
+                        <PaymentButton disabled={!shippingOption.submitted} loadingHandler={setIsLoadingState}/>
                     </Paper>
                 </Grid>
             </Hidden>
@@ -161,7 +191,7 @@ function Checkout(props) {
                       style={{height: "fit-content", marginTop: "1rem", position: "sticky", top: 80}}>
                     <Paper square style={{width: "inherit"}}>
                         <PriceDetails buttonName="PLACE ORDER"/>
-                        <PaymentButton disabled={!shippingOption.submitted}/>
+                        <PaymentButton disabled={!shippingOption.submitted} loadingHandler={setIsLoadingState}/>
                     </Paper>
                 </Grid>
             </Hidden>

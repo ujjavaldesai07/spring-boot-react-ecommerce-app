@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -37,30 +35,6 @@ public class CommonDataController {
     public void fillWithTestData() {
         if (Objects.equals(environment.getProperty("ACTIVE_PROFILE"), "dev")) {
             loadFakeDataService.loadTestData();
-        }
-    }
-
-    public void pingOtherServices() {
-        if (Objects.equals(environment.getProperty("ACTIVE_PROFILE"), "prod")) {
-            HttpURLConnection connection;
-
-            try {
-                //Create connection
-                URL url = new URL(System.getenv("AUTHENTICATION_SERVICE_URL"));
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-            } catch (Exception e) {
-                System.out.println("Problem with Authentication service");
-            }
-
-            try {
-                //Create connection
-                URL url = new URL(System.getenv("PAYMENT_SERVICE_URL"));
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-            } catch (Exception e) {
-                System.out.println("Problem with Payment service");
-            }
         }
     }
 

@@ -25,11 +25,6 @@ export const INITIAL_SELECTED_FILTER_ATTRIBUTE_STATE = {
     prices: [],
 }
 
-export const INITIAL_ADD_TO_CART_STATE = {
-    totalQuantity: 0,
-    productQty: {}
-}
-
 export const INITIAL_SHIPPING_OPTION_STATE = {
     price: "Free",
     submitted: false

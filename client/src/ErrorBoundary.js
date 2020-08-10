@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Grid} from "@material-ui/core";
+import {GenericErrorMsg} from "./components/ui/error/GenericErrorMsg";
 
 class ErrorBoundary extends Component {
 
@@ -26,9 +26,7 @@ class ErrorBoundary extends Component {
     render() {
         if (this.state.hasError) {
             return (
-                <Grid container justify="center" style={{paddingTop: "2rem", fontSize: "3rem"}}>
-                    <p>Oops! Something went wrong....</p>
-                </Grid>
+                <GenericErrorMsg/>
             )
         }
         return this.props.children
