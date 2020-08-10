@@ -200,6 +200,7 @@ const NavBar = props => {
     };
 
     const handleMobileSearchClose = () => {
+        log.info("handleMobileSearchClose is invoked.....")
         setMobileSearchState(false)
     }
 
@@ -209,7 +210,9 @@ const NavBar = props => {
 
     const renderMobileSearchInputField = () => {
         if (mobileSearchState) {
-            return <SearchBar size="medium" handleClose={handleMobileSearchClose}/>
+            return (
+                    <SearchBar size="medium" device="mobile" handleClose={handleMobileSearchClose}/>
+            )
         }
     }
 
@@ -249,25 +252,26 @@ const NavBar = props => {
                     <Toolbar classes={{root: classes.toolBarRoot}}>
                         <Grid container alignItems="center">
                             <Hidden lgUp>
-                                <Grid item>
-                                    <IconButton
-                                        edge="start"
-                                        className={classes.menuButton}
-                                        color="inherit"
-                                        aria-label="open drawer"
-                                        onClick={handleSidebarOpen}>
-                                        <MenuIcon fontSize="large"/>
-                                    </IconButton>
-                                </Grid>
+                                {!mobileSearchState ?
+                                    <Grid item>
+                                        <IconButton
+                                            edge="start"
+                                            className={classes.menuButton}
+                                            color="inherit"
+                                            aria-label="open drawer"
+                                            onClick={handleSidebarOpen}>
+                                            <MenuIcon fontSize="large"/>
+                                        </IconButton>
+                                    </Grid> : null}
                             </Hidden>
 
-                            <Grid item>
+                            {!mobileSearchState ? <Grid item>
                                 <Link to="/">
                                     <Typography className={classes.title}>
                                         Shoppers
                                     </Typography>
                                 </Link>
-                            </Grid>
+                            </Grid> : null}
 
                             <div className={classes.growHalf}/>
 
@@ -286,12 +290,12 @@ const NavBar = props => {
                             </Hidden>
 
                             <Hidden smUp>
-                                <Grid item container justify="flex-end" xs={5}>
+                                {!mobileSearchState ? <Grid item container justify="flex-end" xs={5}>
                                     <IconButton onClick={handleMobileSearchOpen}
                                                 edge="end">
                                         <SearchIcon fontSize="large"/>
                                     </IconButton>
-                                </Grid>
+                                </Grid> : null}
                                 {renderMobileSearchInputField()}
                             </Hidden>
 
@@ -309,7 +313,7 @@ const NavBar = props => {
 
 
                             <Hidden smUp>
-                                <Grid item>
+                                {!mobileSearchState ? <Grid item>
                                     <IconButton
                                         aria-label="show more"
                                         aria-controls={mobileMenuId}
@@ -319,7 +323,7 @@ const NavBar = props => {
                                         edge="end">
                                         <MoreIcon fontSize="large"/>
                                     </IconButton>
-                                </Grid>
+                                </Grid> : null}
                             </Hidden>
                         </Grid>
                     </Toolbar>
