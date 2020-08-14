@@ -10,7 +10,7 @@ import {
     shippingAddressReducer, paymentInfoReducer,
     shippingOptionReducer, deliveryChargesReducer,
     paymentResponseReducer, signInReducer, signUpReducer,
-    googleAuthReducer,
+    googleAuthReducer, searchKeywordReducer
 } from "./screens/commonScreenReducer";
 
 import {tabHoverEventReducer} from "./events/eventReducer";
@@ -43,5 +43,6 @@ export default combineReducers({
     shippingOptionReducer,
     deliveryChargesReducer,
     paymentResponseReducer,
-    googleAuthReducer
+    googleAuthReducer,
+    searchKeywordReducer
 });

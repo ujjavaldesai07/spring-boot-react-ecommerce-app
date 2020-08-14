@@ -1,9 +1,6 @@
 package com.ujjaval.ecommerce.commondataservice.utils.resulttransformers;
 
-import com.ujjaval.ecommerce.commondataservice.dto.FilterAttributesDTO;
-import com.ujjaval.ecommerce.commondataservice.dto.FilterAttributesWithTotalItemsDTO;
-import com.ujjaval.ecommerce.commondataservice.dto.SearchSuggestionForThreeAttrDTO;
-import com.ujjaval.ecommerce.commondataservice.dto.SearchSuggestionForTwoAttrDTO;
+import com.ujjaval.ecommerce.commondataservice.dto.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;

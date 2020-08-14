@@ -1,0 +1,7 @@
+setup:
+  addons:
+    - plan: heroku-redis
+      as: DATABASE
+build:
+  docker:
+    web: Dockerfile-prod

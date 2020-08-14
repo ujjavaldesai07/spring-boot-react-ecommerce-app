@@ -5,9 +5,9 @@ import com.ujjaval.ecommerce.commondataservice.dto.SearchSuggestionForTwoAttrDTO
 import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
 import com.ujjaval.ecommerce.commondataservice.model.FilterAttributesResponse;
 import com.ujjaval.ecommerce.commondataservice.model.HomeTabsDataResponse;
-import com.ujjaval.ecommerce.commondataservice.utils.resulttransformers.ListResultTransformer;
 import org.javatuples.Pair;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,11 +22,14 @@ public interface ProductInfoRepository extends JpaRepository<ProductInfo, Intege
 
     HomeTabsDataResponse getBrandsAndApparelsByGender();
 
-    List<SearchSuggestionForThreeAttrDTO> getSearchSuggestionListForThreeAttr();
+    List<SearchSuggestionForThreeAttrDTO> getGenderApparelBrandByIdAndName();
 
-    List<SearchSuggestionForTwoAttrDTO> getSearchSuggestionListForGenderAndApparel();
+    List<SearchSuggestionForTwoAttrDTO> getGenderAndApparelByIdAndName();
 
-    List<SearchSuggestionForTwoAttrDTO> getSearchSuggestionListForGenderAndBrand();
+    List<SearchSuggestionForTwoAttrDTO> getGenderAndBrandByIdAndName();
 
-    List<SearchSuggestionForTwoAttrDTO> getSearchSuggestionListForApparelAndBrand();
+    List<SearchSuggestionForTwoAttrDTO> getApparelAndBrandByIdAndName();
+
+    @Query(value = "SELECT DISTINCT p.name FROM ProductInfo p")
+    List<String> getProductByName();
 }

@@ -12,10 +12,6 @@ import java.util.List;
 
 public interface CommonDataService {
 
-    ProductInfo findAddressById(Integer id);
-
-    void save();
-
     MainScreenResponse getHomeScreenData(String apiName);
 
     FilterAttributesResponse getFilterAttributesByProducts(String queryParams);
@@ -26,6 +22,6 @@ public interface CommonDataService {
 
     HomeTabsDataResponse getBrandsAndApparelsByGender(String apiName);
 
-    List<SearchSuggestionResponse> getSearchSuggestionList();
+    SearchSuggestionResponse getSearchSuggestionList();
 }
 

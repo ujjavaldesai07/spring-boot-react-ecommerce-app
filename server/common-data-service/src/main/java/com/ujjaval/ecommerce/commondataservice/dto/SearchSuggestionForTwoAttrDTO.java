@@ -1,23 +1,20 @@
 package com.ujjaval.ecommerce.commondataservice.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
-public class SearchSuggestionForTwoAttrDTO {
-    Integer attr1_Id;
-    String attr1_Name;
-    Integer attr2_Id;
-    String attr2_Name;
-
-    public SearchSuggestionForTwoAttrDTO(Integer attr1_Id, String attr1_Name, Integer attr2_Id, String attr2_Name) {
-        this.attr1_Id = attr1_Id;
-        this.attr1_Name = attr1_Name;
-        this.attr2_Id = attr2_Id;
-        this.attr2_Name = attr2_Name;
-    }
+@AllArgsConstructor
+public class SearchSuggestionForTwoAttrDTO implements Serializable {
+    Integer attr1_id;
+    String attr1_type;
+    Integer attr2_id;
+    String attr2_type;
 }
 

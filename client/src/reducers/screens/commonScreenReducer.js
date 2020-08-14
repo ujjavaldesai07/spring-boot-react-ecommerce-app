@@ -31,7 +31,7 @@ import {
     RESET_SHIPPING_OPTION,
     RESET_DELIVERY_CHARGES,
     RESET_CART_TOTAL,
-    RESET_ADD_TO_CART, RESET_SHOPPING_BAG_PRODUCTS
+    RESET_ADD_TO_CART, RESET_SHOPPING_BAG_PRODUCTS, SEARCH_KEYWORD, SEARCH_KEYWORD_ERROR
 } from "../../actions/types";
 import log from "loglevel";
 import {
@@ -259,6 +259,18 @@ export const paymentResponseReducer = (state
             return {...state, error: false, errorMsg: null, timestamp: null}
         case RESET_PAYMENT_RESPONSE:
             return {error: false, errorMsg: null, timestamp: null}
+        default:
+            return state;
+    }
+};
+
+export const searchKeywordReducer = (state
+                                           = {error: false, errorMsg: null, data: [{keyword: ' '}]}, action) => {
+    switch (action.type) {
+        case SEARCH_KEYWORD:
+            return {...action.payload, error: false, errorMsg: null}
+        case SEARCH_KEYWORD_ERROR:
+            return {...state, error: true, errorMsg: "Something went wrong"};
         default:
             return state;
     }

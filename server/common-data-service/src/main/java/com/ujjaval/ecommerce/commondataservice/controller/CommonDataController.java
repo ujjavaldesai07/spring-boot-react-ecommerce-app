@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -33,7 +32,7 @@ public class CommonDataController {
     LoadFakeDataService loadFakeDataService;
 
     public void fillWithTestData() {
-        if (Objects.equals(environment.getProperty("ACTIVE_PROFILE"), "dev")) {
+        if (Objects.equals(environment.getProperty("ACTIVE_PROFILE"), "no_profile")) {
             loadFakeDataService.loadTestData();
         }
     }
@@ -94,19 +93,13 @@ public class CommonDataController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/search-suggestions")
+    @GetMapping("/search-suggestion-list")
     public ResponseEntity<?> getSearchSuggestionList() {
-        List<SearchSuggestionResponse> searchSuggestionList = commonDataService.getSearchSuggestionList();
+        SearchSuggestionResponse searchSuggestionList = commonDataService.getSearchSuggestionList();
         if (searchSuggestionList == null) {
             return new ResponseEntity<Error>(HttpStatus.CONFLICT);
         }
 
         return ResponseEntity.ok(searchSuggestionList);
     }
-
-//    @GetMapping("/save")
-//    public Object save() {
-//        commonDataService.save();
-//        return ResponseEntity.status(HttpStatus.OK);
-//    }
 }

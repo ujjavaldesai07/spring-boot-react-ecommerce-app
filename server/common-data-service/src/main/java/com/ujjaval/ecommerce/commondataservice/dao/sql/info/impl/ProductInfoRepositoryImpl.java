@@ -2,10 +2,7 @@ package com.ujjaval.ecommerce.commondataservice.dao.sql.info.impl;
 
 import com.ujjaval.ecommerce.commondataservice.dao.sql.info.queryhelpers.ProductQueryHelper;
 import com.ujjaval.ecommerce.commondataservice.dao.sql.info.queryhelpers.context.ParamsToQueryContext;
-import com.ujjaval.ecommerce.commondataservice.dto.BrandsAndApparelsDTO;
-import com.ujjaval.ecommerce.commondataservice.dto.FilterAttributesWithTotalItemsDTO;
-import com.ujjaval.ecommerce.commondataservice.dto.SearchSuggestionForThreeAttrDTO;
-import com.ujjaval.ecommerce.commondataservice.dto.SearchSuggestionForTwoAttrDTO;
+import com.ujjaval.ecommerce.commondataservice.dto.*;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.info.ProductInfo;
 import com.ujjaval.ecommerce.commondataservice.model.FilterAttributesResponse;
 import com.ujjaval.ecommerce.commondataservice.model.HomeTabsDataResponse;
@@ -181,7 +178,7 @@ public class ProductInfoRepositoryImpl {
         return homeTabsDataResponse;
     }
 
-    public List<SearchSuggestionForThreeAttrDTO> getSearchSuggestionListForThreeAttr() {
+    public List<SearchSuggestionForThreeAttrDTO> getGenderApparelBrandByIdAndName() {
         ListResultTransformer listResultTransformer = new ListResultTransformer();
 
         return listResultTransformer.getSearchSuggestionForThreeAttrResultTransformer("SELECT DISTINCT " +
@@ -191,7 +188,7 @@ public class ProductInfoRepositoryImpl {
                 , entityManager);
     }
 
-    public List<SearchSuggestionForTwoAttrDTO> getSearchSuggestionListForGenderAndApparel() {
+    public List<SearchSuggestionForTwoAttrDTO> getGenderAndApparelByIdAndName() {
         ListResultTransformer listResultTransformer = new ListResultTransformer();
         return listResultTransformer.getSearchSuggestionForTwoAttrResultTransformer("SELECT DISTINCT " +
                         " p.genderCategory.id, p.genderCategory.type," +
@@ -200,7 +197,7 @@ public class ProductInfoRepositoryImpl {
                 , entityManager);
     }
 
-    public List<SearchSuggestionForTwoAttrDTO> getSearchSuggestionListForGenderAndBrand() {
+    public List<SearchSuggestionForTwoAttrDTO> getGenderAndBrandByIdAndName() {
         ListResultTransformer listResultTransformer = new ListResultTransformer();
         return listResultTransformer.getSearchSuggestionForTwoAttrResultTransformer("SELECT DISTINCT " +
                         " p.genderCategory.id, p.genderCategory.type," +
@@ -209,7 +206,7 @@ public class ProductInfoRepositoryImpl {
                 , entityManager);
     }
 
-    public List<SearchSuggestionForTwoAttrDTO> getSearchSuggestionListForApparelAndBrand() {
+    public List<SearchSuggestionForTwoAttrDTO> getApparelAndBrandByIdAndName() {
         ListResultTransformer listResultTransformer = new ListResultTransformer();
         return listResultTransformer.getSearchSuggestionForTwoAttrResultTransformer("SELECT DISTINCT " +
                         " p.apparelCategory.id, p.apparelCategory.type," +

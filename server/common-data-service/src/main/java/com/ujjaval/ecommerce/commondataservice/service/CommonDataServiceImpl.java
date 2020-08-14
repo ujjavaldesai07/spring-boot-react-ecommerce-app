@@ -6,7 +6,6 @@ import com.ujjaval.ecommerce.commondataservice.dao.sql.images.CarouselImagesRepo
 import com.ujjaval.ecommerce.commondataservice.dao.sql.images.ApparelImagesRepository;
 import com.ujjaval.ecommerce.commondataservice.dao.sql.info.*;
 import com.ujjaval.ecommerce.commondataservice.dto.*;
-import com.ujjaval.ecommerce.commondataservice.entity.sql.categories.GenderCategory;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.images.BrandImages;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.images.CarouselImages;
 import com.ujjaval.ecommerce.commondataservice.entity.sql.images.ApparelImages;
@@ -33,18 +32,6 @@ public class CommonDataServiceImpl implements CommonDataService {
     private ProductInfoRepository productInfoRepository;
 
     @Autowired
-    private OrderInfoRepository orderInfoRepository;
-
-    @Autowired
-    private AddressInfoRepository addressInfoRepository;
-
-    @Autowired
-    private BankInfoRepository bankInfoRepository;
-
-    @Autowired
-    private ContactInfoRepository contactInfoRepository;
-
-    @Autowired
     private GenderCategoryRepository genderCategoryRepository;
 
     @Autowired
@@ -66,57 +53,7 @@ public class CommonDataServiceImpl implements CommonDataService {
     private SortByCategoryRepository sortByCategoryRepository;
 
     @Autowired
-    private PriceRangeCategoryRepository priceRangeCategoryRepository;
-
-    @Autowired
     private ModelMapper modelMapper;
-
-    private HashMap<String, Pair<String, String>> searchSuggestionMap;
-
-    private final String PRODUCT_QUERY_URI = "/products?q=";
-
-    public ProductInfo findAddressById(Integer id) {
-        Optional<ProductInfo> result = productInfoRepository.findById(id);
-
-        ProductInfo productInfo;
-
-        if (result.isPresent()) {
-            productInfo = result.get();
-        } else {
-            throw new RuntimeException("Address Id is not present " + id);
-        }
-
-        return productInfo;
-    }
-
-    public void save() {
-//        AddressInfo addressInfo1 = new AddressInfo("2600 bay area blvd.", "Apt. 304", "77058", "Tx", "USA");
-//        ContactInfo contactInfo = new ContactInfo("jmiller@gmail.com", "534636453", "345345353", null);
-//        BankInfo bankInfo1 = new BankInfo("john", "miller", "Chase bank", "34345834", "0003424653");
-//        BankInfo bankInfo2 = new BankInfo("john", "Filler", "Chase bank", "34345834", "0003424653");
-//        bankInfo1.setAddressInfo(addressInfo1);
-//        bankInfo1.setContactInfo(contactInfo);
-//        bankInfo2.setContactInfo(contactInfo);
-//        addressInfoRepository.save(addressInfo1);
-//        contactInfoRepository.save(contactInfo);
-//        bankInfoRepository.save(bankInfo1);
-//        bankInfoRepository.save(bankInfo2);
-
-
-//        ProductMainCategoryInfo productMainCategoryInfo = new ProductMainCategoryInfo("Category1");
-//        ProductSubCategoryInfo productSubCategoryInfo = new ProductSubCategoryInfo("SubCategory1");
-//        ProductBrandInfo productBrandInfo = new ProductBrandInfo("Brand1");
-//
-//        ProductInfo productInfo = new ProductInfo(123, "product1", "312423", productBrandInfo,
-//                productMainCategoryInfo, productSubCategoryInfo, 34.23, 3, 4, (float) 3.4,
-//                false, "image.jpg", null);
-//
-//        productBrandInfoRepository.save(productBrandInfo);
-//        productSubCategoryInfoRepository.save(productSubCategoryInfo);
-//        productMainCategoryInfoRepository.save(productMainCategoryInfo);
-//        productInfoRepository.save(productInfo);
-
-    }
 
     private HashMap<String, String> getConditionMapFromQuery(String queryParams) {
         // append :: at the end so that we can split even if there is just one condition
@@ -137,7 +74,7 @@ public class CommonDataServiceImpl implements CommonDataService {
         return null;
     }
 
-    @Cacheable(key = "#apiName" , value = "mainScreenResponse")
+    @Cacheable(key = "#apiName", value = "mainScreenResponse")
     public MainScreenResponse getHomeScreenData(String apiName) {
 
         List<BrandImages> brandList = brandImagesRepository.getAllData();
@@ -155,7 +92,7 @@ public class CommonDataServiceImpl implements CommonDataService {
         return new MainScreenResponse(brandDTOList, apparelDTOList, carouselList);
     }
 
-    @Cacheable(key = "#queryParams" , value = "filterAttributesResponse")
+    @Cacheable(key = "#queryParams", value = "filterAttributesResponse")
     public FilterAttributesResponse getFilterAttributesByProducts(String queryParams) {
         HashMap<String, String> conditionMap = getConditionMapFromQuery(queryParams);
 
@@ -203,72 +140,19 @@ public class CommonDataServiceImpl implements CommonDataService {
         return resultMap;
     }
 
-    @Cacheable(key = "#apiName" , value = "homeTabsDataResponse")
+    @Cacheable(key = "#apiName", value = "homeTabsDataResponse")
     public HomeTabsDataResponse getBrandsAndApparelsByGender(String apiName) {
-       return productInfoRepository.getBrandsAndApparelsByGender();
+        return productInfoRepository.getBrandsAndApparelsByGender();
     }
 
-    private void constructAndAppendSearchSuggestion(String attr1_Name, String attr2_Name,
-                                                    List<SearchSuggestionForTwoAttrDTO> searchSuggestionList,
-                                                    List<SearchSuggestionResponse> searchSuggestionResponseList) {
-
-        if (searchSuggestionList == null) {
-            return;
-        }
-
-        for (SearchSuggestionForTwoAttrDTO searchSuggestion : searchSuggestionList) {
-            StringJoiner title = new StringJoiner(" ");
-            title.add(searchSuggestion.getAttr1_Name());
-            title.add(searchSuggestion.getAttr2_Name());
-
-            StringBuilder link = new StringBuilder(PRODUCT_QUERY_URI);
-            link.append(attr1_Name).append("=").append(searchSuggestion.getAttr1_Id());
-            link.append("::").append(attr2_Name).append("=").append(searchSuggestion.getAttr2_Id());
-            searchSuggestionResponseList.add(new SearchSuggestionResponse(title, link));
-        }
+    public SearchSuggestionResponse getSearchSuggestionList() {
+        return new SearchSuggestionResponse(genderCategoryRepository.getAllData(),
+                productBrandCategoryRepository.getAllData(), apparelCategoryRepository.getAllData(),
+                productInfoRepository.getGenderAndApparelByIdAndName(),
+                productInfoRepository.getGenderAndBrandByIdAndName(),
+                productInfoRepository.getApparelAndBrandByIdAndName(),
+                productInfoRepository.getGenderApparelBrandByIdAndName(),
+                productInfoRepository.getProductByName());
     }
-
-    public List<SearchSuggestionResponse> getSearchSuggestionList() {
-
-        List<SearchSuggestionForThreeAttrDTO> searchSuggestionForThreeAttrDTOList =
-                productInfoRepository.getSearchSuggestionListForThreeAttr();
-        List<SearchSuggestionResponse> searchSuggestionResponseList = new LinkedList<>();
-
-        List<GenderCategory> genderCategoryList = genderCategoryRepository.getAllData();
-
-//        for (GenderCategory genderCategory: genderCategoryList) {
-//
-//        }
-
-
-        constructAndAppendSearchSuggestion("genders", "apparels",
-                productInfoRepository.getSearchSuggestionListForGenderAndApparel(),
-                searchSuggestionResponseList);
-
-        constructAndAppendSearchSuggestion("genders", "brands",
-                productInfoRepository.getSearchSuggestionListForGenderAndBrand(),
-                searchSuggestionResponseList);
-
-        constructAndAppendSearchSuggestion("apparels", "brands",
-                productInfoRepository.getSearchSuggestionListForApparelAndBrand(),
-                searchSuggestionResponseList);
-
-        for (SearchSuggestionForThreeAttrDTO searchSuggestionForThreeAttrDTO : searchSuggestionForThreeAttrDTOList) {
-            StringJoiner title = new StringJoiner(" ");
-            title.add(searchSuggestionForThreeAttrDTO.getGenderName());
-            title.add(searchSuggestionForThreeAttrDTO.getApparelName());
-            title.add(searchSuggestionForThreeAttrDTO.getBrandName());
-
-            StringBuilder link = new StringBuilder(PRODUCT_QUERY_URI);
-            link.append("genders=").append(searchSuggestionForThreeAttrDTO.getGenderId());
-            link.append("::apparels=").append(searchSuggestionForThreeAttrDTO.getApparelId());
-            link.append("::brands=").append(searchSuggestionForThreeAttrDTO.getBrandId());
-            searchSuggestionResponseList.add(new SearchSuggestionResponse(title, link));
-        }
-
-
-        return searchSuggestionResponseList;
-    }
-
 
 }

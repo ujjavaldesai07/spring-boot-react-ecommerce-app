@@ -11,7 +11,7 @@ import {
     PAYMENT_RESPONSE,
     HANDLE_GOOGLE_AUTH_SIGN_IN,
     HANDLE_GOOGLE_AUTH_SIGN_OUT,
-    PAYMENT_RESPONSE_ERROR,
+    PAYMENT_RESPONSE_ERROR, SEARCH_KEYWORD_ERROR, SEARCH_KEYWORD,
 } from './types';
 import {INTERNAL_SERVER_ERROR_CODE, BAD_REQUEST_ERROR_CODE} from '../constants/http_error_codes'
 import {SHOPPERS_PRODUCT_INFO_COOKIE, CART_TOTAL_COOKIE, AUTH_DETAILS_COOKIE} from '../constants/cookies'
@@ -19,8 +19,9 @@ import history from "../history";
 import {Base64} from 'js-base64';
 import Cookies from 'js-cookie';
 import log from "loglevel";
-import {commonServiceAPI, authServiceAPI} from "../api/service_api";
+import {commonServiceAPI, authServiceAPI, searchSuggestionServiceAPI} from "../api/service_api";
 import axios from 'axios';
+import {DEFAULT_SEARCH_SUGGESTION_API, SEARCH_SUGGESTION_API} from "../constants/api_routes";
 
 export const setAuthDetailsFromCookie = savedResponse => {
     log.info(`[ACTION]: setTokenFromCookie savedResponse = ${savedResponse}`)
@@ -101,45 +102,45 @@ export const signInUsingOAuth = googleAuth => async dispatch => {
                     history.push("/");
 
                     // try {
-                        // let userProfile = googleAuth.currentUser.get().getBasicProfile()
-                        // if (userProfile) {
-                        //     const response = await authServiceAPI.post('/signin-using-google-auth', {
-                        //         'id': userProfile.getId(),
-                        //         'firstname': userProfile.getGivenName(),
-                        //         'lastname': userProfile.getFamilyName(),
-                        //         'email': userProfile.getEmail(),
-                        //         'username': null,
-                        //         'password': null,
-                        //     }).catch(err => {
-                        //         log.info(`[ACTION]: signUp dispatch HANDLE_SIGN_UP_ERROR err.message = ${err.message}.`)
-                        //     });
-                        //
-                        //     if(response.data === "success") {
-                        //         // here we are sure that we signed in and now dispatch.
-                        //         dispatch({
-                        //             type: HANDLE_GOOGLE_AUTH_SIGN_IN,
-                        //             payload: {
-                        //                 oAuth: googleAuth
-                        //             }
-                        //         })
-                        //         history.push("/");
-                        //     } else {
-                        //         dispatch({type: HANDLE_SIGN_IN_ERROR, payload: response.data.error});
-                        //     }
+                    // let userProfile = googleAuth.currentUser.get().getBasicProfile()
+                    // if (userProfile) {
+                    //     const response = await authServiceAPI.post('/signin-using-google-auth', {
+                    //         'id': userProfile.getId(),
+                    //         'firstname': userProfile.getGivenName(),
+                    //         'lastname': userProfile.getFamilyName(),
+                    //         'email': userProfile.getEmail(),
+                    //         'username': null,
+                    //         'password': null,
+                    //     }).catch(err => {
+                    //         log.info(`[ACTION]: signUp dispatch HANDLE_SIGN_UP_ERROR err.message = ${err.message}.`)
+                    //     });
+                    //
+                    //     if(response.data === "success") {
+                    //         // here we are sure that we signed in and now dispatch.
+                    //         dispatch({
+                    //             type: HANDLE_GOOGLE_AUTH_SIGN_IN,
+                    //             payload: {
+                    //                 oAuth: googleAuth
+                    //             }
+                    //         })
+                    //         history.push("/");
+                    //     } else {
+                    //         dispatch({type: HANDLE_SIGN_IN_ERROR, payload: response.data.error});
+                    //     }
 
-                        // dispatch({
-                        //     type: HANDLE_GOOGLE_AUTH_SIGN_IN,
-                        //     payload: {
-                        //         oAuth: googleAuth
-                        //     }
-                        // })
-                        // history.push("/");
-                        // }
-                        // } catch
-                        //     (e) {
-                        //     log.info(`[signInUsingOAuth] Unable to retrieve user profile.`)
-                        //     dispatch({type: HANDLE_SIGN_IN_ERROR, payload: "Unable to retrieve user profile."});
-                        // }
+                    // dispatch({
+                    //     type: HANDLE_GOOGLE_AUTH_SIGN_IN,
+                    //     payload: {
+                    //         oAuth: googleAuth
+                    //     }
+                    // })
+                    // history.push("/");
+                    // }
+                    // } catch
+                    //     (e) {
+                    //     log.info(`[signInUsingOAuth] Unable to retrieve user profile.`)
+                    //     dispatch({type: HANDLE_SIGN_IN_ERROR, payload: "Unable to retrieve user profile."});
+                    // }
                 }
             }
         )
@@ -194,7 +195,7 @@ export const signUp = formValues => async dispatch => {
 
 export const sendPaymentToken = (token) => async dispatch => {
     log.info(`Token = ${JSON.stringify(token)}`)
-    if(!token || (token && !token.hasOwnProperty("id"))) {
+    if (!token || (token && !token.hasOwnProperty("id"))) {
         dispatch({
             type: PAYMENT_RESPONSE_ERROR,
             payload: {errorMsg: "Unable to fetch token. Try again later"}
@@ -202,7 +203,7 @@ export const sendPaymentToken = (token) => async dispatch => {
     }
 
     let url
-    if(process.env.REACT_APP_PAYMENT_SERVICE_URL) {
+    if (process.env.REACT_APP_PAYMENT_SERVICE_URL) {
         url = `${process.env.REACT_APP_PAYMENT_SERVICE_URL}/payment`
     } else {
         url = `http://localhost:${process.env.REACT_APP_PAYMENT_SERVICE_PORT}/payment`
@@ -318,3 +319,48 @@ export const loadFilterAttributes = filterQuery => async dispatch => {
         }
     }
 };
+
+export const getSearchSuggestions = (prefix) => async dispatch => {
+    log.info(`[ACTION]: getSearchSuggestions Calling API.`)
+
+    if (prefix) {
+        let responseError = false
+        const uri = SEARCH_SUGGESTION_API + prefix
+        const response = await searchSuggestionServiceAPI.get(uri)
+            .catch(err => {
+                log.info(`[ACTION]: unable to fetch response for API = ${uri}`)
+                dispatch({type: SEARCH_KEYWORD_ERROR});
+                responseError = true
+            });
+
+        if (responseError) {
+            return
+        }
+
+        log.debug(`[ACTION]: Data = ${JSON.parse(JSON.stringify(response.data))}.`)
+        dispatch({
+            type: SEARCH_KEYWORD, payload: {data: JSON.parse(JSON.stringify(response.data))}
+        });
+    }
+
+}
+
+export const setDefaultSearchSuggestions = () => async dispatch => {
+    log.info(`[ACTION]: getSearchSuggestions Calling API.`)
+    let responseError = false
+    const response = await searchSuggestionServiceAPI.get(DEFAULT_SEARCH_SUGGESTION_API)
+        .catch(err => {
+            log.info(`[ACTION]: unable to fetch response for API = ${DEFAULT_SEARCH_SUGGESTION_API}`)
+            dispatch({type: SEARCH_KEYWORD_ERROR});
+            responseError = true
+        });
+
+    if (responseError) {
+        return
+    }
+
+    log.debug(`[ACTION]: Data = ${JSON.parse(JSON.stringify(response.data))}.`)
+    dispatch({
+        type: SEARCH_KEYWORD, payload: {data: JSON.parse(JSON.stringify(response.data))}
+    });
+}

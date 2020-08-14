@@ -8,7 +8,7 @@ import MoreIcon from '@material-ui/icons/MoreVert';
 import Cookies from 'js-cookie';
 import {
     getDataViaAPI, setAuthDetailsFromCookie,
-    signOut, signOutUsingOAuth
+    signOut, signOutUsingOAuth, setDefaultSearchSuggestions
 } from '../../../actions';
 import {connect, useDispatch} from 'react-redux'
 
@@ -123,6 +123,9 @@ const NavBar = props => {
 
         // set the cart values
         setAddToCartValuesFromCookie()
+
+        // set default search suggestions
+        props.setDefaultSearchSuggestions()
 
         // eslint-disable-next-line
     }, [isSignedIn, tabsDataReducer]);
@@ -343,4 +346,5 @@ const NavBar = props => {
     );
 };
 
-export default connect(null, {setAuthDetailsFromCookie, signOut, signOutUsingOAuth, getDataViaAPI})(NavBar);
+export default connect(null, {setAuthDetailsFromCookie, signOut,
+    signOutUsingOAuth, getDataViaAPI, setDefaultSearchSuggestions})(NavBar);
