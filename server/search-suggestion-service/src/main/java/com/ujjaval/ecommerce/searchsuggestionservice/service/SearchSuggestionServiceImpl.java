@@ -91,7 +91,7 @@ public class SearchSuggestionServiceImpl implements SearchSuggestionService {
     }
 
     public void loadSearchSuggestionToMap() {
-        String URL = System.getenv("SEARCH_SUGGESTION_SERVICE_URL") + "/search-suggestion-list";
+        String URL = System.getenv("COMMON_DATA_SERVICE_URL") + "/search-suggestion-list";
 
         while (true) {
             try {
