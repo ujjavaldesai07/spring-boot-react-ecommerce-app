@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class ProductQueryHelper {
     enum QueryType {
-        genders, apparels, brands, prices, category, sortby, page;
+        genders, apparels, brands, prices, category, sortby, page, productname;
     }
 
     private final int NEWEST = 1;
@@ -38,6 +38,21 @@ public class ProductQueryHelper {
 
         for (String val : data.split(",")) {
             mapParameters.put(mapParametersKey.getKey(), Integer.parseInt(val));
+            tempList.add("?" + mapParametersKey.getKey());
+            mapParametersKey.increment();
+        }
+        if (data.length() > 0) {
+            conditions.add(String.format("(%s IN (%s))", field, String.join(",", tempList)));
+        }
+    }
+
+    public void prepareConditionListByName(HashMap<Integer, Object> mapParameters, String data,
+                                           MapParameterKey mapParametersKey,
+                                           List<String> conditions, String field) {
+        List<String> tempList = new ArrayList<>();
+
+        for (String val : data.split(",")) {
+            mapParameters.put(mapParametersKey.getKey(), val);
             tempList.add("?" + mapParametersKey.getKey());
             mapParametersKey.increment();
         }
@@ -106,6 +121,10 @@ public class ProductQueryHelper {
 
                 case page:
                     pageInfo = entry.getValue().split(",");
+                    break;
+                case productname:
+                    prepareConditionListByName(mapParams, entry.getValue(), mapParametersKey,
+                            conditions, "p.name");
                     break;
                 default:
                     System.out.println("UnsupportedType");

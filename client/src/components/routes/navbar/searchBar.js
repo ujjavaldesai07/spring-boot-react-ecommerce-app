@@ -32,10 +32,10 @@ function SearchBar(props) {
             props.handleClose();
         }
 
+        setValue('')
+
         // search is selected
         if(reason === "select-option" && selectedValue != null) {
-            log.info("Search is selected.... value = "
-                + selectedValue)
             for(let index = 0; index < searchSuggestions.data.length; ++index) {
                 if(searchSuggestions.data[index].keyword.length === selectedValue.length
                     && searchSuggestions.data[index].keyword.localeCompare(selectedValue) === 0) {

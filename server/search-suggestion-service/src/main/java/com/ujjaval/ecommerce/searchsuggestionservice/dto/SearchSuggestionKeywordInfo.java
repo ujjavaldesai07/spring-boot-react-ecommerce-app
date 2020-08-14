@@ -1,6 +1,5 @@
 package com.ujjaval.ecommerce.searchsuggestionservice.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 

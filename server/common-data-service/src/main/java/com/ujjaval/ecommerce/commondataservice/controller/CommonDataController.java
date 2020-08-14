@@ -83,7 +83,6 @@ public class CommonDataController {
 
     @GetMapping(value = "/filter", params = "q")
     public ResponseEntity<?> getFilterAttributesByProducts(@RequestParam("q") String queryParams) {
-
         FilterAttributesResponse result = commonDataService.getFilterAttributesByProducts(queryParams);
 
         if (result == null) {

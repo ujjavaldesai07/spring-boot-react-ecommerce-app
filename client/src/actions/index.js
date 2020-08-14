@@ -257,7 +257,7 @@ export const getDataViaAPI = (type, uri, subsequent_request) => async dispatch =
     log.info(`[ACTION]: invokeAndDispatchAPIData Calling API = ${uri}.`)
 
     if (uri) {
-        uri = uri.replace(/\s/g, '')
+        // uri = uri.replace(/\s/g, '')
         let responseError = false
         const response = await commonServiceAPI.get(uri)
             .catch(err => {
@@ -291,20 +291,28 @@ export const loadFilterAttributes = filterQuery => async dispatch => {
     log.info(`[ACTION]: loadFilterAttributes Calling Filter API filterQuery = ${filterQuery}`)
 
     if (filterQuery) {
-        let removedSpacesFromFilterQuery = filterQuery.replace(/\s/g, '')
-        let uri = `/filter${removedSpacesFromFilterQuery}`
+        try {
+            if(filterQuery.split("=")[1].localeCompare("productname") === 0 ) {
+                // currently we do not support productname parameter for filter API.
+                filterQuery="?q=category=all"
+            }
+        } catch (e) {
+            log.info('Unable to find productname parameter')
+        }
+
+        let uri = `/filter${filterQuery}`
         const response = await commonServiceAPI.get(uri);
         if (response != null) {
             log.trace(`[ACTION]: Filter = ${JSON.stringify(response.data)}`)
 
-            const extractRequiredParams = removedSpacesFromFilterQuery.slice(3)
+            const extractRequiredParams = filterQuery.slice(3)
 
             dispatch({
                 type: LOAD_FILTER_ATTRIBUTES,
                 payload: JSON.parse(JSON.stringify(
                     {
                         ...response.data,
-                        "query": removedSpacesFromFilterQuery.slice(3)
+                        "query": filterQuery.slice(3)
                     }))
             });
 
