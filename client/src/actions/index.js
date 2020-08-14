@@ -253,7 +253,7 @@ export const sendPaymentToken = (token) => async dispatch => {
 }
 
 
-export const getDataViaAPI = (type, uri) => async dispatch => {
+export const getDataViaAPI = (type, uri, subsequent_request) => async dispatch => {
     log.info(`[ACTION]: invokeAndDispatchAPIData Calling API = ${uri}.`)
 
     if (uri) {

@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import CloseIcon from '@material-ui/icons/Close';
@@ -7,8 +7,10 @@ import {Grid} from "@material-ui/core";
 import SearchIcon from '@material-ui/icons/Search';
 import log from 'loglevel';
 import {connect, useSelector} from "react-redux";
-import {getSearchSuggestions} from "../../../actions";
+import {getSearchSuggestions, getDataViaAPI} from "../../../actions";
 import {makeStyles} from "@material-ui/core/styles";
+import {LOAD_FILTER_PRODUCTS} from "../../../actions/types";
+import {PRODUCT_BY_CATEGORY_DATA_API} from "../../../constants/api_routes";
 
 export const useSearchBarStyles = makeStyles(() => ({
     paper: {
@@ -23,7 +25,7 @@ function SearchBar(props) {
     const [value, setValue] = useState(null);
     const searchSuggestions = useSelector(state => state.searchKeywordReducer)
     const classes = useSearchBarStyles()
-    const textFieldRef = useRef(null)
+    let selectedValue = null
 
     const handleClose = (event, reason) => {
         if (props.handleClose) {
@@ -31,9 +33,17 @@ function SearchBar(props) {
         }
 
         // search is selected
-        if(reason === "select-option") {
+        if(reason === "select-option" && selectedValue != null) {
             log.info("Search is selected.... value = "
-                + event.target.getAttributeNames())
+                + selectedValue)
+            for(let index = 0; index < searchSuggestions.data.length; ++index) {
+                if(searchSuggestions.data[index].keyword.length === selectedValue.length
+                    && searchSuggestions.data[index].keyword.localeCompare(selectedValue) === 0) {
+                    props.getDataViaAPI(LOAD_FILTER_PRODUCTS,
+                        PRODUCT_BY_CATEGORY_DATA_API + searchSuggestions.data[index].link)
+                    return
+                }
+            }
         }
     }
 
@@ -58,6 +68,7 @@ function SearchBar(props) {
     }
 
     const handleInputChange = (event, newValue) => {
+        selectedValue = newValue
         props.getSearchSuggestions(newValue)
     }
 
@@ -87,8 +98,6 @@ function SearchBar(props) {
                 selectOnFocus
                 clearOnBlur
                 handleHomeEndKeys
-                ref={textFieldRef}
-                open
                 closeIcon={<CloseIcon/>}
                 id="free-solo"
                 options={searchSuggestions.data}
@@ -117,4 +126,4 @@ function SearchBar(props) {
     );
 }
 
-export default connect(null, {getSearchSuggestions})(SearchBar);
+export default connect(null, {getSearchSuggestions, getDataViaAPI})(SearchBar);
