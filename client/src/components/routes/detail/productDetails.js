@@ -52,7 +52,10 @@ function ProductDetails(props) {
         if (selectedProduct && !_.isEmpty(addToCart.productQty)) {
             log.info(`[Product Detail] addToCart = ${JSON.stringify(addToCart)}`)
             log.info(`[Product Detail] setProductQuantity = ${addToCart.productQty[selectedProduct.id]}`)
-            setProductQuantity(addToCart.productQty[selectedProduct.id])
+            if(addToCart.productQty[selectedProduct.id]) {
+                setProductQuantity(addToCart.productQty[selectedProduct.id])
+            }
+
         }
 
         // eslint-disable-next-line
@@ -199,11 +202,11 @@ function ProductDetails(props) {
                     </Grid>
 
                     <Grid item container alignItems="center">
-                        <Grid item xs={1} style={{fontSize: '1.2rem', fontWeight: "lighter"}}>
+                        <Grid item style={{fontSize: '1.2rem', fontWeight: "lighter", paddingRight: 10}}>
                             Qty:
                         </Grid>
 
-                        <Grid item xs={1} style={{fontSize: '1.2rem', fontWeight: "bold"}}>
+                        <Grid item style={{fontSize: '1.2rem', fontWeight: "bold", paddingRight: 20}}>
                             {productQuantity}
                         </Grid>
 
