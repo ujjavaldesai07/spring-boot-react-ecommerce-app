@@ -12,6 +12,10 @@ export const StyledDimmer = styled(Dimmer)({
     backgroundColor: 'rgba(0,0,0,0.2) !important',
 });
 
+export const StyledSearchBarDimmer = styled(Dimmer)({
+    height: '100vh !important',
+});
+
 export const StyledLargeDropdown = styled(Dropdown)({
     width: "225px"
 });

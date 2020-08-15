@@ -16,15 +16,13 @@ import Spinner from "../ui/spinner";
 import {EmptyShoppingBag} from "../ui/error/emptyShoppingBag";
 import {HTTPError} from "../ui/error/httpError";
 import PriceDetails from "./priceDetails";
-import Modal from "../../components/ui/modal";
 import _ from 'lodash';
 import Hidden from "@material-ui/core/Hidden";
 import {useAddProductsToShoppingBag} from "../../hooks/useAddProductsToShoppingBag";
 import {CART_TOTAL_COOKIE, SHOPPERS_PRODUCT_INFO_COOKIE} from "../../constants/cookies";
 import {HOME_ROUTE} from "../../constants/react_routes";
 import {DocumentTitle} from "../ui/documentTitle";
-
-const modalWidth = 430
+import {ModalConfirmation} from "../ui/modalConfirmation";
 
 function ShoppingBag(props) {
     const addToCart = useSelector(state => state.addToCartReducer)
@@ -104,47 +102,6 @@ function ShoppingBag(props) {
         })
     }
 
-    const renderItemRemoveConfirmation = () => {
-        log.info(`Rendering renderRemoveModalWarning`)
-        return (
-            <>
-                <Box display="flex" flexDirection="row">
-                    <Box mx={2.5} mt={2} mb={1}>
-                        {/* eslint-disable-next-line jsx-a11y/img-redundant-alt */}
-                        <img src={shoppingBagProducts.data[itemRemovalModalState.productId].imageName}
-                             width={60} height={90} alt="image"/>
-                    </Box>
-                    <Box mt={2.5} display="flex" flexDirection="column">
-                        <Box style={{color: "#3e4152", fontSize: 14, fontWeight: 200}}>
-                            Remove Item
-                        </Box>
-                        <Box style={{color: "#696b79", fontSize: 14, fontWeight: 200}}>
-                            Are you sure you want to remove this item?
-                        </Box>
-                    </Box>
-                </Box>
-                <Box>
-                    <Divider style={{width: modalWidth, height: 1}}/>
-                </Box>
-                <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
-                    <Box pl={10} onClick={removeConfirmBtnClickHandler} style={{
-                        color: "red"
-                        , width: "50%", fontWeight: "bold", cursor: "pointer"
-                    }}>
-                        REMOVE
-                    </Box>
-                    <Box>
-                        <Divider orientation="vertical" style={{height: 45}}/>
-                    </Box>
-                    <Box pl={10} onClick={closeModalClickHandler}
-                         style={{width: "50%", fontWeight: "bold", cursor: "pointer"}}>
-                        CANCEL
-                    </Box>
-                </Box>
-            </>
-        )
-    }
-
     const removeConfirmBtnClickHandler = () => {
         setItemRemovalModalState({active: false, productId: null})
         if (itemRemovalModalState.productId) {
@@ -177,20 +134,7 @@ function ShoppingBag(props) {
     } else {
         if (shoppingBagProducts.hasOwnProperty("data")) {
             if (Object.keys(shoppingBagProducts.data).length === 0) {
-                return (
-                    <Box display="flex" flexDirection="column">
-                        <Box>
-                            <EmptyShoppingBag/>
-                        </Box>
-                        <Box display="flex" py={2} justifyContent="center">
-                            <Button variant="contained" size="large" color="secondary"
-                                    onClick={wannaShopBtnClick}
-                                    style={{width: '20%'}}>
-                                Wanna Shop? Click Here
-                            </Button>
-                        </Box>
-                    </Box>
-                )
+                return <EmptyShoppingBag btnHandler={wannaShopBtnClick}/>
             }
         } else {
             if (shoppingBagProducts.hasOwnProperty('statusCode')) {
@@ -336,9 +280,11 @@ function ShoppingBag(props) {
                 </Grid>
             </Grid>
 
-            {itemRemovalModalState.active ? <Modal renderWarningComponent={renderItemRemoveConfirmation()}
-                                                   modalWidth={modalWidth}
-                                                   closeHandler={closeModalClickHandler}/> : null}
+            {itemRemovalModalState.active ? <ModalConfirmation
+                                                    title="Remove Item"
+                                                    question="Are you sure you want to remove this item?"
+                                                    removeConfirmedHandler={removeConfirmBtnClickHandler}
+                                                    closeModalHandler={closeModalClickHandler}/> : null}
         </>
     )
 }

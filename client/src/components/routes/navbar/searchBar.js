@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import CloseIcon from '@material-ui/icons/Close';
@@ -11,66 +11,75 @@ import {getSearchSuggestions, getDataViaAPI} from "../../../actions";
 import {makeStyles} from "@material-ui/core/styles";
 import {LOAD_FILTER_PRODUCTS} from "../../../actions/types";
 import {PRODUCT_BY_CATEGORY_DATA_API} from "../../../constants/api_routes";
+import {Loader} from "semantic-ui-react";
+import {StyledSearchBarDimmer} from "../../../styles/semanticUI/customStyles";
 
-export const useSearchBarStyles = makeStyles(() => ({
+export const useSearchBarStyles = makeStyles((theme) => ({
     paper: {
-        height: 300
+        height: 250
     },
     listbox: {
-        maxHeight: 340
+        maxHeight: 290,
+    },
+    option: {
+        [theme.breakpoints.down("xs")]: {
+            paddingLeft: 40
+        },
     }
 }));
 
 function SearchBar(props) {
     const [value, setValue] = useState(null);
     const searchSuggestions = useSelector(state => state.searchKeywordReducer)
+    const filterProductsReducer = useSelector(state => state.filterProductsReducer)
     const classes = useSearchBarStyles()
+    const [isLoading, setIsLoading] = useState(false)
+    let selectedValue = null
 
-    const getSelectedValue = () => {
+    useEffect(() => {
+        log.info(`[SearchBar] Component did mount`)
+        setIsLoading(false)
+    }, [filterProductsReducer])
+
+    const getSearchKeyword = () => {
         return document.querySelector('input[id="free-solo"]').value
     }
 
-    const searchKeyword = () => {
-        const selectedValue = getSelectedValue()
-        if(selectedValue && !selectedValue.isEmpty) {
+    const searchKeyword = (value) => {
+        if (value && !value.isEmpty) {
             let queryLink = null
             for (let index = 0; index < searchSuggestions.data.length; ++index) {
-                if (searchSuggestions.data[index].keyword.length === selectedValue.length
-                    && searchSuggestions.data[index].keyword.localeCompare(selectedValue) === 0) {
+                if (searchSuggestions.data[index].keyword.length === value.length
+                    && searchSuggestions.data[index].keyword.localeCompare(value) === 0) {
 
                     // complete match
                     queryLink = searchSuggestions.data[index].link
                     break;
-                }
-                if(searchSuggestions.data[index].keyword.length > selectedValue.length) {
-                    // just stop finding if length exceeds.
-                    if(!queryLink) {
-                        // then match whatever we have.
-                        queryLink = searchSuggestions.data[index].link
-                    }
-                    break;
                 } else {
-                    // closest match
-                    log.info(``)
                     queryLink = searchSuggestions.data[index].link
                 }
             }
-            props.getDataViaAPI(LOAD_FILTER_PRODUCTS,
-                PRODUCT_BY_CATEGORY_DATA_API + queryLink)
+
+            log.info(`queryLink = ${queryLink}, value = ${value}`)
+            if (queryLink) {
+                setIsLoading(true)
+                props.getDataViaAPI(LOAD_FILTER_PRODUCTS,
+                    PRODUCT_BY_CATEGORY_DATA_API + queryLink)
+            }
         }
     }
 
-    const handleClose = (event, reason) => {
-        setValue('')
-
-        // search is selected
-        if (reason === "select-option") {
-            searchKeyword()
+    const handleClose = () => {
+        log.info(`selectedValue------2 ===== ${selectedValue}`)
+        let finalSelectedValue = selectedValue
+        if (!selectedValue) {
+            finalSelectedValue = getSearchKeyword()
         }
+        searchKeyword(finalSelectedValue)
     }
 
     const onSearchBtnClick = () => {
-        searchKeyword()
+        searchKeyword(getSearchKeyword())
         props.handleClose()
     }
 
@@ -88,17 +97,17 @@ function SearchBar(props) {
                 InputProps={{
                     ...params.InputProps,
                     startAdornment: <ArrowBackIcon onClick={props.handleClose} fontSize="large"/>,
-                    endAdornment: <SearchIcon onClick={onSearchBtnClick} fontSize="large"/>
                 }}
             />
         )
     }
 
     const handleInputChange = (event, newValue) => {
+        selectedValue = newValue
         props.getSearchSuggestions(newValue)
     }
 
-    log.info("[Search Bar] Rendering search bar....")
+    log.info(`[Search Bar] Rendering search bar....`)
 
     return (
         <Grid container alignItems="center">
@@ -144,10 +153,15 @@ function SearchBar(props) {
                 fullWidth
                 onClose={handleClose}
                 size={props.size}
-                classes={{paper: classes.paper, listbox: classes.listbox}}
+                classes={{paper: classes.paper, listbox: classes.listbox, option: classes.option}}
                 renderInput={(params) =>
                     props.device ? renderMobileTextField(params) : renderDesktopTextField(params)}
             />
+            {isLoading ?
+                <StyledSearchBarDimmer active inverted>
+                    <Loader inverted>Loading</Loader>
+                </StyledSearchBarDimmer> : null}
+
         </Grid>
     );
 }
