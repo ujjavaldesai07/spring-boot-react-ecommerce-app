@@ -82,6 +82,30 @@ services:
     networks:
       - spring-cloud-microservices
 
+  search-suggestion-service:
+    build:
+      context: .
+      dockerfile: ./server/search-suggestion-service/Dockerfile-dev
+    container_name: search-suggestion-service-container
+    restart: always
+    depends_on:
+      - mysql-db
+      - redis-cache
+      - react-ui
+      - common-data-service
+      - authentication-service
+      - payment-service
+    environment:
+      - ACTIVE_PROFILE=${ACTIVE_PROFILE}
+      - PORT=${SEARCH_SUGGESTION_SERVICE_PORT}
+      - COMMON_DATA_SERVICE_URL=http://common-data-service:${COMMON_DATA_SERVICE_PORT}
+    expose:
+      - ${SEARCH_SUGGESTION_SERVICE_PORT}
+    ports:
+      - ${SEARCH_SUGGESTION_SERVICE_PORT}:${SEARCH_SUGGESTION_SERVICE_PORT}
+    networks:
+      - spring-cloud-microservices
+
   payment-service:
     build:
       context: .

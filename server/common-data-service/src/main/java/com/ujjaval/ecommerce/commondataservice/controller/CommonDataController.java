@@ -32,7 +32,7 @@ public class CommonDataController {
     LoadFakeDataService loadFakeDataService;
 
     public void fillWithTestData() {
-        if (Objects.equals(environment.getProperty("ACTIVE_PROFILE"), "no_profile")) {
+        if (Objects.equals(environment.getProperty("ACTIVE_PROFILE"), "dev")) {
             loadFakeDataService.loadTestData();
         }
     }
@@ -83,6 +83,13 @@ public class CommonDataController {
 
     @GetMapping(value = "/filter", params = "q")
     public ResponseEntity<?> getFilterAttributesByProducts(@RequestParam("q") String queryParams) {
+
+        // TODO: Add support for productname parameter for filter selection.
+        String[] splitParams = queryParams.split("=");
+        if(splitParams.length >= 1 && splitParams[0].equals("productname")){
+            queryParams="category=all";
+        }
+
         FilterAttributesResponse result = commonDataService.getFilterAttributesByProducts(queryParams);
 
         if (result == null) {

@@ -19,4 +19,4 @@ COPY . .
 #RUN yarn install
 
 # Initiate npm start
-CMD [ "npm", "start" ]
+CMD [ "npm", "run-script", "start_docker_dev" ]

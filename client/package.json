@@ -39,6 +39,7 @@
   "scripts": {
     "start": "node server.js",
     "build": "react-scripts build",
+    "start_docker_dev": "react-scripts start",
     "start_dev": "./node_modules/.bin/env-cmd -f .env react-scripts start",
     "build_dev": "./node_modules/.bin/env-cmd -f .env react-scripts build",
     "test": "react-scripts test",

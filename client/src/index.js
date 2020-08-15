@@ -13,8 +13,8 @@ import '../src/styles/library/swiper/swiper.min.css';
 import log from 'loglevel';
 import ErrorBoundary from "./ErrorBoundary";
 
-// log.disableAll(true)
-log.setLevel("info")
+log.disableAll(true)
+// log.setLevel("info")
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose();
 const store = createStore(

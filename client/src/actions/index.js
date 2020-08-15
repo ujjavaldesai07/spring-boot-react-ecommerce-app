@@ -291,15 +291,6 @@ export const loadFilterAttributes = filterQuery => async dispatch => {
     log.info(`[ACTION]: loadFilterAttributes Calling Filter API filterQuery = ${filterQuery}`)
 
     if (filterQuery) {
-        try {
-            if(filterQuery.split("=")[1].localeCompare("productname") === 0 ) {
-                // currently we do not support productname parameter for filter API.
-                filterQuery="?q=category=all"
-            }
-        } catch (e) {
-            log.info('Unable to find productname parameter')
-        }
-
         let uri = `/filter${filterQuery}`
         const response = await commonServiceAPI.get(uri);
         if (response != null) {

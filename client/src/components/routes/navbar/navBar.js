@@ -213,10 +213,29 @@ const NavBar = props => {
 
     const renderMobileSearchInputField = () => {
         if (mobileSearchState) {
-            return (
-                    <SearchBar size="medium" device="mobile" handleClose={handleMobileSearchClose}/>
-            )
+            return <SearchBar size="medium" device="mobile" handleClose={handleMobileSearchClose}/>
         }
+        return (
+            <>
+                <Grid item>
+                    <IconButton onClick={handleMobileSearchOpen}
+                                edge="end">
+                        <SearchIcon fontSize="large"/>
+                    </IconButton>
+                </Grid>
+                <Grid item>
+                    <IconButton
+                        aria-label="show more"
+                        aria-controls={mobileMenuId}
+                        aria-haspopup="true"
+                        onClick={handleMobileMenuOpen}
+                        color="inherit"
+                        edge="end">
+                        <MoreIcon fontSize="large"/>
+                    </IconButton>
+                </Grid>
+            </>
+        )
     }
 
     const handleSidebarOpen = () => {
@@ -293,12 +312,8 @@ const NavBar = props => {
                             </Hidden>
 
                             <Hidden smUp>
-                                {!mobileSearchState ? <Grid item container justify="flex-end" xs={5}>
-                                    <IconButton onClick={handleMobileSearchOpen}
-                                                edge="end">
-                                        <SearchIcon fontSize="large"/>
-                                    </IconButton>
-                                </Grid> : null}
+                                <div className={classes.growHalf}/>
+                                <div className={classes.growHalf}/>
                                 {renderMobileSearchInputField()}
                             </Hidden>
 
@@ -314,20 +329,6 @@ const NavBar = props => {
                                     "Bag", 0)}
                             </Hidden>
 
-
-                            <Hidden smUp>
-                                {!mobileSearchState ? <Grid item>
-                                    <IconButton
-                                        aria-label="show more"
-                                        aria-controls={mobileMenuId}
-                                        aria-haspopup="true"
-                                        onClick={handleMobileMenuOpen}
-                                        color="inherit"
-                                        edge="end">
-                                        <MoreIcon fontSize="large"/>
-                                    </IconButton>
-                                </Grid> : null}
-                            </Hidden>
                         </Grid>
                     </Toolbar>
                 </AppBar>
@@ -346,5 +347,7 @@ const NavBar = props => {
     );
 };
 
-export default connect(null, {setAuthDetailsFromCookie, signOut,
-    signOutUsingOAuth, getDataViaAPI, setDefaultSearchSuggestions})(NavBar);
+export default connect(null, {
+    setAuthDetailsFromCookie, signOut,
+    signOutUsingOAuth, getDataViaAPI, setDefaultSearchSuggestions
+})(NavBar);

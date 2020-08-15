@@ -29,7 +29,7 @@ const useNavBarStyles = makeStyles(theme => ({
         },
         [theme.breakpoints.down("sm")]: {
             display: "block",
-            fontSize: "1.5rem",
+            fontSize: "1.8rem",
             paddingBottom: 0,
         },
     },

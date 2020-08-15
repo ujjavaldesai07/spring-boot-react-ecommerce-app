@@ -95,6 +95,7 @@ public class SearchSuggestionServiceImpl implements SearchSuggestionService {
 
         while (true) {
             try {
+                System.out.println("URL = " + URL);
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
                         .GET()
@@ -123,7 +124,11 @@ public class SearchSuggestionServiceImpl implements SearchSuggestionService {
                             new String[]{"genders", "apparels", "brands"});
 
                     System.out.println("prefixKeywordsMap = " + prefixKeywordsMap.size());
-                    break;
+
+                    // it filled up so break.
+                    if(prefixKeywordsMap.size() > 0) {
+                        break;
+                    }
 
                 } else {
                     System.out.println("Error: Unable to connect Search Suggestion API status code = "

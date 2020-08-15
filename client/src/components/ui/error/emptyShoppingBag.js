@@ -1,17 +1,10 @@
 import React from 'react';
-import {Box} from "@material-ui/core";
 import emptyCheckoutCartImage from '../../../images/emptyCheckoutCart.png'
+import {RenderErrorImage} from "./renderErrorImage";
 
 export const EmptyShoppingBag = () => {
 
     return (
-        <Box display="flex"
-             justifyContent="center"
-             flexDirection="column"
-             alignItems="center">
-            <Box alignSelf="center">
-                <img src={emptyCheckoutCartImage} alt="emptyCheckoutCartImage" height={400} width={1000}/>
-            </Box>
-        </Box>
+        <RenderErrorImage image={emptyCheckoutCartImage} name="empty-shopping-bag-image"/>
     );
 };
