@@ -5,7 +5,6 @@ import {
     HANDLE_SIGN_IN_ERROR,
     LOAD_FILTER_PRODUCTS,
     LOAD_FILTER_ATTRIBUTES,
-    SAVE_QUERY_STATUS,
     SHIPPING_ADDRESS_CONFIRMED,
     PAYMENT_INFO_CONFIRMED,
     PAYMENT_RESPONSE,
@@ -296,8 +295,6 @@ export const loadFilterAttributes = filterQuery => async dispatch => {
         if (response != null) {
             log.trace(`[ACTION]: Filter = ${JSON.stringify(response.data)}`)
 
-            const extractRequiredParams = filterQuery.slice(3)
-
             dispatch({
                 type: LOAD_FILTER_ATTRIBUTES,
                 payload: JSON.parse(JSON.stringify(
@@ -305,11 +302,6 @@ export const loadFilterAttributes = filterQuery => async dispatch => {
                         ...response.data,
                         "query": filterQuery.slice(3)
                     }))
-            });
-
-            dispatch({
-                type: SAVE_QUERY_STATUS,
-                payload: extractRequiredParams
             });
 
             return JSON.parse(JSON.stringify(response.data))

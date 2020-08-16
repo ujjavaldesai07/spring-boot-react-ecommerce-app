@@ -1,3 +1,4 @@
+
 export const MAX_PRODUCTS_PER_PAGE = 16;
 
 export const TAB_CONFIG = [
@@ -10,12 +11,14 @@ export const TAB_CONFIG = [
 
 export const INITIAL_PAGINATION_STATE = {
     pageNumber: 1,
-    maxProducts: MAX_PRODUCTS_PER_PAGE
+    maxProducts: MAX_PRODUCTS_PER_PAGE,
+    isLoadedFromURL: true
 }
 
 export const INITIAL_SORT_STATE = {
     id: 1,
-    value: null
+    value: null,
+    isLoadedFromURL: true
 }
 
 export const INITIAL_SELECTED_FILTER_ATTRIBUTE_STATE = {
@@ -23,6 +26,8 @@ export const INITIAL_SELECTED_FILTER_ATTRIBUTE_STATE = {
     apparels: [],
     brands: [],
     prices: [],
+    oldQuery: null,
+    newQuery: null
 }
 
 export const INITIAL_SHIPPING_OPTION_STATE = {
@@ -36,6 +41,8 @@ export const INITIAL_SHIPPING_ADDRESS_STATE = {
 }
 
 export const FILTER_ATTRIBUTES = ["genders", "apparels", "brands", "prices"]
+export const SORT_ATTRIBUTE = "sortby"
+export const PAGE_ATTRIBUTE = "page"
 
 export const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
     'August', 'September', 'October', 'November', 'December'];

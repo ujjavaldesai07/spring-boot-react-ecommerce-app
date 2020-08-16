@@ -40,7 +40,8 @@ export default function BrandCheckBox() {
             payload: {
                 brands: {
                     id, value
-                }
+                },
+                newQuery: null
             }
         })
     }

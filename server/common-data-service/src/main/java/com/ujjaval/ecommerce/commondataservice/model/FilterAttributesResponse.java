@@ -19,7 +19,7 @@ public class FilterAttributesResponse implements Serializable {
     private List<FilterAttributesWithTotalItemsDTO> brands;
     private List<FilterAttributesWithTotalItemsDTO> genders;
     private List<FilterAttributesWithTotalItemsDTO> apparels;
-    private List<SortByCategory> sorts;
+    private List<SortByCategory> sortby;
     private List<FilterAttributesWithTotalItemsDTO> prices;
 
     public FilterAttributesResponse(List<FilterAttributesWithTotalItemsDTO> brands, List<FilterAttributesWithTotalItemsDTO> genders,

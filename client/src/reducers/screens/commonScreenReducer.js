@@ -31,7 +31,7 @@ import {
     RESET_SHIPPING_OPTION,
     RESET_DELIVERY_CHARGES,
     RESET_CART_TOTAL,
-    RESET_ADD_TO_CART, RESET_SHOPPING_BAG_PRODUCTS, SEARCH_KEYWORD, SEARCH_KEYWORD_ERROR
+    RESET_ADD_TO_CART, RESET_SHOPPING_BAG_PRODUCTS, SEARCH_KEYWORD, SEARCH_KEYWORD_ERROR, RESET_QUERY_STATUS
 } from "../../actions/types";
 import log from "loglevel";
 import {
@@ -180,6 +180,8 @@ export const filterQueryReducer = (state = null, action) => {
     switch (action.type) {
         case SAVE_QUERY_STATUS:
             return action.payload
+        case RESET_QUERY_STATUS:
+            return null
         default:
             return state;
     }

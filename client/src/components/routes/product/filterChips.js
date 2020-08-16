@@ -94,7 +94,8 @@ const FilterChips = () => {
                         [attributeName]: {
                             id: selectedAttrList[i].id,
                             value: selectedAttrList[i].value
-                        }
+                        },
+                        newQuery: null
                     }
                 })
                 return

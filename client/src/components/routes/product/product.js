@@ -12,9 +12,13 @@ import Hidden from "@material-ui/core/Hidden";
 // import BottomNavBar from "./bottomNavBar";
 import history from "../../../history";
 import BreadcrumbsSection from "../../ui/breadcrumbs";
-// import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
 import {useDispatch} from "react-redux";
-import {SAVE_QUERY_STATUS} from "../../../actions/types";
+import {
+    RESET_QUERY_STATUS,
+    RESET_SELECT_PRODUCT_PAGE,
+    RESET_SELECT_SORT_CATEGORY,
+    RESET_SELECTED_CATEGORY,
+} from "../../../actions/types";
 import {BadRequest} from "../../ui/error/badRequest";
 import {HOME_ROUTE} from "../../../constants/react_routes";
 import {DocumentTitle} from "../../ui/documentTitle";
@@ -51,7 +55,14 @@ function Product() {
 
             // this is required to reload the page when user
             // navigates on browser using back or forward button.
-            window.location.reload()
+            [RESET_SELECTED_CATEGORY,
+                RESET_SELECT_PRODUCT_PAGE,
+                RESET_SELECT_SORT_CATEGORY,
+                RESET_QUERY_STATUS].forEach(type => {
+                dispatch({
+                    type: type
+                })
+            })
         }
 
         window.addEventListener("popstate", reloadPage);
@@ -66,9 +77,13 @@ function Product() {
             // This required to support the case where user
             // executes URL directly and we need to construct
             // fresh states for eg selecting options based on URL
-            dispatch({
-                type: SAVE_QUERY_STATUS,
-                payload: null
+            [RESET_SELECTED_CATEGORY,
+                RESET_SELECT_PRODUCT_PAGE,
+                RESET_SELECT_SORT_CATEGORY,
+                RESET_QUERY_STATUS].forEach(type => {
+                dispatch({
+                    type: type
+                })
             })
 
         }
@@ -87,7 +102,7 @@ function Product() {
         <Grid container>
             <DocumentTitle title="Shoppers Products"/>
             <Grid item md={3} lg={2}>
-                <FilterNavBar/>
+                <FilterNavBar linkList={breadcrumbLinks}/>
             </Grid>
 
             <Grid item md={9} lg={10}>

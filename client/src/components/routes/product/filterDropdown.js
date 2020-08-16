@@ -3,11 +3,12 @@ import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
 import {SELECT_SORT_CATEGORY} from "../../../actions/types";
 import DropdownSection from "../../ui/dropDown";
+import {SORT_ATTRIBUTE} from "../../../constants/constants";
 
 export default function FilterDropdown() {
     const dispatch = useDispatch()
     const sortList = useSelector(state => state.filterAttributesReducer?
-        state.filterAttributesReducer.sorts : null)
+        state.filterAttributesReducer[SORT_ATTRIBUTE] : null)
     const selectedSortValue = useSelector(state => state.selectSortReducer)
 
     if (!sortList) {
@@ -19,12 +20,13 @@ export default function FilterDropdown() {
         dispatch({
             type: SELECT_SORT_CATEGORY,
             payload: {
-                id, value
+                id, value,
+                isLoadedFromURL: false
             }
         })
     }
 
-    log.info(`[FilterDropdown] Rendering FilterDropdown Component selectedSortValue = ${selectedSortValue}`)
+    log.info(`[FilterDropdown] Rendering FilterDropdown Component selectedSortValue = ${JSON.stringify(selectedSortValue)}`)
 
     return (
         <DropdownSection

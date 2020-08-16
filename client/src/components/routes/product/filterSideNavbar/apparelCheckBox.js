@@ -40,7 +40,8 @@ export default function ApparelCheckBox() {
             payload: {
                 apparels: {
                     id, value
-                }
+                },
+                newQuery: null
             }
         })
     }

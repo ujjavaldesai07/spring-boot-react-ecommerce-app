@@ -1,6 +1,6 @@
 import {
     ADD_SELECTED_CATEGORY,
-    REMOVE_SELECTED_CATEGORY,
+    REMOVE_SELECTED_CATEGORY, RESET_SELECT_PRODUCT_PAGE, RESET_SELECT_SORT_CATEGORY, RESET_SELECTED_CATEGORY,
     SELECT_PRODUCT_PAGE,
     SELECT_SORT_CATEGORY
 } from "../../../actions/types";
@@ -71,6 +71,14 @@ const appendNewPayloadToPrevState = (prevState, payload) => {
         }
     })
 
+    if(payload.hasOwnProperty("newQuery")) {
+        prevState = {...prevState, newQuery: payload.newQuery}
+    }
+
+    if(payload.hasOwnProperty("oldQuery")) {
+        prevState = {...prevState, oldQuery: payload.oldQuery}
+    }
+
     return prevState
 }
 
@@ -81,30 +89,39 @@ export const selectedFilterAttributesReducer = (state = INITIAL_SELECTED_FILTER_
             return appendNewPayloadToPrevState(state, action.payload);
 
         case REMOVE_SELECTED_CATEGORY:
-            return {...INITIAL_SELECTED_FILTER_ATTRIBUTE_STATE, "query": action.payload}
+            return {...INITIAL_SELECTED_FILTER_ATTRIBUTE_STATE, oldQuery: state.oldQuery, newQuery: null}
+
+        case RESET_SELECTED_CATEGORY:
+            return {...INITIAL_SELECTED_FILTER_ATTRIBUTE_STATE, newQuery: state.newQuery}
 
         default:
             return state;
     }
 };
 
-export const selectSortReducer = (state = INITIAL_SORT_STATE, action) => {
+export const selectSortReducer = (state
+                                      = INITIAL_SORT_STATE, action) => {
     switch (action.type) {
         case SELECT_SORT_CATEGORY:
-            if (action.payload.attrList) {
-                return action.payload.attrList[0];
-            }
-
             return action.payload
+
+        case RESET_SELECT_SORT_CATEGORY:
+            return INITIAL_SORT_STATE
+
         default:
             return state;
     }
 };
 
-export const selectPageReducer = (state = INITIAL_PAGINATION_STATE, action) => {
+export const selectPageReducer = (state
+                                      = INITIAL_PAGINATION_STATE, action) => {
     switch (action.type) {
         case SELECT_PRODUCT_PAGE:
             return action.payload
+
+        case RESET_SELECT_PRODUCT_PAGE:
+            return INITIAL_PAGINATION_STATE
+
         default:
             return state;
     }

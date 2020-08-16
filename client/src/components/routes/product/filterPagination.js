@@ -18,7 +18,8 @@ export default function FilterPagination() {
             type: SELECT_PRODUCT_PAGE,
             payload: {
                 pageNumber: page,
-                maxProducts: MAX_PRODUCTS_PER_PAGE
+                maxProducts: MAX_PRODUCTS_PER_PAGE,
+                isLoadedFromURL: false
             }
         })
     }

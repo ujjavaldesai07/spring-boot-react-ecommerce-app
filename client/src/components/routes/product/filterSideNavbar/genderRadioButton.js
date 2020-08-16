@@ -31,7 +31,8 @@ export default function GenderRadioButton() {
                             id: genderList[i].id,
                             value: value,
                             append: false
-                        }
+                        },
+                        newQuery: null
                     }
                 })
                 return

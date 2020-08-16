@@ -4,7 +4,6 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import CloseIcon from '@material-ui/icons/Close';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {Grid} from "@material-ui/core";
-import SearchIcon from '@material-ui/icons/Search';
 import log from 'loglevel';
 import {connect, useSelector} from "react-redux";
 import {getSearchSuggestions, getDataViaAPI} from "../../../actions";
@@ -19,7 +18,7 @@ export const useSearchBarStyles = makeStyles((theme) => ({
         height: 250
     },
     listbox: {
-        maxHeight: 290,
+        maxHeight: 240,
     },
     option: {
         [theme.breakpoints.down("xs")]: {
@@ -64,23 +63,17 @@ function SearchBar(props) {
             if (queryLink) {
                 setIsLoading(true)
                 props.getDataViaAPI(LOAD_FILTER_PRODUCTS,
-                    PRODUCT_BY_CATEGORY_DATA_API + queryLink)
+                    `${PRODUCT_BY_CATEGORY_DATA_API}?q=${queryLink}`)
             }
         }
     }
 
     const handleClose = () => {
-        log.info(`selectedValue------2 ===== ${selectedValue}`)
         let finalSelectedValue = selectedValue
         if (!selectedValue) {
             finalSelectedValue = getSearchKeyword()
         }
         searchKeyword(finalSelectedValue)
-    }
-
-    const onSearchBtnClick = () => {
-        searchKeyword(getSearchKeyword())
-        props.handleClose()
     }
 
     const renderDesktopTextField = (params) => {

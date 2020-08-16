@@ -14,12 +14,12 @@ import {loadFilterAttributes} from "../../../../actions";
 import {Grid} from "@material-ui/core";
 import {useFilterNavBarStyles} from "../../../../styles/materialUI/filterNavBarStyles";
 import {
-    FILTER_ATTRIBUTES, INITIAL_PAGINATION_STATE,
-    MAX_PRODUCTS_PER_PAGE
+    FILTER_ATTRIBUTES, MAX_PRODUCTS_PER_PAGE,
+    PAGE_ATTRIBUTE, SORT_ATTRIBUTE
 } from "../../../../constants/constants";
 import {
     ADD_SELECTED_CATEGORY,
-    SAVE_QUERY_STATUS, SAVE_SORT_LIST, SELECT_PRODUCT_PAGE,
+    SAVE_QUERY_STATUS, SAVE_SORT_LIST, SELECT_PRODUCT_PAGE, SELECT_SORT_CATEGORY,
 } from "../../../../actions/types";
 import {PRODUCTS_ROUTE} from "../../../../constants/react_routes";
 
@@ -32,8 +32,6 @@ function FilterNavBar(props) {
     const selectedFilterAttributes = useSelector(state => state.selectedFilterAttributesReducer)
     const selectedSort = useSelector(state => state.selectSortReducer)
     const selectedPage = useSelector(state => state.selectPageReducer)
-    const filterAttributes = useSelector(state => state.filterAttributesReducer)
-    const [filterAttributeFromUrlState, setFilterAttributeFromUrlState] = React.useState(false);
     const dispatch = useDispatch()
 
     /**
@@ -61,6 +59,7 @@ function FilterNavBar(props) {
      * @returns {string|null}
      */
     const prepareQuery = () => {
+        log.info("[FilterNavBar] Preparing Query from filters.")
 
         let query = []
         let executeDefaultQuery = true
@@ -100,9 +99,30 @@ function FilterNavBar(props) {
         }
 
         if (query.length > 0) {
-            log.info(`[FilterNavBar] query is prepared successfully`)
             query = query.join("::")
-            return query
+            log.info(`[FilterNavBar] query is prepared successfully query = ${query}`)
+            return `?q=${query}`
+        }
+        return null
+    }
+
+    /**
+     * check whether id exist in the filterAPIData list
+     *
+     * @param id
+     * @param list
+     * @returns {null|*}
+     */
+    const getObjectFromList = (id, list) => {
+        log.info(`[FilterNavBar] getObjectFromList id = ${id}`)
+        for (let i = 0; i < list.length; i++) {
+            try {
+                if (list[i].id === parseInt(id))
+                    return list[i]
+            } catch (e) {
+                log.error(`Malformed URL: Unable to parse id = ${id}`)
+                return null
+            }
         }
         return null
     }
@@ -112,39 +132,26 @@ function FilterNavBar(props) {
      * filterAPI Data will be received from server side
      *
      * @param filterAPIData
+     * @param queryFromURL
      */
-    const dispatchFilterAttributesFromURL = (filterAPIData) => {
+    const dispatchFilterAttributesFromURL = (filterAPIData, queryFromURL) => {
 
-        // check whether id exist in the filterAPIData list
-        // if found return the object
-        const getObjectFromList = (id, list) => {
-            for (let i = 0; i < list.length; i++) {
-                if (list[i].id === parseInt(id))
-                    return list[i]
-            }
-            return null
-        }
+        log.info(`[FilterNavBar] dispatchFilterAttributesFromURL` +
+            ` queryFromURL = ${queryFromURL}, filterAPIData = ${filterAPIData}`)
 
         // check URI
         if (history.location && history.location.pathname.localeCompare(PRODUCTS_ROUTE) === 0) {
-            log.info(`[FilterNavBar]: url = ${history.location.search}`)
 
-            let query = history.location.search
             let selectedFilterAttributes = {}
-            let filterAttributeIsAdded = false
 
-            // remove genders from filter attributes because we can get
-            // multiple genders from the URL and genders is radio button
-            // component so multiple selection is not allowed
-            let modified_filter_attributes = FILTER_ATTRIBUTES.filter((attribute) => attribute !== "genders")
-
-            modified_filter_attributes.forEach((attribute) => {
+            // eg: http://localhost:7071/products?q=sortby=3::page=16,16::category=all
+            FILTER_ATTRIBUTES.forEach((attribute) => {
 
                 // split string based on attribute.
                 // for eg /products?q=genders=1::brands=2,3
                 // where genders= and brands= are string to split
                 // this will give start position
-                let queryParameters = query.split(`${attribute}=`)
+                let queryParameters = queryFromURL.split(`${attribute}=`)
 
                 log.info(`[FilterNavBar] queryParameters = ${JSON.stringify(queryParameters)}`)
 
@@ -191,22 +198,70 @@ function FilterNavBar(props) {
                                         attrList: selectedAttrList
                                     }
                                 }
-                                filterAttributeIsAdded = true
                             }
                         }
                     }
                 }
             })
 
+            selectedFilterAttributes = {
+                ...selectedFilterAttributes,
+                oldQuery: queryFromURL, newQuery: queryFromURL
+            }
+
             // if selected attributes are found then dispatch to redux store
-            if (filterAttributeIsAdded) {
-                log.info(`[FilterNavBar] dispatchFilterAttributesFromURL` +
-                    `dispatching selectedFilterAttributes=${JSON.stringify(selectedFilterAttributes)}`)
-                setFilterAttributeFromUrlState(true)
+            log.info(`[FilterNavBar] dispatchFilterAttributesFromURL` +
+                `dispatching selectedFilterAttributes=${JSON.stringify(selectedFilterAttributes)}`)
+            dispatch({
+                type: ADD_SELECTED_CATEGORY,
+                payload: selectedFilterAttributes
+            })
+        }
+    }
+
+    const dispatchSortAttributeFromURL = (filterAPIData, queryFromURL) => {
+        // dispatch sort type
+        // eg: http://localhost:7071/products?q=sortby=3::page=16,16::category=all
+        let queryParameters = queryFromURL.split(`${SORT_ATTRIBUTE}=`)
+        if (queryParameters.length > 1) {
+            let id = queryParameters[1][0]
+            let attrObject = getObjectFromList(id, filterAPIData[SORT_ATTRIBUTE])
+            if (attrObject) {
                 dispatch({
-                    type: ADD_SELECTED_CATEGORY,
-                    payload: selectedFilterAttributes
+                    type: SELECT_SORT_CATEGORY,
+                    payload: {
+                        id: attrObject.id,
+                        value: attrObject.type,
+                        isLoadedFromURL: true
+                    }
                 })
+            }
+        }
+    }
+
+    const dispatchPageAttributeFromURL = (filterAPIData, queryFromURL) => {
+        log.info(`dispatchPageAttributeFromURL = ${queryFromURL}`)
+        // dispatch selected page
+        // eg: http://localhost:7071/products?q=sortby=3::page=16,16::category=all
+        let queryParameters = queryFromURL.split(`${PAGE_ATTRIBUTE}=`)
+        if (queryParameters.length > 1) {
+            let id = queryParameters[1].split(",")
+            if (id.length > 1) {
+                try {
+                    let pageNo = parseInt(id[0])
+                    log.info(`pageNo = ${pageNo}`)
+                    dispatch({
+                        type: SELECT_PRODUCT_PAGE,
+                        payload: {
+                            pageNumber: pageNo > 0 ? pageNo / MAX_PRODUCTS_PER_PAGE + 1 : 1,
+                            maxProducts: MAX_PRODUCTS_PER_PAGE,
+                            isLoadedFromURL: true
+                        }
+                    })
+                } catch (e) {
+                    log.error(`Malformed URL: Unable to parse attribute name ${PAGE_ATTRIBUTE},` +
+                        ` url = ${log.info(`dispatchPageAttributeFromURL = ${queryFromURL}`)}`)
+                }
             }
         }
     }
@@ -245,66 +300,70 @@ function FilterNavBar(props) {
         log.info("[FilterNavBar] Component did mount for " +
             "selectedApparels, selectedGenders, selectedBrands, selectedPriceRanges.")
 
-        // Get Data for filter Attributes and Products from the server side
-        // based on the URL
-        if (!filterAttributes) {
-            log.info(`[FilterNavBar] setting selected attributes from URL`)
-            let promise = props.loadFilterAttributes(history.location.search);
-            promise.then((data) => {
+        const {oldQuery, newQuery} = selectedFilterAttributes;
 
-                if (!data) {
-                    return
-                }
+        log.info(`[FilterNavBar] oldQuery = ${oldQuery}, newQuery = ${newQuery}`)
+        let dispatchQueryForProducts = null
+        let queryFromURL = history.location.search
 
-                dispatchFilterAttributesFromURL(data)
+        if (!oldQuery) {
+
+            // first load and navigation scenario
+            if (!newQuery || newQuery.localeCompare(queryFromURL) !== 0) {
+                log.info(`[FilterNavBar] Updating from First time page load ` +
+                    `scenario is null oldQuery = ${oldQuery}, ` +
+                    `newQuery = ${newQuery}, queryFromURL = ${queryFromURL}`)
+
+                props.loadFilterAttributes(queryFromURL).then(data => {
+                    dispatchFilterAttributesFromURL(data, queryFromURL)
+                    dispatchSortAttributeFromURL(data, queryFromURL)
+                    dispatchPageAttributeFromURL(data, queryFromURL)
+                    dispatchSortList(data)
+                })
+
+                dispatchQueryForProducts = queryFromURL
+            }
+        } else if (!newQuery) {
+            log.info(`[FilterNavBar] Updating when filter is selected ` +
+                `oldQuery = ${oldQuery}, newQuery = ${newQuery}`)
+            let queryPreparedFromFilters = prepareQuery()
+
+            props.loadFilterAttributes(queryPreparedFromFilters).then(data => {
                 dispatchSortList(data)
-
-            }).catch((message) => {
-                log.error(`[FilterNavBar] ${message}}`)
             })
 
-        } else {
-            log.info(`[FilterNavBar] prepare query for selectedFilterAttribute`)
+            // set new query
+            dispatch({
+                type: ADD_SELECTED_CATEGORY,
+                payload: {newQuery: queryPreparedFromFilters}
+            })
 
-            // prepare query using states from redux store
-            let query = prepareQuery()
-
-            log.info(`[FilterNavBar] newQuery = ${query}, oldQuery = ${selectedFilterAttributes.query}`)
-
-            if (filterAttributes.query || filterAttributeFromUrlState === false) {
-
-                // check if we have data for the required query
-                // if matched then we dont need to call the API again.
-                if (filterAttributes.query.localeCompare(query) === 0) {
-                    return
-                }
-
-                log.info(`[FilterNavBar] dispatching query to SAVE_FILTER_QUERY query = ${query}`)
-
-                // call filter Attributes API
-                props.loadFilterAttributes(`?q=${query}`);
-
-                // as the filter Attributes are changed we need to update
-                // sorted list for apparels and brands.
-                dispatchSortList(filterAttributes)
+            // by default first page should be selected.
+            if (selectedPage.pageNumber > 1) {
+                log.info(`dispatching selectedPage = ${JSON.stringify(selectedPage)}`)
+                dispatch({
+                    type: SELECT_PRODUCT_PAGE,
+                    payload: {
+                        pageNumber: 1,
+                        maxProducts: MAX_PRODUCTS_PER_PAGE,
+                        isLoadedFromURL: false
+                    }
+                })
             } else {
-
-                // this is required to load the attributes from URL
-                // when user lands on this page for the first time.
-                setFilterAttributeFromUrlState(false)
+                dispatchQueryForProducts = queryPreparedFromFilters
             }
         }
 
-        // by default first page should be selected.
-        if (selectedPage.pageNumber > 1) {
+        if (dispatchQueryForProducts) {
+            log.info(`selectedFilterAttributes useEffect dispatchQueryForProducts = ${dispatchQueryForProducts}`)
             dispatch({
-                type: SELECT_PRODUCT_PAGE,
-                payload: INITIAL_PAGINATION_STATE
+                type: SAVE_QUERY_STATUS,
+                payload: dispatchQueryForProducts
             })
         }
 
         // eslint-disable-next-line
-    }, [selectedFilterAttributes]);
+    }, [selectedFilterAttributes, props]);
 
     /**
      * Component Did Update for Sort and Page Options
@@ -312,23 +371,18 @@ function FilterNavBar(props) {
     useEffect(() => {
         log.info("[FilterNavBar] Component did mount selectedPage, selectedSort.")
 
-        // Just Update the query as we just need Products components to change
-        // by retrieving new data from server
-        if (filterAttributes) {
-            log.info(`[FilterNavBar] prepare query for selectedPage, selectedSort`)
+        if (!selectedPage.isLoadedFromURL || !selectedSort.isLoadedFromURL) {
+            log.info("[FilterNavBar] Preparing query for selectedPage and selectedSort.")
 
             let query = prepareQuery()
+            log.info(`selectedPage useEffect dispatchQueryForProducts = ${query}`)
 
-            // check if data already exist for the required query.
-            if (filterAttributes.query
-                && filterAttributes.query.localeCompare(query) === 0) {
-                return
+            if (query) {
+                dispatch({
+                    type: SAVE_QUERY_STATUS,
+                    payload: query
+                })
             }
-
-            dispatch({
-                type: SAVE_QUERY_STATUS,
-                payload: query
-            })
         }
 
         // eslint-disable-next-line
@@ -336,8 +390,10 @@ function FilterNavBar(props) {
 
     // if no filter attributes then just return no
     // need to render the component.
-    if (!filterAttributes) {
-        log.info(`[FilterNavBar] filterAttributes is null.`)
+    if (!selectedFilterAttributes.newQuery
+        && selectedFilterAttributes.newQuery === selectedFilterAttributes.oldQuery) {
+        log.info(`[FilterNavBar] Stop rendering... newQuery = ${selectedFilterAttributes.newQuery}`
+            + `, oldQuery = ${selectedFilterAttributes.oldQuery}`)
         return null
     }
 

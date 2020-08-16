@@ -29,8 +29,10 @@ export default function PriceCheckBox() {
         dispatch({
             type: ADD_SELECTED_CATEGORY,
             payload: {
-                prices: {id, value}
+                prices: {id, value},
+                newQuery: null
             }
+
         })
     }
 

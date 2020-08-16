@@ -98,7 +98,7 @@ public class CommonDataServiceImpl implements CommonDataService {
 
         if (conditionMap != null && !conditionMap.isEmpty()) {
             FilterAttributesResponse filterAttributesResponse = productInfoRepository.getFilterAttributesByProducts(conditionMap);
-            filterAttributesResponse.setSorts(sortByCategoryRepository.getAllData());
+            filterAttributesResponse.setSortby(sortByCategoryRepository.getAllData());
             return filterAttributesResponse;
         }
         return null;
