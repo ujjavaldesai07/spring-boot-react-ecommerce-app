@@ -1,5 +1,5 @@
 # spring-boot-react-ecommerce-app
-eCommerce application based on the microservices architecture built using Spring-boot (back-end) and React JS (front-end).
+eCommerce application based on the microservices architecture built using Spring Boot and ReactJS.
 
 **DEMO**
 - Deployed to Heroku Cloud:
@@ -22,11 +22,12 @@ eCommerce application based on the microservices architecture built using Spring
 - Stores authentication details like token information in cookies.
 - Store cart's product information in cookies.
 - Payment service using Stripe's API to buy products.
+- Responsiveness support for all devices.
 
 **TOOLS USED**
 
 - **ReactJS:** Front-end Javascript framework.
-- **Spring-boot 2.0:** Back-end JAVA framework to build microservices using Spring
+- **Spring Boot 2.0:** Back-end JAVA framework to build microservices using Spring
  Rest Controller and Spring JPA.
 - **Material-UI:** Used Google's material design based on the CSS Framework for a responsive website.
 - **Semantic-UI:** Used some components which Material-UI doesn't support.
