@@ -252,10 +252,14 @@ export const sendPaymentToken = (token) => async dispatch => {
 }
 
 
-export const getDataViaAPI = (type, uri, subsequent_request) => async dispatch => {
-    log.info(`[ACTION]: invokeAndDispatchAPIData Calling API = ${uri}.`)
-
+export const getDataViaAPI = (type, uri, query) => async dispatch => {
     if (uri) {
+        if(query) {
+            uri += query
+        }
+
+        log.info(`[ACTION]: invokeAndDispatchAPIData Calling API = ${uri}.`)
+
         // uri = uri.replace(/\s/g, '')
         let responseError = false
         const response = await commonServiceAPI.get(uri)
@@ -271,10 +275,18 @@ export const getDataViaAPI = (type, uri, subsequent_request) => async dispatch =
 
         if (response != null) {
             log.debug(`[ACTION]: Data = ${JSON.parse(JSON.stringify(response.data))}.`)
-            dispatch({
-                type: type, payload:
-                    {isLoading: false, data: JSON.parse(JSON.stringify(response.data))}
-            });
+            let payload = {isLoading: false, data: JSON.parse(JSON.stringify(response.data))}
+            if(query) {
+                dispatch({
+                    type: type, payload:
+                        {...payload, query: query}
+                });
+            } else {
+                dispatch({
+                    type: type, payload: payload
+                });
+            }
+
 
             if (LOAD_FILTER_PRODUCTS.localeCompare(type) === 0 &&
                 window.location.search.localeCompare(uri.split("/products")[1]) !== 0) {

@@ -24,10 +24,10 @@ const FilterProductDisplay = props => {
             log.info(`[FilterProductDisplay] Component did mount`)
 
             try {
-                // if query is present then call the products API
-                if (queryStatus) {
-                    log.info(`[FilterProductDisplay] Getting products from API.....`)
-                    props.getDataViaAPI(LOAD_FILTER_PRODUCTS, PRODUCT_BY_CATEGORY_DATA_API + queryStatus)
+                // if we already have the data then dont make a API request.
+                if (queryStatus && (queryStatus.localeCompare(filterProductsReducer.query) !== 0)) {
+                    log.info(`[FilterProductDisplay] Getting products from API.....query = ${filterProductsReducer.query}, queryStatus = ${queryStatus}, URL = ${history.location.search}`)
+                    props.getDataViaAPI(LOAD_FILTER_PRODUCTS, PRODUCT_BY_CATEGORY_DATA_API, queryStatus)
                 }
             } catch (e) {
                 log.error(`[FilterProductDisplay] Bad URL found in history.location.search`)

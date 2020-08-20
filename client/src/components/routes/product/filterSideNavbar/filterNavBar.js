@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
@@ -33,6 +33,7 @@ function FilterNavBar(props) {
     const selectedSort = useSelector(state => state.selectSortReducer)
     const selectedPage = useSelector(state => state.selectPageReducer)
     const dispatch = useDispatch()
+    const [loadOnlyProducts, setLoadOnlyProducts] = useState(false)
 
     /**
      * multiple selected options IDs are appended
@@ -301,49 +302,52 @@ function FilterNavBar(props) {
 
         const {oldQuery, newQuery} = selectedFilterAttributes;
 
-        let dispatchQueryForProducts = null
+        // this means we are seeing new URL
+        if (!oldQuery || (oldQuery && oldQuery.localeCompare(newQuery) === 0)) {
+            return
+        }
+
         let queryFromURL = history.location.search
 
         log.info(`[FilterNavBar] filter selection hook oldQuery = ${oldQuery}, newQuery = ${newQuery}, queryFromURL = ${queryFromURL}`)
         if (!newQuery) {
-            log.info(`[FilterNavBar] filter selection hook oldQuery = ${oldQuery}, newQuery = ${newQuery}`)
+            log.info(`[FilterNavBar] updating states for filter selection hook`)
 
             // on filter selection scenario
             let queryPreparedFromFilters = prepareQuery()
 
             props.loadFilterAttributes(queryPreparedFromFilters).then(data => {
+                if(!data) {
+                    log.error(`[FilterNavBar]  loadFilterAttributes failed. No data found.`)
+                    return
+                }
+
                 dispatchSortList(data)
-            })
-
-            // set new query
-            dispatch({
-                type: ADD_SELECTED_CATEGORY,
-                payload: {newQuery: queryPreparedFromFilters}
-            })
-
-            // by default first page should be selected.
-            if (selectedPage.pageNumber > 1) {
-                log.info(`[FilterNavBar] filter selection hook dispatching selectedPage = ${JSON.stringify(selectedPage)}`)
-
+                // set new query
                 dispatch({
-                    type: SELECT_PRODUCT_PAGE,
-                    payload: {
-                        pageNumber: 1,
-                        maxProducts: MAX_PRODUCTS_PER_PAGE,
-                        isLoadedFromURL: false
-                    }
+                    type: ADD_SELECTED_CATEGORY,
+                    payload: {newQuery: queryPreparedFromFilters}
                 })
-            } else {
-                dispatchQueryForProducts = queryPreparedFromFilters
-            }
-        }
 
-        if (dispatchQueryForProducts) {
-            log.info(`[FilterNavBar] filter selection hook dispatchQueryForProducts = ${dispatchQueryForProducts}`)
+                // by default first page should be selected.
+                if (selectedPage.pageNumber > 1) {
+                    log.info(`[FilterNavBar] filter selection hook dispatching selectedPage = ${JSON.stringify(selectedPage)}`)
 
-            dispatch({
-                type: SAVE_QUERY_STATUS,
-                payload: dispatchQueryForProducts
+                    dispatch({
+                        type: SELECT_PRODUCT_PAGE,
+                        payload: {
+                            pageNumber: 1,
+                            maxProducts: MAX_PRODUCTS_PER_PAGE,
+                            isLoadedFromURL: false
+                        }
+                    })
+                } else {
+                    log.info(`[FilterNavBar] filter selection hook dispatching SAVE_QUERY_STATUS = ${queryPreparedFromFilters}`)
+                    dispatch({
+                        type: SAVE_QUERY_STATUS,
+                        payload: queryPreparedFromFilters
+                    })
+                }
             })
         }
 
@@ -355,29 +359,33 @@ function FilterNavBar(props) {
 
         const {oldQuery, newQuery} = selectedFilterAttributes;
 
-        let dispatchQueryForProducts = null
         let queryFromURL = history.location.search
 
         log.info(`[FilterNavBar] new URL hook oldQuery = ${oldQuery}, newQuery = ${newQuery}, queryFromURL = ${queryFromURL}`)
+
+        if(loadOnlyProducts) {
+            setLoadOnlyProducts(false)
+            return
+        }
+
         if (!oldQuery || newQuery.localeCompare(queryFromURL) !== 0) {
-            log.info(`[FilterNavBar]  new URL hook oldQuery = ${oldQuery}, newQuery = ${newQuery}`)
+            log.info(`[FilterNavBar] updating states for new URL hook`)
 
             // on links click from tabs
             props.loadFilterAttributes(queryFromURL).then(data => {
+                if(!data) {
+                    log.error(`[FilterNavBar]  loadFilterAttributes failed. No data found.`)
+                    return
+                }
+
                 dispatchFilterAttributesFromURL(data, queryFromURL)
                 dispatchSortAttributeFromURL(data, queryFromURL)
                 dispatchPageAttributeFromURL(data, queryFromURL)
                 dispatchSortList(data)
-            })
-            dispatchQueryForProducts = queryFromURL
-        }
-
-        if (dispatchQueryForProducts) {
-            log.info(`[FilterNavBar]  new URL hook dispatchQueryForProducts = ${dispatchQueryForProducts}`)
-
-            dispatch({
-                type: SAVE_QUERY_STATUS,
-                payload: dispatchQueryForProducts
+                dispatch({
+                    type: SAVE_QUERY_STATUS,
+                    payload: queryFromURL
+                })
             })
         }
 
@@ -391,12 +399,14 @@ function FilterNavBar(props) {
         log.info("[FilterNavBar] Component did mount selectedPage, selectedSort hook.")
 
         if (!selectedPage.isLoadedFromURL || !selectedSort.isLoadedFromURL) {
-            log.info("[FilterNavBar] selectedPage, selectedSort hook Preparing query for selectedPage and selectedSort.")
+            log.info(`[FilterNavBar] updating states for selectedPage, selectedSort hook`)
 
             let query = prepareQuery()
             log.info(`[FilterNavBar] selectedPage, selectedSort hook dispatchQueryForProducts = ${query}`)
 
             if (query) {
+                setLoadOnlyProducts(true)
+
                 dispatch({
                     type: SAVE_QUERY_STATUS,
                     payload: query
