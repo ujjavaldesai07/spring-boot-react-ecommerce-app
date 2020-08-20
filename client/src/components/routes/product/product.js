@@ -31,6 +31,13 @@ export const stickyBoxStyle = {
     paddingLeft: "1rem"
 }
 
+const RESET_ALL_PRODUCT_STATES = [
+    RESET_SELECTED_CATEGORY,
+    RESET_SELECT_PRODUCT_PAGE,
+    RESET_SELECT_SORT_CATEGORY,
+    RESET_QUERY_STATUS]
+
+
 function Product() {
     const dispatch = useDispatch();
 
@@ -49,38 +56,15 @@ function Product() {
     useEffect(() => {
         log.info(`[Product] Component did mount...`)
 
-        /* TODO: Replace this reloadPage option with
-                 setting the right dependency in useEffect*/
-        const reloadPage = () => {
-
-            // this is required to reload the page when user
-            // navigates on browser using back or forward button.
-            [RESET_SELECTED_CATEGORY,
-                RESET_SELECT_PRODUCT_PAGE,
-                RESET_SELECT_SORT_CATEGORY,
-                RESET_QUERY_STATUS].forEach(type => {
-                dispatch({
-                    type: type
-                })
-            })
-        }
-
-        window.addEventListener("popstate", reloadPage);
-
         return () => {
             log.info(`[Product] Component will unmount...`)
-
-            window.removeEventListener("popstate", reloadPage);
 
             // reset the saved query as we will load
             // next time from the URL.
             // This required to support the case where user
             // executes URL directly and we need to construct
             // fresh states for eg selecting options based on URL
-            [RESET_SELECTED_CATEGORY,
-                RESET_SELECT_PRODUCT_PAGE,
-                RESET_SELECT_SORT_CATEGORY,
-                RESET_QUERY_STATUS].forEach(type => {
+            RESET_ALL_PRODUCT_STATES.forEach(type => {
                 dispatch({
                     type: type
                 })

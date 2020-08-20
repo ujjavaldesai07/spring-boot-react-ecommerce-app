@@ -1,5 +1,5 @@
 import {
-    ADD_SELECTED_CATEGORY,
+    ADD_SELECTED_CATEGORY, LOAD_SELECTED_CATEGORY_FROM_URL,
     REMOVE_SELECTED_CATEGORY, RESET_SELECT_PRODUCT_PAGE, RESET_SELECT_SORT_CATEGORY, RESET_SELECTED_CATEGORY,
     SELECT_PRODUCT_PAGE,
     SELECT_SORT_CATEGORY
@@ -89,10 +89,13 @@ export const selectedFilterAttributesReducer = (state = INITIAL_SELECTED_FILTER_
             return appendNewPayloadToPrevState(state, action.payload);
 
         case REMOVE_SELECTED_CATEGORY:
-            return {...INITIAL_SELECTED_FILTER_ATTRIBUTE_STATE, oldQuery: state.oldQuery, newQuery: null}
+            return {...INITIAL_SELECTED_FILTER_ATTRIBUTE_STATE, oldQuery: state.oldQuery, newQuery: action.payload.newQuery}
 
         case RESET_SELECTED_CATEGORY:
             return {...INITIAL_SELECTED_FILTER_ATTRIBUTE_STATE, newQuery: state.newQuery}
+
+        case LOAD_SELECTED_CATEGORY_FROM_URL:
+            return appendNewPayloadToPrevState(INITIAL_SELECTED_FILTER_ATTRIBUTE_STATE, action.payload);
 
         default:
             return state;

@@ -6,16 +6,10 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {Link} from "react-router-dom";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {TAB_CONFIG} from "../../../constants/constants";
 import log from "loglevel";
 import {PRODUCTS_ROUTE} from "../../../constants/react_routes";
-import {
-    RESET_QUERY_STATUS,
-    RESET_SELECT_PRODUCT_PAGE,
-    RESET_SELECT_SORT_CATEGORY,
-    RESET_SELECTED_CATEGORY
-} from "../../../actions/types";
 
 const height = 48
 
@@ -69,24 +63,12 @@ const useStyles = makeStyles((theme) => ({
 export default function AccordionSection() {
     const classes = useStyles();
     const tabsAPIData = useSelector(state => state.tabsDataReducer)
-    const dispatch = useDispatch()
-
-    const handleLinkClick = () => {
-        [RESET_SELECTED_CATEGORY,
-            RESET_SELECT_PRODUCT_PAGE,
-            RESET_SELECT_SORT_CATEGORY,
-            RESET_QUERY_STATUS].forEach(type => {
-            dispatch({
-                type: type
-            })
-        })
-    }
 
     const renderContent = (contentList, mapKey, queryParam) => {
         return contentList.map(({id, value}) => {
             return (
                 <Grid item key={`${mapKey}${id}`}>
-                    <Link onClick={handleLinkClick} to={`${PRODUCTS_ROUTE}?q=${queryParam}=${id}`}>
+                    <Link to={`${PRODUCTS_ROUTE}?q=${queryParam}=${id}`}>
                         <Typography className={classes.content}>
                             {value}
                         </Typography>

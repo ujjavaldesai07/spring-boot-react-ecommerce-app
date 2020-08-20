@@ -18,7 +18,7 @@ import {
     PAGE_ATTRIBUTE, SORT_ATTRIBUTE
 } from "../../../../constants/constants";
 import {
-    ADD_SELECTED_CATEGORY,
+    ADD_SELECTED_CATEGORY, LOAD_SELECTED_CATEGORY_FROM_URL,
     SAVE_QUERY_STATUS, SAVE_SORT_LIST, SELECT_PRODUCT_PAGE, SELECT_SORT_CATEGORY,
 } from "../../../../actions/types";
 import {PRODUCTS_ROUTE} from "../../../../constants/react_routes";
@@ -213,7 +213,7 @@ function FilterNavBar(props) {
             log.info(`[FilterNavBar] dispatchFilterAttributesFromURL` +
                 `dispatching selectedFilterAttributes=${JSON.stringify(selectedFilterAttributes)}`)
             dispatch({
-                type: ADD_SELECTED_CATEGORY,
+                type: LOAD_SELECTED_CATEGORY_FROM_URL,
                 payload: selectedFilterAttributes
             })
         }
@@ -297,35 +297,18 @@ function FilterNavBar(props) {
      * Component Did Update for Genders, Apparels, Brands and Prices
      */
     useEffect(() => {
-        log.info("[FilterNavBar] Component did mount for " +
-            "selectedApparels, selectedGenders, selectedBrands, selectedPriceRanges.")
+        log.info("[FilterNavBar] Component did mount for filter selection hook")
 
         const {oldQuery, newQuery} = selectedFilterAttributes;
 
-        log.info(`[FilterNavBar] oldQuery = ${oldQuery}, newQuery = ${newQuery}`)
         let dispatchQueryForProducts = null
         let queryFromURL = history.location.search
 
-        if (!oldQuery) {
+        log.info(`[FilterNavBar] filter selection hook oldQuery = ${oldQuery}, newQuery = ${newQuery}, queryFromURL = ${queryFromURL}`)
+        if (!newQuery) {
+            log.info(`[FilterNavBar] filter selection hook oldQuery = ${oldQuery}, newQuery = ${newQuery}`)
 
-            // first load and navigation scenario
-            if (!newQuery || newQuery.localeCompare(queryFromURL) !== 0) {
-                log.info(`[FilterNavBar] Updating from First time page load ` +
-                    `scenario is null oldQuery = ${oldQuery}, ` +
-                    `newQuery = ${newQuery}, queryFromURL = ${queryFromURL}`)
-
-                props.loadFilterAttributes(queryFromURL).then(data => {
-                    dispatchFilterAttributesFromURL(data, queryFromURL)
-                    dispatchSortAttributeFromURL(data, queryFromURL)
-                    dispatchPageAttributeFromURL(data, queryFromURL)
-                    dispatchSortList(data)
-                })
-
-                dispatchQueryForProducts = queryFromURL
-            }
-        } else if (!newQuery) {
-            log.info(`[FilterNavBar] Updating when filter is selected ` +
-                `oldQuery = ${oldQuery}, newQuery = ${newQuery}`)
+            // on filter selection scenario
             let queryPreparedFromFilters = prepareQuery()
 
             props.loadFilterAttributes(queryPreparedFromFilters).then(data => {
@@ -340,7 +323,8 @@ function FilterNavBar(props) {
 
             // by default first page should be selected.
             if (selectedPage.pageNumber > 1) {
-                log.info(`dispatching selectedPage = ${JSON.stringify(selectedPage)}`)
+                log.info(`[FilterNavBar] filter selection hook dispatching selectedPage = ${JSON.stringify(selectedPage)}`)
+
                 dispatch({
                     type: SELECT_PRODUCT_PAGE,
                     payload: {
@@ -355,7 +339,8 @@ function FilterNavBar(props) {
         }
 
         if (dispatchQueryForProducts) {
-            log.info(`selectedFilterAttributes useEffect dispatchQueryForProducts = ${dispatchQueryForProducts}`)
+            log.info(`[FilterNavBar] filter selection hook dispatchQueryForProducts = ${dispatchQueryForProducts}`)
+
             dispatch({
                 type: SAVE_QUERY_STATUS,
                 payload: dispatchQueryForProducts
@@ -363,19 +348,53 @@ function FilterNavBar(props) {
         }
 
         // eslint-disable-next-line
-    }, [selectedFilterAttributes, props]);
+    }, [selectedFilterAttributes]);
+
+    useEffect(() => {
+        log.info("[FilterNavBar] Component did mount for new URL hook")
+
+        const {oldQuery, newQuery} = selectedFilterAttributes;
+
+        let dispatchQueryForProducts = null
+        let queryFromURL = history.location.search
+
+        log.info(`[FilterNavBar] new URL hook oldQuery = ${oldQuery}, newQuery = ${newQuery}, queryFromURL = ${queryFromURL}`)
+        if (!oldQuery || newQuery.localeCompare(queryFromURL) !== 0) {
+            log.info(`[FilterNavBar]  new URL hook oldQuery = ${oldQuery}, newQuery = ${newQuery}`)
+
+            // on links click from tabs
+            props.loadFilterAttributes(queryFromURL).then(data => {
+                dispatchFilterAttributesFromURL(data, queryFromURL)
+                dispatchSortAttributeFromURL(data, queryFromURL)
+                dispatchPageAttributeFromURL(data, queryFromURL)
+                dispatchSortList(data)
+            })
+            dispatchQueryForProducts = queryFromURL
+        }
+
+        if (dispatchQueryForProducts) {
+            log.info(`[FilterNavBar]  new URL hook dispatchQueryForProducts = ${dispatchQueryForProducts}`)
+
+            dispatch({
+                type: SAVE_QUERY_STATUS,
+                payload: dispatchQueryForProducts
+            })
+        }
+
+        // eslint-disable-next-line
+    }, [props]);
 
     /**
      * Component Did Update for Sort and Page Options
      */
     useEffect(() => {
-        log.info("[FilterNavBar] Component did mount selectedPage, selectedSort.")
+        log.info("[FilterNavBar] Component did mount selectedPage, selectedSort hook.")
 
         if (!selectedPage.isLoadedFromURL || !selectedSort.isLoadedFromURL) {
-            log.info("[FilterNavBar] Preparing query for selectedPage and selectedSort.")
+            log.info("[FilterNavBar] selectedPage, selectedSort hook Preparing query for selectedPage and selectedSort.")
 
             let query = prepareQuery()
-            log.info(`selectedPage useEffect dispatchQueryForProducts = ${query}`)
+            log.info(`[FilterNavBar] selectedPage, selectedSort hook dispatchQueryForProducts = ${query}`)
 
             if (query) {
                 dispatch({

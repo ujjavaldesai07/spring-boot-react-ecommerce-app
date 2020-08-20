@@ -8,7 +8,7 @@ function ClearAllButton() {
     const selectedFilterAttribute = useSelector(state => state.selectedFilterAttributesReducer)
 
     // check if any filter is selected or not
-    if((selectedFilterAttribute.genders.length + selectedFilterAttribute.apparels.length
+    if ((selectedFilterAttribute.genders.length + selectedFilterAttribute.apparels.length
         + selectedFilterAttribute.brands.length + selectedFilterAttribute.prices.length) === 0) {
         log.info(`[ClearAllButton] selected attribute are null`)
         return null
@@ -19,15 +19,23 @@ function ClearAllButton() {
      */
     const handleClearAllClick = () => {
         log.info(`[ClearAllButton] handleClearAllClick(value)`)
-        dispatch({type: REMOVE_SELECTED_CATEGORY})
+        dispatch({
+            type: REMOVE_SELECTED_CATEGORY,
+            payload: {
+                newQuery: null
+            }
+        })
     }
 
     log.info(`[ClearAllButton] Rendering ClearAllButton Component`)
 
     return (
         <>
-            <div onClick={handleClearAllClick} style={{fontWeight: "bold", cursor: 'pointer',
-                fontSize: '0.9rem', height: 'inherit', color: 'red'}}>CLEAR ALL</div>
+            <div onClick={handleClearAllClick} style={{
+                fontWeight: "bold", cursor: 'pointer',
+                fontSize: '0.9rem', height: 'inherit', color: 'red'
+            }}>CLEAR ALL
+            </div>
         </>
     );
 }
