@@ -83,6 +83,12 @@ eCommerce application based on the microservices architecture built using Spring
       docker images -a | grep -E "ecommerce|none" | awk '{print $3}' | xargs docker rmi -f
    ```
 
+**Payment Service Test Details:**
+
+Credit card no.: 4242 4242 4242 4242
+Expiry: Any future date
+CVV: Any 3-digit number
+
 **Steps to deploy on Heroku using docker-compose:**
 
 1. create heroku.yml as docker-compose.yml is not invoked on Heroku.
