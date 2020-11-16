@@ -5,12 +5,13 @@ import CloseIcon from '@material-ui/icons/Close';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {Grid} from "@material-ui/core";
 import log from 'loglevel';
-import {connect, useDispatch, useSelector} from "react-redux";
+import {connect, useSelector} from "react-redux";
 import {getSearchSuggestions, getDataViaAPI} from "../../../actions";
 import {makeStyles} from "@material-ui/core/styles";
-import {SAVE_QUERY_STATUS} from "../../../actions/types";
+import {LOAD_FILTER_PRODUCTS} from "../../../actions/types";
 import {Loader} from "semantic-ui-react";
 import {StyledSearchBarDimmer} from "../../../styles/semanticUI/customStyles";
+import {PRODUCT_BY_CATEGORY_DATA_API} from "../../../constants/api_routes";
 
 export const useSearchBarStyles = makeStyles((theme) => ({
     paper: {
@@ -32,7 +33,6 @@ function SearchBar(props) {
     const filterProductsReducer = useSelector(state => state.filterProductsReducer)
     const classes = useSearchBarStyles()
     const [isLoading, setIsLoading] = useState(false)
-    const dispatch = useDispatch()
     let selectedValue = null
 
     useEffect(() => {
@@ -62,10 +62,8 @@ function SearchBar(props) {
             log.info(`queryLink = ${queryLink}, value = ${value}`)
             if (queryLink) {
                 setIsLoading(true)
-                dispatch({
-                    type: SAVE_QUERY_STATUS,
-                    payload: `?q=${queryLink}`
-                })
+                props.getDataViaAPI(LOAD_FILTER_PRODUCTS,
+                    `${PRODUCT_BY_CATEGORY_DATA_API}?q=${queryLink}`)
             }
         }
     }
