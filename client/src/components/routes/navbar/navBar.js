@@ -118,7 +118,7 @@ const NavBar = props => {
 
         // tabs data is not loaded then load it.
         if (!tabsAPIData.hasOwnProperty("data")) {
-            props.getDataViaAPI(LOAD_TABS_DATA, TABS_DATA_API)
+            props.getDataViaAPI(LOAD_TABS_DATA, TABS_DATA_API, null, false)
         }
 
         // set the cart values

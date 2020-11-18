@@ -17,7 +17,7 @@ import {tabHoverEventReducer} from "./events/eventReducer";
 
 import {
     selectedFilterAttributesReducer,
-    selectSortReducer, selectPageReducer,
+    selectSortReducer, selectPageReducer, clearFiltersReducer
 } from "./screens/filter/selectedFilterAttributesReducer"
 
 export default combineReducers({
@@ -44,5 +44,6 @@ export default combineReducers({
     deliveryChargesReducer,
     paymentResponseReducer,
     googleAuthReducer,
-    searchKeywordReducer
+    searchKeywordReducer,
+    clearFiltersReducer
 });

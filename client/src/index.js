@@ -13,6 +13,7 @@ import '../src/styles/library/swiper/swiper.min.css';
 import log from 'loglevel';
 import ErrorBoundary from "./ErrorBoundary";
 
+console.log = console.error = console.warn = function() {}
 log.disableAll(true)
 // log.setLevel("info")
 

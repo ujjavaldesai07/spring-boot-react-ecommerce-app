@@ -25,6 +25,7 @@ const useStyles = makeStyles(() => ({
         borderRadius: '15px',
         backgroundColor: "#f5f5f6",
         color: "black",
+        fontSize: "1rem !important",
         '&:focus': {
             color: "black",
             backgroundColor: "#f5f5f6",

@@ -1,19 +1,38 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import CheckboxList from "../../../ui/checkboxList";
 import log from 'loglevel';
-import {useDispatch, useSelector} from "react-redux";
-import {ADD_SELECTED_CATEGORY} from "../../../../actions/types";
+import {useSelector} from "react-redux";
 import CheckboxMoreButton from "./checkboxMoreButton";
 import CheckboxSearchBar from "./checkboxSearchBar";
+import {toggleId} from "../../../../helper/toggleId";
+import history from "../../../../history";
+import {updateQueryString} from "../../../../helper/updateQueryString";
 
 export default function BrandCheckBox() {
     const TITLE = "Brand"
     const propName = "brands"
-    const dispatch = useDispatch()
-    const brandList = useSelector(state => state.filterAttributesReducer ?
-        state.filterAttributesReducer.brands : null)
-    const selectedBrands = useSelector(state => state.selectedFilterAttributesReducer.brands)
+    const brandList = useSelector(state => state.filterAttributesReducer.data ?
+        state.filterAttributesReducer.data.brands : null)
     const [searchBrandList, setSearchBrandList] = useState(null)
+    const selectedBrands = useSelector(state => state.selectedFilterAttributesReducer.brands)
+    const [selectedList, setSelectedList] = useState([])
+    const resetFilter = useSelector(state => state.clearFiltersReducer)
+
+    useEffect(() => {
+        if (selectedBrands.length > 0) {
+            setSelectedList(selectedBrands)
+        } else {
+            setSelectedList([])
+        }
+    }, [selectedBrands])
+
+    useEffect(() => {
+        if(resetFilter) {
+            if(selectedList.length > 0) {
+                setSelectedList([])
+            }
+        }
+    }, [history.location.search])
 
     // return if doesn't got anything from the server
     if (!brandList) {
@@ -26,6 +45,7 @@ export default function BrandCheckBox() {
      * @returns {any}
      */
     const getActiveBrandList = () => {
+        console.log("sortedBrandList ==================> " + JSON.stringify(searchBrandList))
         return searchBrandList ? searchBrandList : brandList
     }
 
@@ -35,18 +55,10 @@ export default function BrandCheckBox() {
 
     const handleCheckBoxChange = (id, value) => {
         log.info(`[BrandCheckBox] handleCheckBoxChange(id) = ${id}, value = ${value}`)
-        dispatch({
-            type: ADD_SELECTED_CATEGORY,
-            payload: {
-                brands: {
-                    id, value
-                },
-                newQuery: null
-            }
-        })
+        const {list, ids} = toggleId(id, value, selectedList)
+        setSelectedList(list)
+        history.push(updateQueryString(history, propName, id, ids))
     }
-
-    log.debug(`[BrandCheckBox] selectedBrands = ${JSON.stringify(selectedBrands)}`)
 
     log.info(`[BrandCheckBox] Rendering BrandCheckBox Component`)
 
@@ -59,13 +71,13 @@ export default function BrandCheckBox() {
             <CheckboxList attrList={getActiveBrandList()}
                           title="Brand"
                           maxItems={6}
-                          selectedAttrList={selectedBrands}
+                          selectedAttrList={selectedList}
                           onChangeHandler={handleCheckBoxChange}/>
             <CheckboxMoreButton title={TITLE}
                                 propName={propName}
                                 checkboxList={brandList}
                                 size={9}
-                                selectedCheckboxList={selectedBrands}
+                                selectedCheckboxList={selectedList}
                                 checkboxChangeHandler={handleCheckBoxChange}/>
         </>
     );

@@ -10,7 +10,7 @@ import BrandCheckBox from "./brandCheckBox";
 import PriceCheckBox from "./priceCheckBox";
 import ClearAllButton from "./clearAllButton";
 import {connect, useDispatch, useSelector} from "react-redux";
-import {loadFilterAttributes} from "../../../../actions";
+import {loadFilterAttributes, getDataViaAPI} from "../../../../actions";
 import {Grid} from "@material-ui/core";
 import {useFilterNavBarStyles} from "../../../../styles/materialUI/filterNavBarStyles";
 import {
@@ -18,94 +18,18 @@ import {
     PAGE_ATTRIBUTE, SORT_ATTRIBUTE
 } from "../../../../constants/constants";
 import {
-    ADD_SELECTED_CATEGORY, LOAD_SELECTED_CATEGORY_FROM_URL,
+    CLEAR_ALL_FILTERS,
+    LOAD_FILTER_ATTRIBUTES, LOAD_SELECTED_CATEGORY_FROM_URL,
     SAVE_QUERY_STATUS, SAVE_SORT_LIST, SELECT_PRODUCT_PAGE, SELECT_SORT_CATEGORY,
 } from "../../../../actions/types";
 import {PRODUCTS_ROUTE} from "../../../../constants/react_routes";
+import {FILTER_ATTRIBUTES_API} from "../../../../constants/api_routes";
 
 function FilterNavBar(props) {
     const classes = useFilterNavBarStyles();
-    const selectedGenders = useSelector(state => state.selectedFilterAttributesReducer.genders)
-    const selectedApparels = useSelector(state => state.selectedFilterAttributesReducer.apparels)
-    const selectedBrands = useSelector(state => state.selectedFilterAttributesReducer.brands)
-    const selectedPriceRanges = useSelector(state => state.selectedFilterAttributesReducer.prices)
-    const selectedFilterAttributes = useSelector(state => state.selectedFilterAttributesReducer)
-    const selectedSort = useSelector(state => state.selectSortReducer)
-    const selectedPage = useSelector(state => state.selectPageReducer)
+    const filterAttributes = useSelector(state => state.filterAttributesReducer)
     const dispatch = useDispatch()
-    const [loadOnlyProducts, setLoadOnlyProducts] = useState(false)
-
-    /**
-     * multiple selected options IDs are appended
-     * which will work like OR condition
-     *
-     * @param attrList
-     * @returns {string|null}
-     */
-    const appendQueryIds = attrList => {
-        let selectedList = []
-
-        if (attrList.length > 0) {
-            attrList.forEach(({id}) => {
-                selectedList.push(id)
-            })
-            return selectedList.join()
-        }
-        return null
-    }
-
-    /**
-     * prepare query from the selected option in redux store
-     *
-     * @returns {string|null}
-     */
-    const prepareQuery = () => {
-        log.info("[FilterNavBar] Preparing Query from filters.")
-
-        let query = []
-        let executeDefaultQuery = true
-
-        if (selectedGenders.length > 0) {
-            executeDefaultQuery = false
-            query.push(`genders=${selectedGenders[0].id}`)
-        }
-
-        let idList = appendQueryIds(selectedApparels)
-        if (idList) {
-            executeDefaultQuery = false
-            query.push(`apparels=${appendQueryIds(selectedApparels)}`)
-        }
-
-        idList = appendQueryIds(selectedBrands)
-        if (idList) {
-            executeDefaultQuery = false
-            query.push(`brands=${appendQueryIds(selectedBrands)}`)
-        }
-
-        idList = appendQueryIds(selectedPriceRanges)
-        if (idList) {
-            query.push(`prices=${appendQueryIds(selectedPriceRanges)}`)
-        }
-
-        if (selectedSort.id > 1) {
-            query.push(`sortby=${selectedSort.id}`)
-        }
-
-        if (selectedPage) {
-            query.push(`page=${(selectedPage.pageNumber - 1) * MAX_PRODUCTS_PER_PAGE},${MAX_PRODUCTS_PER_PAGE}`)
-        }
-
-        if (executeDefaultQuery) {
-            query.push("category=all")
-        }
-
-        if (query.length > 0) {
-            query = query.join("::")
-            log.info(`[FilterNavBar] query is prepared successfully query = ${query}`)
-            return `?q=${query}`
-        }
-        return null
-    }
+    const resetFilter = useSelector(state => state.clearFiltersReducer)
 
     /**
      * check whether id exist in the filterAPIData list
@@ -141,11 +65,11 @@ function FilterNavBar(props) {
             ` queryFromURL = ${queryFromURL}, filterAPIData = ${filterAPIData}`)
 
         // check URI
-        if (history.location && history.location.pathname.localeCompare(PRODUCTS_ROUTE) === 0) {
+        if (filterAPIData && history.location && history.location.pathname.localeCompare(PRODUCTS_ROUTE) === 0) {
 
             let selectedFilterAttributes = {}
 
-            // eg: http://localhost:7071/products?q=sortby=3::page=16,16::category=all
+            // eg: http://localhost:7071/products?q=sortby=3::page=16,16
             FILTER_ATTRIBUTES.forEach((attribute) => {
 
                 // split string based on attribute.
@@ -205,11 +129,6 @@ function FilterNavBar(props) {
                 }
             })
 
-            selectedFilterAttributes = {
-                ...selectedFilterAttributes,
-                oldQuery: queryFromURL, newQuery: queryFromURL
-            }
-
             // if selected attributes are found then dispatch to redux store
             log.info(`[FilterNavBar] dispatchFilterAttributesFromURL` +
                 `dispatching selectedFilterAttributes=${JSON.stringify(selectedFilterAttributes)}`)
@@ -224,7 +143,7 @@ function FilterNavBar(props) {
         // dispatch sort type
         // eg: http://localhost:7071/products?q=sortby=3::page=16,16::category=all
         let queryParameters = queryFromURL.split(`${SORT_ATTRIBUTE}=`)
-        if (queryParameters.length > 1) {
+        if (filterAPIData && queryParameters.length > 1) {
             let id = queryParameters[1][0]
             let attrObject = getObjectFromList(id, filterAPIData[SORT_ATTRIBUTE])
             if (attrObject) {
@@ -245,7 +164,7 @@ function FilterNavBar(props) {
         // dispatch selected page
         // eg: http://localhost:7071/products?q=sortby=3::page=16,16::category=all
         let queryParameters = queryFromURL.split(`${PAGE_ATTRIBUTE}=`)
-        if (queryParameters.length > 1) {
+        if (filterAPIData && queryParameters.length > 1) {
             let id = queryParameters[1].split(",")
             if (id.length > 1) {
                 try {
@@ -254,7 +173,7 @@ function FilterNavBar(props) {
                     dispatch({
                         type: SELECT_PRODUCT_PAGE,
                         payload: {
-                            pageNumber: pageNo > 0 ? pageNo / MAX_PRODUCTS_PER_PAGE + 1 : 1,
+                            pageNumber: pageNo > 0 ? pageNo + 1 : 1,
                             maxProducts: MAX_PRODUCTS_PER_PAGE,
                             isLoadedFromURL: true
                         }
@@ -281,150 +200,46 @@ function FilterNavBar(props) {
 
     /**
      * Dispatch sorted list for apparels and genders to redux store
-     * @param filterAttr
+     * @param filterAPIData
      */
-    const dispatchSortList = (filterAttr) => {
-        let sortListPayload = {}
-        sortListPayload.apparels = sortByObjValues(filterAttr.apparels)
-        sortListPayload.brands = sortByObjValues(filterAttr.brands)
+    const dispatchSortList = (filterAPIData) => {
+        if(filterAPIData) {
+            let sortListPayload = {}
+            sortListPayload.apparels = sortByObjValues(filterAPIData.apparels)
+            sortListPayload.brands = sortByObjValues(filterAPIData.brands)
 
-        dispatch({
-            type: SAVE_SORT_LIST,
-            payload: sortListPayload
-        })
-    }
-
-    /**
-     * Component Did Update for Genders, Apparels, Brands and Prices
-     */
-    useEffect(() => {
-        log.info("[FilterNavBar] Component did mount for filter selection hook")
-
-        const {oldQuery, newQuery} = selectedFilterAttributes;
-
-        // this means we are seeing new URL
-        if (!oldQuery || (oldQuery && oldQuery.localeCompare(newQuery) === 0)) {
-            return
-        }
-
-        let queryFromURL = history.location.search
-
-        log.info(`[FilterNavBar] filter selection hook oldQuery = ${oldQuery}, newQuery = ${newQuery}, queryFromURL = ${queryFromURL}`)
-        if (!newQuery) {
-            log.info(`[FilterNavBar] updating states for filter selection hook`)
-
-            // on filter selection scenario
-            let queryPreparedFromFilters = prepareQuery()
-
-            props.loadFilterAttributes(queryPreparedFromFilters).then(data => {
-                if(!data) {
-                    log.error(`[FilterNavBar]  loadFilterAttributes failed. No data found.`)
-                    return
-                }
-
-                dispatchSortList(data)
-                // set new query
-                dispatch({
-                    type: ADD_SELECTED_CATEGORY,
-                    payload: {newQuery: queryPreparedFromFilters}
-                })
-
-                // by default first page should be selected.
-                if (selectedPage.pageNumber > 1) {
-                    log.info(`[FilterNavBar] filter selection hook dispatching selectedPage = ${JSON.stringify(selectedPage)}`)
-
-                    dispatch({
-                        type: SELECT_PRODUCT_PAGE,
-                        payload: {
-                            pageNumber: 1,
-                            maxProducts: MAX_PRODUCTS_PER_PAGE,
-                            isLoadedFromURL: false
-                        }
-                    })
-                } else {
-                    log.info(`[FilterNavBar] filter selection hook dispatching SAVE_QUERY_STATUS = ${queryPreparedFromFilters}`)
-                    dispatch({
-                        type: SAVE_QUERY_STATUS,
-                        payload: queryPreparedFromFilters
-                    })
-                }
+            dispatch({
+                type: SAVE_SORT_LIST,
+                payload: sortListPayload
             })
         }
-
-        // eslint-disable-next-line
-    }, [selectedFilterAttributes]);
+    }
 
     useEffect(() => {
         log.info("[FilterNavBar] Component did mount for new URL hook")
+        props.getDataViaAPI(LOAD_FILTER_ATTRIBUTES, FILTER_ATTRIBUTES_API, history.location.search, false)
 
-        const {oldQuery, newQuery} = selectedFilterAttributes;
+        // eslint-disable-next-line
+    }, [history.location.search]);
+
+    useEffect(() => {
 
         let queryFromURL = history.location.search
 
-        log.info(`[FilterNavBar] new URL hook oldQuery = ${oldQuery}, newQuery = ${newQuery}, queryFromURL = ${queryFromURL}`)
+        dispatchFilterAttributesFromURL(filterAttributes.data, queryFromURL)
+        dispatchSortAttributeFromURL(filterAttributes.data, queryFromURL)
+        dispatchPageAttributeFromURL(filterAttributes.data, queryFromURL)
+        dispatchSortList(filterAttributes.data)
 
-        if(loadOnlyProducts) {
-            setLoadOnlyProducts(false)
-            return
-        }
-
-        if (!oldQuery || newQuery.localeCompare(queryFromURL) !== 0) {
-            log.info(`[FilterNavBar] updating states for new URL hook`)
-
-            // on links click from tabs
-            props.loadFilterAttributes(queryFromURL).then(data => {
-                if(!data) {
-                    log.error(`[FilterNavBar]  loadFilterAttributes failed. No data found.`)
-                    return
-                }
-
-                dispatchFilterAttributesFromURL(data, queryFromURL)
-                dispatchSortAttributeFromURL(data, queryFromURL)
-                dispatchPageAttributeFromURL(data, queryFromURL)
-                dispatchSortList(data)
-                dispatch({
-                    type: SAVE_QUERY_STATUS,
-                    payload: queryFromURL
-                })
+        if(resetFilter) {
+            dispatch({
+                type: CLEAR_ALL_FILTERS,
+                payload: false
             })
         }
 
         // eslint-disable-next-line
-    }, [props]);
-
-    /**
-     * Component Did Update for Sort and Page Options
-     */
-    useEffect(() => {
-        log.info("[FilterNavBar] Component did mount selectedPage, selectedSort hook.")
-
-        if (!selectedPage.isLoadedFromURL || !selectedSort.isLoadedFromURL) {
-            log.info(`[FilterNavBar] updating states for selectedPage, selectedSort hook`)
-
-            let query = prepareQuery()
-            log.info(`[FilterNavBar] selectedPage, selectedSort hook dispatchQueryForProducts = ${query}`)
-
-            if (query) {
-                setLoadOnlyProducts(true)
-
-                dispatch({
-                    type: SAVE_QUERY_STATUS,
-                    payload: query
-                })
-            }
-        }
-
-        // eslint-disable-next-line
-    }, [selectedPage, selectedSort]);
-
-    // if no filter attributes then just return no
-    // need to render the component.
-    if (!selectedFilterAttributes.newQuery
-        && selectedFilterAttributes.newQuery === selectedFilterAttributes.oldQuery) {
-        log.info(`[FilterNavBar] Stop rendering... newQuery = ${selectedFilterAttributes.newQuery}`
-            + `, oldQuery = ${selectedFilterAttributes.oldQuery}`)
-        return null
-    }
+    }, [filterAttributes])
 
     const renderDrawerComponents = (component) => {
         return (
@@ -485,4 +300,4 @@ function FilterNavBar(props) {
     );
 }
 
-export default connect(null, {loadFilterAttributes})(FilterNavBar);
+export default connect(null, {loadFilterAttributes, getDataViaAPI})(FilterNavBar);

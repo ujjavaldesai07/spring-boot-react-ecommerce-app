@@ -13,7 +13,7 @@ export default function CheckboxSearchBar(props) {
 
     const handleSearchBarChange = value => {
         log.info(`[CheckboxSearchBar] handleSearchClick value = ${value}`)
-        let filterApparelList = props.checkboxList.filter(info => info.value.toUpperCase().search(value.toUpperCase()) !== -1)
+        let filterApparelList = props.checkboxList.filter(info => info.value.toUpperCase().startsWith(value.toUpperCase()))
         props.searchListHandler(filterApparelList)
     }
 

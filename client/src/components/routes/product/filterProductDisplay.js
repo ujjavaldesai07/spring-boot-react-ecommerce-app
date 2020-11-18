@@ -17,27 +17,19 @@ import {SearchMatchesNotFound} from "../../ui/error/searchMatchesNotFound";
 const FilterProductDisplay = props => {
         const filterProductsReducer = useSelector(state => state.filterProductsReducer)
         let filterProducts = null
-        const queryStatus = useSelector(state => state.filterQueryReducer)
         const dispatch = useDispatch()
-
+        log.info(`[FilterProductDisplay] Rendering...`)
         useEffect(() => {
             log.info(`[FilterProductDisplay] Component did mount`)
 
-            try {
-                // if we already have the data then dont make a API request.
-                if (queryStatus && (queryStatus.localeCompare(filterProductsReducer.query) !== 0)) {
-                    log.info(`[FilterProductDisplay] Getting products from API.....query = ${filterProductsReducer.query}, queryStatus = ${queryStatus}, URL = ${history.location.search}`)
-                    props.getDataViaAPI(LOAD_FILTER_PRODUCTS, PRODUCT_BY_CATEGORY_DATA_API, queryStatus)
-                }
-            } catch (e) {
-                log.error(`[FilterProductDisplay] Bad URL found in history.location.search`)
-            }
+            console.log("[FilterProductDisplay] history.location.search ==== " + history.location.search)
+            props.getDataViaAPI(LOAD_FILTER_PRODUCTS, PRODUCT_BY_CATEGORY_DATA_API, history.location.search, false)
 
             // scroll up after call the API
             window.scrollTo(0, 0)
 
             // eslint-disable-next-line
-        }, [queryStatus]);
+        }, [history.location.search]);
 
 
         // initial state is loading and this will change

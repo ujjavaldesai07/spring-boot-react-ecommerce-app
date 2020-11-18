@@ -1,19 +1,38 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import CheckboxList from "../../../ui/checkboxList";
 import log from 'loglevel';
-import {useDispatch, useSelector} from "react-redux";
-import {ADD_SELECTED_CATEGORY} from "../../../../actions/types";
+import {useSelector} from "react-redux";
 import CheckboxMoreButton from "./checkboxMoreButton";
 import CheckboxSearchBar from "./checkboxSearchBar";
+import {toggleId} from "../../../../helper/toggleId";
+import history from "../../../../history";
+import {updateQueryString} from "../../../../helper/updateQueryString";
 
 export default function ApparelCheckBox() {
     const TITLE = "Apparel"
     const propName = "apparels"
-    const dispatch = useDispatch()
-    const apparelList = useSelector(state => state.filterAttributesReducer ?
-        state.filterAttributesReducer.apparels : null)
-    const selectedApparels = useSelector(state => state.selectedFilterAttributesReducer.apparels)
+    const apparelList = useSelector(state => state.filterAttributesReducer.data ?
+        state.filterAttributesReducer.data.apparels : null)
     const [searchApparelList, setSearchApparelList] = useState(null)
+    const selectedApparels = useSelector(state => state.selectedFilterAttributesReducer.apparels)
+    const [selectedList, setSelectedList] = useState([])
+    const resetFilter = useSelector(state => state.clearFiltersReducer)
+
+    useEffect(() => {
+        if (selectedApparels.length > 0) {
+            setSelectedList(selectedApparels)
+        } else {
+            setSelectedList([])
+        }
+    }, [selectedApparels])
+
+    useEffect(() => {
+        if (resetFilter) {
+            if (selectedList.length > 0) {
+                setSelectedList([])
+            }
+        }
+    }, [history.location.search])
 
     // return if doesn't got anything from the server
     if (!apparelList) {
@@ -35,18 +54,10 @@ export default function ApparelCheckBox() {
 
     const handleCheckBoxChange = (id, value) => {
         log.info(`[ApparelCheckBox] handleCheckBoxChange(id) = ${id}, value = ${value}`)
-        dispatch({
-            type: ADD_SELECTED_CATEGORY,
-            payload: {
-                apparels: {
-                    id, value
-                },
-                newQuery: null
-            }
-        })
+        const {list, ids} = toggleId(id, value, selectedList)
+        setSelectedList(list)
+        history.push(updateQueryString(history, propName, id, ids))
     }
-
-    log.debug(`[ApparelCheckBox] selectedApparels = ${JSON.stringify(selectedApparels)}`)
 
     log.info(`[ApparelCheckBox] Rendering ApparelCheckBox Component`)
 
@@ -59,13 +70,13 @@ export default function ApparelCheckBox() {
             <CheckboxList attrList={getActiveApparelList()}
                           title={TITLE}
                           maxItems={6}
-                          selectedAttrList={selectedApparels}
+                          selectedAttrList={selectedList}
                           onChangeHandler={handleCheckBoxChange}/>
             <CheckboxMoreButton title={TITLE}
                                 checkboxList={apparelList}
                                 propName={propName}
                                 size={6}
-                                selectedCheckboxList={selectedApparels}
+                                selectedCheckboxList={selectedList}
                                 checkboxChangeHandler={handleCheckBoxChange}/>
 
         </>

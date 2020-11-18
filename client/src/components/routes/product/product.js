@@ -68,7 +68,7 @@ function Product() {
                     </Grid>
                 </Hidden>
                 <Divider/>
-                <FilterProductsDisplay/>
+                <FilterProductsDisplay linkList={breadcrumbLinks}/>
                 <Divider/>
                 <FilterPagination/>
             </Grid>

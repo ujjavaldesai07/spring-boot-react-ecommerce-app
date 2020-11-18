@@ -4,6 +4,10 @@ import Chip from "@material-ui/core/Chip";
 import Box from '@material-ui/core/Box';
 import log from "loglevel";
 import {ADD_SELECTED_CATEGORY} from "../../../actions/types";
+import history from "../../../history";
+import {PRODUCT_BY_CATEGORY_DATA_API} from "../../../constants/api_routes";
+import {toggleId} from "../../../helper/toggleId";
+import {updateQueryString} from "../../../helper/updateQueryString";
 
 const FilterChips = () => {
     const selectedGenders = useSelector(state => state.selectedFilterAttributesReducer.genders)
@@ -98,6 +102,9 @@ const FilterChips = () => {
                         newQuery: null
                     }
                 })
+
+                const {list, ids} = toggleId(selectedAttrList[i].id, selectedAttrList[i].value, selectedAttrList)
+                history.push(updateQueryString(history, attributeName, selectedAttrList[i].id, ids))
                 return
             }
         }

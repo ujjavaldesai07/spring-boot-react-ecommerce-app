@@ -1,7 +1,8 @@
 import React from 'react';
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
-import {REMOVE_SELECTED_CATEGORY} from "../../../../actions/types";
+import {CLEAR_ALL_FILTERS, REMOVE_SELECTED_CATEGORY, RESET_SELECTED_CATEGORY} from "../../../../actions/types";
+import history from "../../../../history";
 
 function ClearAllButton() {
     const dispatch = useDispatch()
@@ -20,11 +21,13 @@ function ClearAllButton() {
     const handleClearAllClick = () => {
         log.info(`[ClearAllButton] handleClearAllClick(value)`)
         dispatch({
-            type: REMOVE_SELECTED_CATEGORY,
-            payload: {
-                newQuery: null
-            }
+            type: RESET_SELECTED_CATEGORY
         })
+        dispatch({
+            type: CLEAR_ALL_FILTERS,
+            payload: true
+        })
+        history.push(history.location.pathname + "?q=page=0,16")
     }
 
     log.info(`[ClearAllButton] Rendering ClearAllButton Component`)

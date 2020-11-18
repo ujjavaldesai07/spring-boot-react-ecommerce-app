@@ -1,16 +1,33 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import log from 'loglevel';
 import RadioButtonsGroup from "../../../ui/radioButtonGroup";
-import {useDispatch, useSelector} from "react-redux";
-import {ADD_SELECTED_CATEGORY} from "../../../../actions/types";
+import {useSelector} from "react-redux";
 import {Grid} from "@material-ui/core";
 import {NavBarHeader} from "../../../ui/headers";
+import history from "../../../../history";
 
 export default function GenderRadioButton() {
-    const dispatch = useDispatch()
-    const genderList = useSelector(state => state.filterAttributesReducer ?
-        state.filterAttributesReducer.genders : null)
-    const gender = useSelector(state => state.selectedFilterAttributesReducer.genders)
+    const genderList = useSelector(state => state.filterAttributesReducer.data ?
+        state.filterAttributesReducer.data.genders : null)
+    const resetFilter = useSelector(state => state.clearFiltersReducer)
+    const selectedGenders = useSelector(state => state.selectedFilterAttributesReducer.genders)
+    const [selectedValue, setSelectedValue] = useState(false)
+
+    useEffect(() => {
+        if(selectedGenders.length > 0) {
+            setSelectedValue(selectedGenders[0].value)
+        } else {
+            setSelectedValue(false)
+        }
+    }, [selectedGenders])
+
+    useEffect(() => {
+        if(resetFilter) {
+            if(selectedValue !== false) {
+                setSelectedValue(false)
+            }
+        }
+    }, [resetFilter])
 
     if (!genderList) {
         log.debug(`[GenderRadioButton] genderList is null`)
@@ -24,17 +41,14 @@ export default function GenderRadioButton() {
         for (let i = 0; i < genderList.length; i++) {
             if (value.charAt(0).localeCompare(genderList[i].value.charAt(0)) === 0) {
                 log.info(`[GenderRadioButton] handleRadioButtonChange id = ${genderList[i].id}`)
-                dispatch({
-                    type: ADD_SELECTED_CATEGORY,
-                    payload: {
-                        genders: {
-                            id: genderList[i].id,
-                            value: value,
-                            append: false
-                        },
-                        newQuery: null
-                    }
-                })
+                setSelectedValue(value)
+                let route = history.location.pathname
+                let queryStr = history.location.search
+                if(history.location.search.search("genders") === -1) {
+                    history.push(`${route}${queryStr}::genders=${genderList[i].id}`)
+                } else {
+                    history.push(`${route}${queryStr.replace(/genders=[0-9]/gi, `genders=${genderList[i].id}`)}`)
+                }
                 return
             }
         }
@@ -43,7 +57,7 @@ export default function GenderRadioButton() {
         window.scrollTo(0, 80)
     }
 
-    log.info(`[GenderRadioButton] Rendering FilterRadioButtonSection Component = ${JSON.stringify(gender[0])}`)
+    log.info(`[GenderRadioButton] Rendering FilterRadioButtonSection Component...`)
 
     return (
         <>
@@ -53,7 +67,7 @@ export default function GenderRadioButton() {
             <Grid item style={{marginLeft: "0.5rem"}}>
                 <RadioButtonsGroup onChangeHandler={handleRadioButtonChange}
                                    attrList={genderList.filter(obj => obj.id < 5)}
-                                   selectedValue={gender.length > 0 ? gender[0].value : false}
+                                   selectedValue={selectedValue}
                                    title="Gender"/>
             </Grid>
         </>

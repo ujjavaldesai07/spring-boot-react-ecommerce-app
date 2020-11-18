@@ -145,7 +145,7 @@ export const filterProductsReducer = (state = {isLoading: true}, action) => {
     }
 };
 
-export const filterAttributesReducer = (state = null, action) => {
+export const filterAttributesReducer = (state = {isLoading: true}, action) => {
     switch (action.type) {
         case LOAD_FILTER_ATTRIBUTES:
             return action.payload;

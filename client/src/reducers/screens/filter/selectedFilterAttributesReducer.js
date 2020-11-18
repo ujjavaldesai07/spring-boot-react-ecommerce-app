@@ -1,5 +1,5 @@
 import {
-    ADD_SELECTED_CATEGORY, LOAD_SELECTED_CATEGORY_FROM_URL,
+    ADD_SELECTED_CATEGORY, CLEAR_ALL_FILTERS, LOAD_SELECTED_CATEGORY_FROM_URL,
     REMOVE_SELECTED_CATEGORY, RESET_SELECT_PRODUCT_PAGE, RESET_SELECT_SORT_CATEGORY, RESET_SELECTED_CATEGORY,
     SELECT_PRODUCT_PAGE,
     SELECT_SORT_CATEGORY
@@ -92,7 +92,7 @@ export const selectedFilterAttributesReducer = (state = INITIAL_SELECTED_FILTER_
             return {...INITIAL_SELECTED_FILTER_ATTRIBUTE_STATE, oldQuery: state.oldQuery, newQuery: action.payload.newQuery}
 
         case RESET_SELECTED_CATEGORY:
-            return {...INITIAL_SELECTED_FILTER_ATTRIBUTE_STATE, newQuery: state.newQuery}
+            return {genders: [], apparels: [], brands: [], prices: []}
 
         case LOAD_SELECTED_CATEGORY_FROM_URL:
             return appendNewPayloadToPrevState(INITIAL_SELECTED_FILTER_ATTRIBUTE_STATE, action.payload);
@@ -129,3 +129,12 @@ export const selectPageReducer = (state
             return state;
     }
 };
+
+export const clearFiltersReducer = (state = false, action) => {
+    switch (action.type) {
+        case CLEAR_ALL_FILTERS:
+            return action.payload;
+        default:
+            return state;
+    }
+}

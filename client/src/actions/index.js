@@ -252,74 +252,80 @@ export const sendPaymentToken = (token) => async dispatch => {
 }
 
 
-export const getDataViaAPI = (type, uri, query) => async dispatch => {
-    if (uri) {
-        if(query) {
-            uri += query
+export const getDataViaAPI = (type, route, query, synchronous = true) => async dispatch => {
+    if (route) {
+        if (query) {
+            route += query
         }
 
-        log.info(`[ACTION]: invokeAndDispatchAPIData Calling API = ${uri}.`)
-
-        // uri = uri.replace(/\s/g, '')
-        let responseError = false
-        const response = await commonServiceAPI.get(uri)
-            .catch(err => {
-                log.info(`[ACTION]: unable to fetch response for API = ${uri}`)
-                dispatch({type: type, payload: {isLoading: false, statusCode: INTERNAL_SERVER_ERROR_CODE}});
-                responseError = true
-            });
-
-        if (responseError) {
-            return
-        }
-
-        if (response != null) {
-            log.debug(`[ACTION]: Data = ${JSON.parse(JSON.stringify(response.data))}.`)
-            let payload = {isLoading: false, data: JSON.parse(JSON.stringify(response.data))}
-            if(query) {
-                dispatch({
-                    type: type, payload:
-                        {...payload, query: query}
+        log.info(`[ACTION]: invokeAndDispatchAPIData Calling API = ${route}.`)
+        let isFetchError = false
+        if (synchronous) {
+            await commonServiceAPI.get(route)
+                .then(response => processResponse(response, query, type, route))
+                .catch(err => {
+                    isFetchError = true
                 });
-            } else {
-                dispatch({
-                    type: type, payload: payload
-                });
-            }
-
-
-            if (LOAD_FILTER_PRODUCTS.localeCompare(type) === 0 &&
-                window.location.search.localeCompare(uri.split("/products")[1]) !== 0) {
-                history.push(uri)
-            }
         } else {
-            dispatch({type: type, payload: {isLoading: false, statusCode: BAD_REQUEST_ERROR_CODE}});
+            commonServiceAPI.get(route)
+                .then(response => processResponse(response, query, type, route, dispatch))
+                .catch(err => {
+                    isFetchError = true
+                });
+        }
+
+        if (isFetchError) {
+            log.info(`[ACTION]: unable to fetch response for API = ${route}`)
+            dispatch({type: type, payload: {isLoading: false, statusCode: INTERNAL_SERVER_ERROR_CODE}});
         }
     }
 }
 
-export const loadFilterAttributes = filterQuery => async dispatch => {
+export const processResponse = (response, query, type, uri, dispatch) => {
+    log.debug(`[ACTION]: Data = ${JSON.parse(JSON.stringify(response.data))}.`)
+    if (response.data !== null) {
+        let payload = {isLoading: false, data: JSON.parse(JSON.stringify(response.data))}
+        if (query) {
+            dispatch({
+                type: type, payload:
+                    {...payload, query: query}
+            });
+        } else {
+            dispatch({
+                type: type, payload: payload
+            });
+        }
+
+        if (LOAD_FILTER_PRODUCTS.localeCompare(type) === 0 &&
+            window.location.search.localeCompare(uri.split("/products")[1]) !== 0) {
+            history.push(uri)
+        }
+    } else {
+        dispatch({type: type, payload: {isLoading: false, statusCode: BAD_REQUEST_ERROR_CODE}});
+    }
+}
+
+export const loadFilterAttributes = filterQuery => dispatch => {
     log.info(`[ACTION]: loadFilterAttributes Calling Filter API filterQuery = ${filterQuery}`)
 
     if (filterQuery) {
         let uri = `/filter${filterQuery}`
-        const response = await commonServiceAPI.get(uri);
-        if (response != null) {
-            log.trace(`[ACTION]: Filter = ${JSON.stringify(response.data)}`)
+        commonServiceAPI.get(uri)
+            .then(response => {
+                dispatch({
+                    type: LOAD_FILTER_ATTRIBUTES,
+                    payload: JSON.parse(JSON.stringify(
+                        {
+                            ...response.data,
+                            "query": filterQuery.slice(3)
+                        }))
+                });
 
-            dispatch({
-                type: LOAD_FILTER_ATTRIBUTES,
-                payload: JSON.parse(JSON.stringify(
-                    {
-                        ...response.data,
-                        "query": filterQuery.slice(3)
-                    }))
+                return JSON.parse(JSON.stringify(response.data))
+            })
+            .catch(error => {
+                log.info(`[ACTION]: unable to fetch response for Filter API`)
             });
-
-            return JSON.parse(JSON.stringify(response.data))
-        } else {
-            log.info(`[ACTION]: unable to fetch response for Filter API`)
-        }
     }
 };
 

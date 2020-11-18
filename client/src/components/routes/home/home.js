@@ -26,7 +26,7 @@ const Home = props => {
         log.info("[Home]: component did mount.")
 
         if(!homeAPIData.hasOwnProperty("data")) {
-            props.getDataViaAPI(LOAD_HOME_PAGE, HOME_PAGE_DATA_API);
+            props.getDataViaAPI(LOAD_HOME_PAGE, HOME_PAGE_DATA_API, null, false);
         }
 
         // eslint-disable-next-line

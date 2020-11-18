@@ -71,35 +71,32 @@ public class ProductQueryHelper {
         String sortBy = " order by p.ratings desc";
         HashMap<Integer, Object> mapParams = new HashMap<>();
         MapParameterKey mapParametersKey = new MapParameterKey();
+        boolean applyFilter = false;
 
         for (Map.Entry<String, String> entry : conditionMap.entrySet()) {
             switch (QueryType.valueOf(entry.getKey())) {
                 case genders:
                     prepareConditionListById(mapParams, entry.getValue(), mapParametersKey,
                             conditions, "p.genderCategory.id");
+                    applyFilter = true;
                     break;
 
                 case apparels:
                     prepareConditionListById(mapParams, entry.getValue(), mapParametersKey,
                             conditions, "p.apparelCategory.id");
+                    applyFilter = true;
                     break;
 
                 case brands:
                     prepareConditionListById(mapParams, entry.getValue(), mapParametersKey,
                             conditions, "p.productBrandCategory.id");
+                    applyFilter = true;
                     break;
 
                 case prices:
                     prepareConditionListById(mapParams, entry.getValue(), mapParametersKey,
                             conditions, "p.priceRangeCategory.id");
-                    break;
-
-                case category:
-                    if (entry.getValue().equals("all")) {
-                        conditions.add(String.format(" (1 = ?%d)", mapParametersKey.getKey()));
-                        mapParams.put(mapParametersKey.getKey(), 1);
-                        mapParametersKey.increment();
-                    }
+                    applyFilter = true;
                     break;
 
                 case sortby:
@@ -122,13 +119,22 @@ public class ProductQueryHelper {
                 case page:
                     pageInfo = entry.getValue().split(",");
                     break;
+
                 case productname:
                     prepareConditionListByName(mapParams, entry.getValue(), mapParametersKey,
                             conditions, "p.name");
                     break;
+
                 default:
                     System.out.println("UnsupportedType");
             }
+        }
+
+        // if no filters are applied then by default return all data based on pagination.
+        if(!applyFilter) {
+            conditions.add(String.format(" (1 = ?%d)", mapParametersKey.getKey()));
+            mapParams.put(mapParametersKey.getKey(), 1);
+            mapParametersKey.increment();
         }
 
         System.out.println("condition = " + String.join(" AND ", conditions));

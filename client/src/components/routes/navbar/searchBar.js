@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import CloseIcon from '@material-ui/icons/Close';
@@ -6,11 +6,9 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import {Grid} from "@material-ui/core";
 import log from 'loglevel';
 import {connect, useSelector} from "react-redux";
-import {getSearchSuggestions, getDataViaAPI} from "../../../actions";
+import {getSearchSuggestions} from "../../../actions";
 import {makeStyles} from "@material-ui/core/styles";
-import {LOAD_FILTER_PRODUCTS} from "../../../actions/types";
-import {Loader} from "semantic-ui-react";
-import {StyledSearchBarDimmer} from "../../../styles/semanticUI/customStyles";
+import history from "../../../history";
 import {PRODUCT_BY_CATEGORY_DATA_API} from "../../../constants/api_routes";
 
 export const useSearchBarStyles = makeStyles((theme) => ({
@@ -30,15 +28,8 @@ export const useSearchBarStyles = makeStyles((theme) => ({
 function SearchBar(props) {
     const [value, setValue] = useState(null);
     const searchSuggestions = useSelector(state => state.searchKeywordReducer)
-    const filterProductsReducer = useSelector(state => state.filterProductsReducer)
     const classes = useSearchBarStyles()
-    const [isLoading, setIsLoading] = useState(false)
     let selectedValue = null
-
-    useEffect(() => {
-        log.info(`[SearchBar] Component did mount`)
-        setIsLoading(false)
-    }, [filterProductsReducer])
 
     const getSearchKeyword = () => {
         return document.querySelector('input[id="free-solo"]').value
@@ -59,21 +50,22 @@ function SearchBar(props) {
                 }
             }
 
-            log.info(`queryLink = ${queryLink}, value = ${value}`)
+            log.info(`=======> queryLink = ${queryLink}, value = ${value}, history = ${JSON.stringify(history)}`)
             if (queryLink) {
-                setIsLoading(true)
-                props.getDataViaAPI(LOAD_FILTER_PRODUCTS,
-                    `${PRODUCT_BY_CATEGORY_DATA_API}?q=${queryLink}`)
+                history.push(`${PRODUCT_BY_CATEGORY_DATA_API}?q=${queryLink}`)
             }
         }
     }
 
-    const handleClose = () => {
-        let finalSelectedValue = selectedValue
-        if (!selectedValue) {
-            finalSelectedValue = getSearchKeyword()
+    const handleClose = (event, reason) => {
+        if(reason === "select-option") {
+            let finalSelectedValue = selectedValue
+            if (!selectedValue) {
+                finalSelectedValue = getSearchKeyword()
+            }
+            log.info("Coming here------1 = " + reason)
+            searchKeyword(finalSelectedValue)
         }
-        searchKeyword(finalSelectedValue)
     }
 
     const renderDesktopTextField = (params) => {
@@ -125,6 +117,7 @@ function SearchBar(props) {
                 onInputChange={handleInputChange}
                 selectOnFocus
                 clearOnBlur
+                blurOnSelect={true}
                 handleHomeEndKeys
                 closeIcon={<CloseIcon/>}
                 id="free-solo"
@@ -150,13 +143,8 @@ function SearchBar(props) {
                 renderInput={(params) =>
                     props.device ? renderMobileTextField(params) : renderDesktopTextField(params)}
             />
-            {isLoading ?
-                <StyledSearchBarDimmer active inverted>
-                    <Loader inverted>Loading</Loader>
-                </StyledSearchBarDimmer> : null}
-
         </Grid>
     );
 }
 
-export default connect(null, {getSearchSuggestions, getDataViaAPI})(SearchBar);
+export default connect(null, {getSearchSuggestions})(SearchBar);
