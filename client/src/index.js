@@ -13,11 +13,21 @@ import '../src/styles/library/swiper/swiper.min.css';
 import log from 'loglevel';
 import ErrorBoundary from "./ErrorBoundary";
 
-console.log = console.error = console.warn = function() {}
-log.disableAll(true)
-// log.setLevel("info")
+let composeEnhancers
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose();
+// enable logs & redux only in production.
+if (process.env.ENVIRONMENT === "dev") {
+
+    // by default set the level to info
+    log.setLevel("info")
+    composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose();
+} else {
+    console.log = console.error = console.warn = function () {}
+    log.disableAll(true)
+    composeEnhancers = compose();
+}
+
+
 const store = createStore(
     reducers,
     composeEnhancers(applyMiddleware(thunk))
