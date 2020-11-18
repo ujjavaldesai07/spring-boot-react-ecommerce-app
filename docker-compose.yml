@@ -147,6 +147,7 @@ services:
     environment:
       - REACT_APP_STRIPE_PUBLISH_KEY=${REACT_APP_STRIPE_PUBLISH_KEY}
       - REACT_APP_COMMON_DATA_SERVICE_PORT=${COMMON_DATA_SERVICE_PORT}
+      - REACT_APP_ENVIRONMENT=${REACT_APP_ENVIRONMENT}
     volumes:
       - ./client:/usr/src/app
       - /usr/src/app/node_modules

@@ -16,7 +16,7 @@ import ErrorBoundary from "./ErrorBoundary";
 let composeEnhancers
 
 // enable logs & redux only in production.
-if (process.env.ENVIRONMENT === "dev") {
+if (process.env.REACT_APP_ENVIRONMENT === "dev") {
 
     // by default set the level to info
     log.setLevel("info")
