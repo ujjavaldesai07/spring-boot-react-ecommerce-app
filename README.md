@@ -48,13 +48,14 @@ eCommerce application based on the microservices architecture built using Spring
  for money deduction. 
 - **Search Suggestion Service:** Provide default search suggestions and provides suggestions based on a prefix using Hashmap. The service creates the Hashmap based on available data from the database with various combinations and populates the map.
 
-**Steps for executing theapplication using docker-compose:**
+**Steps for executing the application using docker-compose:**
 1. Clone/Download the repository.
 
 2. Set the environmental variables which will be impacted on docker-compose.yml.
-   You can checkthe .env-setup file. Most of the variables are already set.
+   You can checkthe .env-sample file. Most of the variables are already set.
+   You need to modify the variable and rename the file to ".env".
    You need to create a Stripe account and Google OAuth credentials.
-   These accounts are doesn't charge you anything and are absolutely free.
+   These accounts doesn't charge you anything and are absolutely free.
  
    You need to set below two env variables.
  
