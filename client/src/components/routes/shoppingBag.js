@@ -126,7 +126,7 @@ function ShoppingBag(props) {
     }
 
     const wannaShopBtnClick = () => {
-        history.push(`/products?q=category=all::page=0,${MAX_PRODUCTS_PER_PAGE}`);
+        history.push(`/products?q=page=0,${MAX_PRODUCTS_PER_PAGE}`);
     }
 
     if (shoppingBagProducts.isLoading) {

@@ -33,7 +33,7 @@ export function useAddProductsToShoppingBag(getDataViaAPIFunc) {
             idList = extractIdsFromObject(addToCart["productQty"])
 
             if (idList.length > 0) {
-                getDataViaAPIFunc(LOAD_SHOPPING_BAG_PRODUCTS, PRODUCT_BY_ID_DATA_API + idList.toString())
+                getDataViaAPIFunc(LOAD_SHOPPING_BAG_PRODUCTS, PRODUCT_BY_ID_DATA_API + idList.toString(), null, false)
                 return
             }
 

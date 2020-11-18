@@ -105,7 +105,7 @@ function ProductDetails(props) {
             const extractedProductId = history.location.search.split("product_id=")
             log.info(`[Product Detail] extractedProductId = ${JSON.stringify(extractedProductId)}, length = ${extractedProductId.length}`)
             if (extractedProductId.length === 2) {
-                props.getDataViaAPI(SELECT_PRODUCT_DETAIL, PRODUCT_BY_ID_DATA_API + extractedProductId[1])
+                props.getDataViaAPI(SELECT_PRODUCT_DETAIL, PRODUCT_BY_ID_DATA_API + extractedProductId[1], null, false)
             }
         } catch (e) {
             log.error('[Product Detail] selectedProduct is null')
