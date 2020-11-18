@@ -5,7 +5,7 @@ import TopCategoriesAndBrands from "./topCategoriesAndBrands";
 import {StyledSegment, StyledDimmer} from "../../../styles/semanticUI/customStyles";
 import {connect, useSelector} from "react-redux";
 import {DocumentTitle} from "../../ui/documentTitle";
-import {getDataViaAPI} from "../../../actions";
+import {getDataViaAPI, setDefaultSearchSuggestions} from "../../../actions";
 import log from 'loglevel';
 import {homePageDataReducer} from "../../../reducers/screens/commonScreenReducer";
 import HomeMenuIcons from "./homeMenuIcons";
@@ -16,6 +16,8 @@ import {LOAD_HOME_PAGE} from "../../../actions/types";
 import {BadRequest} from "../../ui/error/badRequest";
 import {HOME_PAGE_DATA_API} from "../../../constants/api_routes";
 import {HOME_PAGE_API_OBJECT_LEN} from "../../../constants/constants"
+import {authServiceAPI} from "../../../api/service_api";
+import axios from "axios";
 
 const Home = props => {
     const {hover} = useSelector(state => state.tabHoverEventReducer)
@@ -24,6 +26,26 @@ const Home = props => {
     // Main screen API is loaded during Component Did mount
     useEffect(() => {
         log.info("[Home]: component did mount.")
+
+        ///////////////////////////////////////////////////////////
+        // Below requests are made just to wake up all services on
+        // Heroku so that it serves the requests quickly.
+        // This should be removed when the app is deployed on actual server.
+        props.setDefaultSearchSuggestions()
+        authServiceAPI.post('/authenticate').catch(err => {})
+        if(process.env.REACT_APP_PAYMENT_SERVICE_URL) {
+            axios({
+                method: 'post',
+                url:  `${process.env.REACT_APP_PAYMENT_SERVICE_URL}/payment`,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: "xyz"
+            }).catch(err => {})
+        }
+        ///////////////////////////////////////////////////////////
+
+
 
         if(!homeAPIData.hasOwnProperty("data")) {
             props.getDataViaAPI(LOAD_HOME_PAGE, HOME_PAGE_DATA_API, null, false);
@@ -75,4 +97,4 @@ const Home = props => {
     )
 }
 
-export default connect(null, {getDataViaAPI})(Home);
+export default connect(null, {getDataViaAPI, setDefaultSearchSuggestions})(Home);

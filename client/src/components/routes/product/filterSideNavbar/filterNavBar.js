@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
@@ -20,7 +20,7 @@ import {
 import {
     CLEAR_ALL_FILTERS,
     LOAD_FILTER_ATTRIBUTES, LOAD_SELECTED_CATEGORY_FROM_URL,
-    SAVE_QUERY_STATUS, SAVE_SORT_LIST, SELECT_PRODUCT_PAGE, SELECT_SORT_CATEGORY,
+    SAVE_SORT_LIST, SELECT_PRODUCT_PAGE, SELECT_SORT_CATEGORY,
 } from "../../../../actions/types";
 import {PRODUCTS_ROUTE} from "../../../../constants/react_routes";
 import {FILTER_ATTRIBUTES_API} from "../../../../constants/api_routes";

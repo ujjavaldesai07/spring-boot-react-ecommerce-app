@@ -354,22 +354,17 @@ export const getSearchSuggestions = (prefix) => async dispatch => {
 
 }
 
-export const setDefaultSearchSuggestions = () => async dispatch => {
+export const setDefaultSearchSuggestions = () => dispatch => {
     log.info(`[ACTION]: getSearchSuggestions Calling API.`)
-    let responseError = false
-    const response = await searchSuggestionServiceAPI.get(DEFAULT_SEARCH_SUGGESTION_API)
+
+    searchSuggestionServiceAPI.get(DEFAULT_SEARCH_SUGGESTION_API)
+        .then(response => {
+            dispatch({
+                type: SEARCH_KEYWORD, payload: {data: JSON.parse(JSON.stringify(response.data))}
+            });
+        })
         .catch(err => {
             log.info(`[ACTION]: unable to fetch response for API = ${DEFAULT_SEARCH_SUGGESTION_API}`)
             dispatch({type: SEARCH_KEYWORD_ERROR});
-            responseError = true
         });
-
-    if (responseError) {
-        return
-    }
-
-    log.debug(`[ACTION]: Data = ${JSON.parse(JSON.stringify(response.data))}.`)
-    dispatch({
-        type: SEARCH_KEYWORD, payload: {data: JSON.parse(JSON.stringify(response.data))}
-    });
 }

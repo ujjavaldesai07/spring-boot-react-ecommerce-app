@@ -10,6 +10,7 @@ import {getSearchSuggestions} from "../../../actions";
 import {makeStyles} from "@material-ui/core/styles";
 import history from "../../../history";
 import {PRODUCT_BY_CATEGORY_DATA_API} from "../../../constants/api_routes";
+import {MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
 
 export const useSearchBarStyles = makeStyles((theme) => ({
     paper: {
@@ -52,7 +53,7 @@ function SearchBar(props) {
 
             log.info(`=======> queryLink = ${queryLink}, value = ${value}, history = ${JSON.stringify(history)}`)
             if (queryLink) {
-                history.push(`${PRODUCT_BY_CATEGORY_DATA_API}?q=${queryLink}`)
+                history.push(`${PRODUCT_BY_CATEGORY_DATA_API}?q=${queryLink}::page=0,${MAX_PRODUCTS_PER_PAGE}`)
             }
         }
     }

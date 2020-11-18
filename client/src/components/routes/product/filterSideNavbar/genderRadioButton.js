@@ -27,6 +27,7 @@ export default function GenderRadioButton() {
                 setSelectedValue(false)
             }
         }
+        // eslint-disable-next-line
     }, [resetFilter])
 
     if (!genderList) {

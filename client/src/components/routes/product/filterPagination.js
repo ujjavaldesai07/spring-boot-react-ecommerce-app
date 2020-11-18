@@ -1,13 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import Grid from "@material-ui/core/Grid";
 import log from 'loglevel';
-import {useDispatch, useSelector} from "react-redux";
-import {SELECT_PRODUCT_PAGE} from "../../../actions/types";
+import {useSelector} from "react-redux";
 import Pagination from "@material-ui/lab/Pagination";
 import {MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
-import {toggleId} from "../../../helper/toggleId";
 import history from "../../../history";
-import {updateQueryString} from "../../../helper/updateQueryString";
 
 export default function FilterPagination() {
     const selectedPage = useSelector(state => state.selectPageReducer)

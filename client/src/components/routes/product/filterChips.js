@@ -103,8 +103,25 @@ const FilterChips = () => {
                     }
                 })
 
-                const {list, ids} = toggleId(selectedAttrList[i].id, selectedAttrList[i].value, selectedAttrList)
-                history.push(updateQueryString(history, attributeName, selectedAttrList[i].id, ids))
+                const {ids} = toggleId(selectedAttrList[i].id, selectedAttrList[i].value, selectedAttrList)
+                let queryString = updateQueryString(history, attributeName, selectedAttrList[i].id, ids)
+
+                let URL = ""
+                if(!queryString.startsWith(PRODUCT_BY_CATEGORY_DATA_API)) {
+                    URL += PRODUCT_BY_CATEGORY_DATA_API
+                }
+
+                if(!queryString.startsWith(`?q=`)) {
+                    URL += `?q=`
+                }
+
+                if(URL !== "") {
+                    history.push(URL + queryString)
+                } else {
+                    history.push(queryString)
+                }
+
+
                 return
             }
         }

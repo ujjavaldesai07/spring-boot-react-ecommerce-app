@@ -32,6 +32,8 @@ export default function BrandCheckBox() {
                 setSelectedList([])
             }
         }
+
+        // eslint-disable-next-line
     }, [history.location.search])
 
     // return if doesn't got anything from the server

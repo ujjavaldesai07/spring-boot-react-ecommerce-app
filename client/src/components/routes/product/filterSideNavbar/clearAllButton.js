@@ -1,7 +1,7 @@
 import React from 'react';
 import log from 'loglevel';
 import {useDispatch, useSelector} from "react-redux";
-import {CLEAR_ALL_FILTERS, REMOVE_SELECTED_CATEGORY, RESET_SELECTED_CATEGORY} from "../../../../actions/types";
+import {CLEAR_ALL_FILTERS, RESET_SELECTED_CATEGORY} from "../../../../actions/types";
 import history from "../../../../history";
 
 function ClearAllButton() {

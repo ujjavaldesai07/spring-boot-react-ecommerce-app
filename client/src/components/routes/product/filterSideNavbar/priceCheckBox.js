@@ -30,6 +30,8 @@ export default function PriceCheckBox() {
                 setSelectedList([])
             }
         }
+
+        // eslint-disable-next-line
     }, [history.location.search])
 
     if (!priceRangeList) {

@@ -12,9 +12,10 @@ import Hidden from "@material-ui/core/Hidden";
 // import BottomNavBar from "./bottomNavBar";
 import history from "../../../history";
 import BreadcrumbsSection from "../../ui/breadcrumbs";
-import {BadRequest} from "../../ui/error/badRequest";
 import {HOME_ROUTE} from "../../../constants/react_routes";
 import {DocumentTitle} from "../../ui/documentTitle";
+import {PRODUCT_BY_CATEGORY_DATA_API} from "../../../constants/api_routes";
+import {MAX_PRODUCTS_PER_PAGE} from "../../../constants/constants";
 
 export const stickyBoxStyle = {
     position: 'sticky',
@@ -41,7 +42,7 @@ function Product() {
     // if we got unexpected uri then just send bad request component.
     if (history.location.pathname.localeCompare('/products') !== 0
         || !history.location.search.startsWith('?q=')) {
-        return <BadRequest/>
+        return history.push(PRODUCT_BY_CATEGORY_DATA_API + "?q=page=0," + MAX_PRODUCTS_PER_PAGE)
     }
 
     log.info("[Product] Rendering Product Component.")

@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import log from 'loglevel';
-import {useDispatch, useSelector} from "react-redux";
-import {SELECT_SORT_CATEGORY} from "../../../actions/types";
+import {useSelector} from "react-redux";
 import DropdownSection from "../../ui/dropDown";
-import {MAX_PRODUCTS_PER_PAGE, SORT_ATTRIBUTE} from "../../../constants/constants";
+import {SORT_ATTRIBUTE} from "../../../constants/constants";
 import history from "../../../history";
 
 export default function FilterDropdown() {
