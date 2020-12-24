@@ -18,6 +18,7 @@ import {HOME_PAGE_DATA_API} from "../../../constants/api_routes";
 import {HOME_PAGE_API_OBJECT_LEN} from "../../../constants/constants"
 import {authServiceAPI} from "../../../api/service_api";
 import axios from "axios";
+import {Grid} from "@material-ui/core";
 
 const Home = props => {
     const {hover} = useSelector(state => state.tabHoverEventReducer)
@@ -32,22 +33,23 @@ const Home = props => {
         // Heroku so that it serves the requests quickly.
         // This should be removed when the app is deployed on actual server.
         props.setDefaultSearchSuggestions()
-        authServiceAPI.post('/authenticate').catch(err => {})
-        if(process.env.REACT_APP_PAYMENT_SERVICE_URL) {
+        authServiceAPI.post('/authenticate').catch(err => {
+        })
+        if (process.env.REACT_APP_PAYMENT_SERVICE_URL) {
             axios({
                 method: 'post',
-                url:  `${process.env.REACT_APP_PAYMENT_SERVICE_URL}/payment`,
+                url: `${process.env.REACT_APP_PAYMENT_SERVICE_URL}/payment`,
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 data: "xyz"
-            }).catch(err => {})
+            }).catch(err => {
+            })
         }
         ///////////////////////////////////////////////////////////
 
 
-
-        if(!homeAPIData.hasOwnProperty("data")) {
+        if (!homeAPIData.hasOwnProperty("data")) {
             props.getDataViaAPI(LOAD_HOME_PAGE, HOME_PAGE_DATA_API, null, false);
         }
 
@@ -57,7 +59,19 @@ const Home = props => {
     // we will be showing spinner till we get the data via API
     if (homeAPIData.isLoading) {
         log.info("[Home]: loading")
-        return <Spinner/>
+        return <Spinner textComponent={
+            <Grid container direction="column" spacing={1} style={{
+                alignItems: "center", fontSize: "1.1rem", fontWeight: "bold"}}>
+                <Grid item>
+                    Please wait! This will take 1-2 minutes to load page for the first time.
+                </Grid>
+                <Grid item>
+                    The backend service on heroku was in sleep mode and now its started.
+                </Grid>
+                <Grid item>
+                    It will sleep again if the backend service is inactive for 30 minutes.
+                </Grid>
+            </Grid>}/>
     } else {
 
         // check if we got the data from the API

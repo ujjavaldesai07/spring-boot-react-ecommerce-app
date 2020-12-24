@@ -11,7 +11,7 @@ public class CorsConfig implements WebMvcConfigurer
 {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins(System.getenv("REACT_CLIENT_URL"))
+        registry.addMapping("/**").allowedOrigins("https://shoppers-ecom-app.herokuapp.com")
                 .allowedMethods("GET", "POST");
     }
 }
