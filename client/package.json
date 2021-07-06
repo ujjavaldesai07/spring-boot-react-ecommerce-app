@@ -34,7 +34,7 @@
     "semantic-ui-react": "^0.88.2",
     "stripe": "^8.78.0",
     "styled-components": "^5.1.1",
-    "swiper": "^5.4.2"
+    "swiper": "^6.5.1"
   },
   "scripts": {
     "start": "node server.js",
