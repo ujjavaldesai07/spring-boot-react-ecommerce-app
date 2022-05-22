@@ -50,7 +50,7 @@ eCommerce application based on the microservices architecture built using Spring
 
 **Steps for executing the application using docker-compose:**
 
-Installation Video: https://youtu.be/_crBKEYyGgY
+Installation Video: https://youtu.be/nPKYbdKPd0E
 
 1. Clone/Download the repository.
 
