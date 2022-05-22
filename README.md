@@ -51,13 +51,10 @@ eCommerce application based on the microservices architecture built using Spring
 **Steps for executing the application using docker-compose:**
 1. Clone/Download the repository.
 
-
 2. Set the environmental variables which will be impacted on docker-compose.yml.
    
-    1. You can check the .env-sample file. Most of the variables are already set.
-       You need to rename the file ".env-sample" to ".env".
-       <br/><br/>
-    2. In addition, You need to create a Stripe account and Google OAuth credentials.
+    1. Rename the file ".env-sample" to ".env".     
+    2. (Optional Step) You need to create a Stripe account and Google OAuth credentials.
        The application works even if you don't create this account, only the payment and OAuth functionality will not work.
        These accounts doesn't charge you anything and are absolutely free.<br/><br/>
 
@@ -71,33 +68,13 @@ eCommerce application based on the microservices architecture built using Spring
 
        Go [Here](https://console.developers.google.com) to create Google OAuth Credentials.
 
-
-3. Set the CORS in the backend service as shown below.
-   ```
-      go to file on this path => server/common-data-service/src/main/java/com/ujjaval/ecommerce/commondataservice/config/CorsConfig.java
-      
-      public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins(<Add your client host URL string here>)
-                .allowedMethods("GET", "POST");
-      }
-   ```
-
 3. Build all the microservices and run the app using docker-compose. This is done using ./start-all.sh script which creates the network and set the container dependencies based on the config mention in the docker-compose.yml. 
    This will build all the jar files and run all the services.
    ```
       ./start-all.sh
    ```
 
-4. If you are making any change in the code then you need to you ./stop-all.sh to clean up the jars created by ./start-all.sh script. Also, you need to remove the images from the docker otherwise it will occupy the image spaces unnecessarily.
-   <br/><br/>
-   You can check docker images with below command
-   ```
-      docker images
-   ```
-   Remove multiple docker images
-   ```
-      docker images -a | grep -E "ecommerce|none" | awk '{print $3}' | xargs docker rmi -f
-   ```
+4. If you are making any change in the code then you need to you ./stop-all.sh to clean up the jars created by ./start-all.sh script.
 
 **Payment Service Test Details:**
 
@@ -108,7 +85,6 @@ eCommerce application based on the microservices architecture built using Spring
 **Steps to deploy on Heroku using docker-compose:**
 
 1. create heroku.yml as docker-compose.yml is not invoked on Heroku.
-
 
 2. If the application contains a database then install MySQL or any other database 
    from Heroku marketplace[https://elements.heroku.com].
