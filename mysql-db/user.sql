@@ -1,1 +1,1 @@
-GRANT ALL PRIVILEGES ON *.* TO 'springstudent'@'%';
+GRANT ALL PRIVILEGES ON *.* TO 'mysqluser'@'%';

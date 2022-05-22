@@ -193,7 +193,7 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
             switch (filenameType) {
                 case SORT_BY:
                     for (String line; (line = reader.readLine()) != null; ) {
-                        System.out.println("SortBy Line = " + line);
+                        // System.out.println("SortBy Line = " + line);
                         String[] result = line.split("\\|");
                         String id = result[0];
                         String type = result[1];
@@ -206,7 +206,7 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                     break;
                 case PRICE_RANGE:
                     for (String line; (line = reader.readLine()) != null; ) {
-                        System.out.println("PriceRange Line = " + line);
+                        // System.out.println("PriceRange Line = " + line);
                         String[] result = line.split("\\|");
                         String id = result[0];
                         String type = result[1];
@@ -271,7 +271,7 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
 
         if(!priceRangeCategoryList.isEmpty()) {
             for(PriceRangeCategory priceRangeCategory: priceRangeCategoryList) {
-                System.out.println("STORED PRICE RANGE CATEGORY id = " + priceRangeCategory.getId() + "type = "+ priceRangeCategory.getType());
+                // System.out.println("STORED PRICE RANGE CATEGORY id = " + priceRangeCategory.getId() + "type = "+ priceRangeCategory.getType());
             }
         } else {
             System.out.println("PRICE RANGE CATEGORY LIST IS EMPTY..Hence exiting.....");
@@ -309,8 +309,6 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                 String fileName = result[6];
                 String imageURL = result[7];
                 String imageLocalPath = replaceSpacesWithUnderscore(String.format("%s/%s/%s", gender, apparel, fileName));
-
-                System.out.println("TestData = " + line);
 
 //                File file = ResourceUtils.getFile("classpath:static/images_2/" + filePath);
 //
@@ -371,7 +369,7 @@ public class LoadFakeDataServiceImpl implements LoadFakeDataService {
                     productBrandCategoryRepository.save(productBrandCategory);
                 }
 
-                System.out.println("price = " + price);
+                // System.out.println("price = " + price);
                 Optional<PriceRangeCategory> priceRangeCategory = findPriceRangeCategory(Integer.parseInt(price));
 
                 if(priceRangeCategory.isPresent()) {

@@ -12,7 +12,7 @@ services:
     volumes:
         - ./mysql-db/user.sql:/docker-entrypoint-initdb.d/user.sql
     ports:
-      - 3312:3306
+      - 3306:3306
     networks:
       - spring-cloud-microservices
 

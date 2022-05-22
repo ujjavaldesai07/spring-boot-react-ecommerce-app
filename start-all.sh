@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# Stop and delete the containers
+#docker-compose down
+
+# Stop and delete the containers
+docker-compose stop 
+
 # Deleting network if available
 docker network rm spring-cloud-microservices
 
