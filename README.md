@@ -49,6 +49,9 @@ eCommerce application based on the microservices architecture built using Spring
 - **Search Suggestion Service:** Provide default search suggestions and provides suggestions based on a prefix using Hashmap. The service creates the Hashmap based on available data from the database with various combinations and populates the map.
 
 **Steps for executing the application using docker-compose:**
+
+Installation Video: https://youtu.be/_crBKEYyGgY
+
 1. Clone/Download the repository.
 
 2. Set the environmental variables which will be impacted on docker-compose.yml.
